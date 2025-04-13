@@ -33,10 +33,22 @@
   programs = {
     home-manager.enable = true;
     direnv.enable = true;
-#    bash = {
-#      enable = true;
-#      initExtra = builtins.readFile ../dotfiles/.bashrc;
-#    };
+    fish = {
+      enable = true;
+      interactiveShellInit = import ../dotfiles/fish-config.nix {};
+      plugins = [
+        { name = "grc"; src = pkgs.fishPlugins.grc.src; }
+        {
+          name = "z";
+          src = pkgs.fetchFromGitHub {
+            owner = "jethrokuan";
+            repo = "z";
+            rev = "e0e1b9dfdba362f8ab1ae8c1afc7ccf62b89f7eb";
+            sha256 = "0dbnir6jbwjpjalz14snzd3cgdysgcs3raznsijd6savad3qhijc";
+          };
+        }
+      ];
+    };
 #    tmux = {
 #      enable = true;
 #      keyMode = "vi";
@@ -58,6 +70,18 @@
       # For example, using vim-nix if it’s available as a package:
       plugins = with pkgs.vimPlugins; [ vim-nix ];
     };
+    bash = {
+      enable = true;
+      initExtra = ''
+        # Check if the parent process is not already fish and that we're not running a non-interactive command.
+        if [[ "$$(${pkgs.procps}/bin/ps --no-header --pid=$$PPID --format=comm)" != "fish" && -z "$${BASH_EXECUTION_STRING:-}" ]]; then
+          # Determine if this is a login shell.
+          shopt -q login_shell && LOGIN_OPTION='--login' || LOGIN_OPTION=""
+          exec ${pkgs.fish}/bin/fish $LOGIN_OPTION
+        fi
+      '';
+    };
+    
     firefox = {
       enable = true;
       package = pkgs.librewolf;
@@ -101,22 +125,6 @@
         # Workaround for https://github.com/nix-community/home-manager/issues/4744
         version = 1;
       };
-    };
-    fish = {
-      enable = true;
-      interactiveShellInit = import ../dotfiles/fish-config.nix {};
-      plugins = [
-        { name = "grc"; src = pkgs.fishPlugins.grc.src; }
-        {
-          name = "z";
-          src = pkgs.fetchFromGitHub {
-            owner = "jethrokuan";
-            repo = "z";
-            rev = "e0e1b9dfdba362f8ab1ae8c1afc7ccf62b89f7eb";
-            sha256 = "0dbnir6jbwjpjalz14snzd3cgdysgcs3raznsijd6savad3qhijc";
-          };
-        }
-      ];
     };
     #zoxide = {
       #enable = true
