@@ -70,18 +70,16 @@
       # For example, using vim-nix if it’s available as a package:
       plugins = with pkgs.vimPlugins; [ vim-nix ];
     };
-    bash = {
+     bash = {
       enable = true;
       initExtra = ''
-        # Check if the parent process is not already fish and that we're not running a non-interactive command.
-        if [[ "$$(${pkgs.procps}/bin/ps --no-header --pid=$$PPID --format=comm)" != "fish" && -z "$${BASH_EXECUTION_STRING:-}" ]]; then
-          # Determine if this is a login shell.
-          shopt -q login_shell && LOGIN_OPTION='--login' || LOGIN_OPTION=""
-          exec ${pkgs.fish}/bin/fish $LOGIN_OPTION
-        fi
-      '';
+        if [[ $(${pkgs.procps}/bin/ps --no-header --pid=$PPID --format=comm) != "fish" && -z ''${BASH_EXECUTION_STRING} ]]
+    then
+      shopt -q login_shell && LOGIN_OPTION='--login' || LOGIN_OPTION=""
+      exec ${pkgs.fish}/bin/fish $LOGIN_OPTION
+    fi
+        '';
     };
-    
     firefox = {
       enable = true;
       package = pkgs.librewolf;
