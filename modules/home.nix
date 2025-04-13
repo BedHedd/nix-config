@@ -13,7 +13,9 @@
 
   home = { 
     packages = with pkgs; [ 
-      gnupg 
+      gnupg
+      zoxide
+      fzf
 
       # dictionaries
       # aspell
@@ -48,6 +50,10 @@
         #  };
         #}
       ];
+    };
+    zoxide = {
+      enableFishIntegration= true;
+      options = ["--cmd cd fish | source"];
     };
     bash = {
       enable = true;
