@@ -52,8 +52,9 @@
       ];
     };
     zoxide = {
-      enableFishIntegration= true;
-      options = ["--cmd cd fish | source"];
+      enable = true;
+      enableFishIntegration = true;
+      options = ["--cmd cd | source"];
     };
     bash = {
       enable = true;
