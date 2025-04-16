@@ -7,6 +7,7 @@
 {
   imports =
     [
+      nixos-hardware.nixosModules.common-gpu-amd
       ./hardware-configuration.nix
       home-manager.nixosModules.home-manager
       ../../modules/home-manager.nix
