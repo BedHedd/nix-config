@@ -9,9 +9,12 @@
      home-manager = {
        url = "github:nix-community/home-manager";
      };
+     plasma-manager = {
+       url = "github:nix-community/plasma-manager";
+     };
   };
 
-  outputs = { self, nixpkgs, nixos-hardware, home-manager, ... }@inputs: {
+  outputs = { self, nixpkgs, nixos-hardware, home-manager, plasma-manager, ... }@inputs: {
   
     nixosConfigurations =
       let
@@ -36,7 +39,7 @@
           revModule
           localNixpkgsModule
         ];
-        specialArgs = { inherit nixos-hardware home-manager; };
+        specialArgs = { inherit nixos-hardware home-manager plasma-manager; };
       };
     # use "nixos", or your hostname as the name of the configuration
     # it's a better practice than "default" shown in the video

@@ -7,6 +7,7 @@
 {
   imports =
     [
+      ../../modules/kde.nix
       nixos-hardware.nixosModules.common-gpu-amd
       ./hardware-configuration.nix
       home-manager.nixosModules.home-manager
