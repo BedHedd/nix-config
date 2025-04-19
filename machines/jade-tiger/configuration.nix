@@ -17,6 +17,12 @@
   boot.loader.grub.enable = true;
   boot.loader.grub.device = "/dev/nvme0n1";
   boot.loader.grub.useOSProber = true;
+  boot.kernelParams = [ 
+    # "video=DP-1:3840x2160@60"
+    "video=DP-2:3840x2160@60"
+    #"video=DP-3:3840x2160@60"
+    #"video=HDMI-A-1:2560x1440@59.95"
+  ];
 
   networking.hostName = "jade-tiger"; # Define your hostname.
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
@@ -99,7 +105,6 @@
     wget
     wl-clipboard
     xclip
-    wlr-randr
   ];
   # Some programs need SUID wrappers, can be configured further or are
   # started in user sessions.
