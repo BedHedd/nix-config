@@ -104,6 +104,12 @@
           "privacy.trackingprotection.enabled" = true;
           "privacy.trackingprotection.fingerprinting.enabled" = true;
           "privacy.trackingprotection.socialtracking.enabled" = true;
+
+          # do not clear cookies and logins
+          "privacy.clearOnShutdown.cookies" = false;
+          "privacy.clearOnShutdown.siteSettings" = false;
+          "network.cookie.lifetimePolicy" = 0; # 0 = accept normally
+          "privacy.sanitize.sanitizeOnShutdown" = false;
         };
         ExtensionSettings = {
           "uBlock0@raymondhill.net" = {
