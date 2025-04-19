@@ -16,6 +16,7 @@
       gnupg
       zoxide
       fzf
+      tree
 
       # dictionaries
       # aspell
