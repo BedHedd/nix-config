@@ -17,6 +17,7 @@
       zoxide
       fzf
       tree
+      fastfetch
 
       # dictionaries
       # aspell
