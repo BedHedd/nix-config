@@ -2,7 +2,7 @@
 # your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 
-{ config, pkgs, nixos-hardware, home-manager, ... }:
+{ config, pkgs, nixos-hardware, home-manager, plasma-manager, ... }:
 
 {
   imports =
@@ -11,7 +11,6 @@
       nixos-hardware.nixosModules.common-gpu-amd
       ./hardware-configuration.nix
       home-manager.nixosModules.home-manager
-      ../../modules/home-manager.nix
     ];
 
   # Bootloader.
@@ -108,7 +107,7 @@
     wl-clipboard
     xclip
   ];
-  # Some programs need SUID wrappers, can be configured further or are
+  # Some programs need SUID wrappers, can be configured further or are:
   # started in user sessions.
   # programs.mtr.enable = true;
   # programs.gnupg.agent = {
@@ -120,6 +119,20 @@
 
   # Enable the OpenSSH daemon.
   # services.openssh.enable = true;
+
+
+  # Home‑Manager setup for plasma‑manager
+
+  home-manager.useGlobalPkgs   = true;
+  home-manager.useUserPackages = true;
+
+  home-manager.sharedModules = [
+    plasma-manager.homeManagerModules."plasma-manager"
+  ];
+
+  home-manager.users.admin = import ./home.nix {
+    inherit pkgs plasma-manager;
+  };
 
   users.extraUsers.admin = {
     isNormalUser = true;

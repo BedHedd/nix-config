@@ -1,46 +1,18 @@
-{ config, pkgs, lib, plasma-manager, ... }:
+
+{ config, pkgs, lib, ... }:
 
 {
-  imports = [
-    plasma-manager.nixosModules.default
-  ];
+  # Enable SDDM & Plasma at the system level:
+  services.displayManager.sddm.enable       = true;
+  services.displayManager.sddm.wayland.enable = true;
+  services.desktopManager.plasma6.enable    = true;
 
-  services.desktopManager.plasma6.enable = true;
-  services.displayManager.sddm.enable = true;
-
-  programs.plasma-manager = {
-    enable = true;
-
-    settings = {
-      kdeglobals = {
-        General = {
-          ColorScheme = "Breeze Dark";
-          Name = "Breeze";
-        };
-      };
-
-      kwinrc = {
-        Plugins = {
-          kwin4_effect_zoomEnabled = false;
-        };
-        MouseBindings = {
-          CommandWindow1 = "ExposeAll";
-        };
-      };
-
-      plasmarc = {
-        Theme = {
-          name = "breeze";
-        };
-      };
-    };
-  };
-
+  # Your KDE apps:
   environment.systemPackages = with pkgs; [
-    dolphin
-    konsole
-    kate
-    # more KDE apps
-  ];
+     kdePackages.dolphin      # Qt6-based Dolphin
+     kdePackages.konsole      # Qt6-based Konsole
+     kdePackages.kate         # Qt6-based Kate
+     # more KDE apps, e.g. kdePackages.okular, etc.
+   ];
 }
 

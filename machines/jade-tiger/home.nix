@@ -2,25 +2,39 @@
 { pkgs, plasma-manager, ... }:
 
 {
-  # 1) import your global home config
-  imports = [
-    ../../modules/home.nix
+  # import your global home.nix (fonts, fish, etc.)
+  imports = [ ../../modules/home.nix ];
 
-    # 2) pull in plasma‑manager’s Home‑Manager module
-    plasma-manager.homeManagerModules."plasma-manager"
+  # now configure plasma via the plasma-manager HM module:
+  programs.plasma.enable = true;
 
-    # (optional) other per‑host HM modules
-    # ../../modules/home-kde.nix
+  programs.plasma.workspace = {
+    clickItemTo = "select";
+    lookAndFeel = "org.kde.breezedark.desktop";
+    # cursor.theme = "Bibata-Modern-Ice";
+    # iconTheme   = "Papirus-Dark";
+    # wallpaper   = "${pkgs.kdePackages.plasma-workspace-wallpapers}/share/wallpapers/Patak/contents/images/1080x1920.png";
+  };
+
+  programs.plasma.hotkeys.commands."launch-konsole" = {
+    name    = "Launch Konsole";
+    key     = "Meta+Alt+K";
+    command = "konsole";
+  };
+
+  programs.plasma.panels = [
+    {
+      location = "bottom";
+      widgets = [
+        "org.kde.plasma.kickoff"
+        "org.kde.plasma.icontasks"
+        "org.kde.plasma.marginsseparator"
+        "org.kde.plasma.systemtray"
+        "org.kde.plasma.digitalclock"
+      ];
+    }
   ];
 
-  # 3) you already set up global packages/programs in modules/home.nix
-
-  # 4) now per‑host plasma‑manager settings:
-  programs.plasma-manager.enable   = true;
-  programs.plasma-manager.settings = {
-    kdeglobals.General.ColorScheme = "Breeze Dark";
-    plasmarc.Theme.name           = "breeze";
-    # …any other plasma‑manager options…
-  };
+  # …more programs.plasma.* settings as desired…
 }
 
