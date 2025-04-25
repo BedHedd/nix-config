@@ -9,6 +9,7 @@
     [
       ../../modules/kde.nix
       nixos-hardware.nixosModules.common-gpu-amd
+      nixos-hardware.nixosModules.gigabyte-b550
       ./hardware-configuration.nix
       home-manager.nixosModules.home-manager
     ];
@@ -24,6 +25,39 @@
     #"video=HDMI-A-1:2560x1440@59.95"
   ];
 
+  services.udev.extraRules = ''
+  # Disable wake for every AMD PCIe bridge
+  ACTION=="add", SUBSYSTEM=="pci", ATTR{vendor}=="0x1022", ATTR{class}=="0x0604*", \
+    ATTR{power/wakeup}="disabled"
+
+  # Disable wake for AMD xHCI controllers
+  ACTION=="add", SUBSYSTEM=="pci", ATTR{vendor}=="0x1022", ATTR{class}=="0x0c0330", \
+    ATTR{power/wakeup}="disabled"
+
+  # Disable wake for Realtek LAN on Gigabyte boards
+  ACTION=="add", SUBSYSTEM=="pci", ATTR{vendor}=="0x10ec", ATTR{device}=="0x8168", \
+    ATTR{power/wakeup}="disabled"
+'';
+
+# # ── Disable every *enabled* ACPI wake device right after boot ────────────────
+# systemd.services.disable-acpi-wakeups = {
+#   description = "Turn off all ACPI devices that are wake-capable by default";
+#   wantedBy    = [ "multi-user.target" ];
+#   after       = [ "local-fs.target" ];
+#
+#   serviceConfig = {
+#     Type = "oneshot";
+#     ExecStart = pkgs.writeShellScript "disable-acpi-wakeups" ''
+#       #!${pkgs.bash}/bin/bash
+#       for dev in $("${pkgs.gawk}/bin/awk" '/\*enabled/ {print $1}' /proc/acpi/wakeup); do
+#         echo "disabling $dev"
+#         echo "$dev" > /proc/acpi/wakeup
+#       done
+#     '';
+#     StandardOutput = "journal";
+#   };
+# };
+#
   networking.hostName = "jade-tiger"; # Define your hostname.
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
 
