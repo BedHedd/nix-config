@@ -18,7 +18,7 @@
       command = "konsole";
     };
 
-    panels = [
+    panels = lib.mkForce [
       {
         location = "bottom";
         widgets  = [
