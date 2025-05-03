@@ -8,6 +8,7 @@
   imports =
     [
       ../../modules/kde.nix
+      ../../modules/steamdeck-plasma.nix
       nixos-hardware.nixosModules.common-gpu-amd
       nixos-hardware.nixosModules.gigabyte-b550
       ./hardware-configuration.nix
