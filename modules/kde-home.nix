@@ -9,7 +9,7 @@
       #clickItemTo = "select";
       #lookAndFeel  = "org.kde.breezedark.desktop";
       # …
-    };
+    #};
 
     hotkeys.commands."launch-konsole" = {
       name    = "Launch Konsole";
