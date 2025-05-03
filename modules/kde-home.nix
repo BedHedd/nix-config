@@ -1,64 +1,52 @@
 # modules/kde-home.nix
 { pkgs, plasma-manager, lib, ... }:
 
+{
+  programs.plasma = {
+    enable = true;
 
-programs.plasma = {
-  enable = true;
-  workspace.lookAndFeel = lib.mkForce "com.valve.vapor.deck.desktop";
+    # — Steam Deck global theme —
+    workspace.lookAndFeel = lib.mkForce "com.valve.vapor.desktop";
 
-  # force exactly one Deck‑style panel each login
-  panels = lib.mkForce [
-    {
-      location   = "bottom";   # 0 = top, 1 = left, 2 = right, 4 = bottom
-      screen     = 0;          # primary monitor
-      height     = 64;
-      floating   = false;      # disable floating panel
-      visibility = "AutoHide"; # AutoHide | LetWindowsCover | WindowsGoBelow
+    # — Declarative Steam Deck panel (auto‑hide, no floating) —
+    panels = lib.mkForce [
+      {
+        location = "bottom";
+        screen   = 0;
+        height   = 64;
+        floating = false;
+        hiding   = "autohide";
 
-      widgets = [
-        # Kickoff (Steam icon)
-        {
-          plugin = "org.kde.plasma.kickoff";
-          configuration = {
-            General = {
-              icon = "distributor-logo-steamdeck";   # Steam Deck logo
-              favoritesPortedToKAstats = true;
-            };
-            popupHeight = 400;
-            popupWidth  = 560;
-          };
-        }
+        widgets = [
+          {
+            plasmoid = "org.kde.plasma.kickoff";
+            config.General.icon                     = "distributor-logo-steamdeck";
+            config.General.favoritesPortedToKAstats = true;
+          }
 
-        # Pager
-        { plugin = "org.kde.plasma.pager"; }
+          { plasmoid = "org.kde.plasma.pager"; }
+          { plasmoid = "org.kde.plasma.icontasks"; }
+          { plasmoid = "org.kde.plasma.marginsseparator"; }
 
-        # Icon Tasks
-        { plugin = "org.kde.plasma.icontasks"; }
+          {
+            plasmoid = "org.kde.plasma.systemtray";
+            config.General.SystrayContainmentId = 166;
+          }
 
-        # Separator
-        { plugin = "org.kde.plasma.marginsseparator"; }
+          { plasmoid = "org.kde.plasma.digitalclock"; }
+          { plasmoid = "org.kde.plasma.showdesktop"; }
+        ];
+      }
+    ];
 
-        # System tray (with its own inner containment)
-        {
-          plugin = "org.kde.plasma.systemtray";
-          configuration = {
-            SystrayContainmentId = 166;
-          };
-        }
+    # Example custom hotkey (unchanged)
+    hotkeys.commands."launch-konsole" = {
+      name    = "Launch Konsole";
+      key     = "Meta+Alt+K";
+      command = "konsole";
+    };
+  };
+}
 
-        # Digital clock
-        {
-          plugin = "org.kde.plasma.digitalclock";
-          configuration = {
-            popupHeight = 400;
-            popupWidth  = 560;
-          };
-        }
 
-        # Show desktop button (optional)
-        { plugin = "org.kde.plasma.showdesktop"; }
-      ];
-    }
-  ];
-};
 
