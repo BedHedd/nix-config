@@ -4,49 +4,33 @@
 {
   programs.plasma = {
     enable = true;
+    workspace.lookAndFeel = lib.mkForce "com.valve.vapor.deck.desktop";
 
-    # — Steam Deck global theme —
-    workspace.lookAndFeel = lib.mkForce "com.valve.vapor.desktop";
-
-    # — Declarative Steam Deck panel (auto‑hide, no floating) —
     panels = lib.mkForce [
       {
         location = "bottom";
-        screen   = 0;
         height   = 64;
         floating = false;
         hiding   = "autohide";
 
         widgets = [
-          {
-            plasmoid = "org.kde.plasma.kickoff";
-            config.General.icon                     = "distributor-logo-steamdeck";
-            config.General.favoritesPortedToKAstats = true;
-          }
-
-          { plasmoid = "org.kde.plasma.pager"; }
-          { plasmoid = "org.kde.plasma.icontasks"; }
-          { plasmoid = "org.kde.plasma.marginsseparator"; }
-
-          {
-            plasmoid = "org.kde.plasma.systemtray";
-            config.General.SystrayContainmentId = 166;
-          }
-
-          { plasmoid = "org.kde.plasma.digitalclock"; }
-          { plasmoid = "org.kde.plasma.showdesktop"; }
+          "org.kde.plasma.kickoff"
+          "org.kde.plasma.pager"
+          "org.kde.plasma.icontasks"
+          "org.kde.plasma.marginsseparator"
+          "org.kde.plasma.systemtray"
+          "org.kde.plasma.digitalclock"
+          "org.kde.plasma.showdesktop"
         ];
       }
     ];
-
-    # Example custom hotkey (unchanged)
-    hotkeys.commands."launch-konsole" = {
-      name    = "Launch Konsole";
-      key     = "Meta+Alt+K";
-      command = "konsole";
-    };
   };
-}
 
+  # Override Kickoff’s icon at the KConfig level
+  xdg.configFile."plasma-org.kde.plasma.desktop-appletsrc".text = lib.mkForce ''
+    [Containments][1][Applets][1][Configuration][General]
+    icon=distributor-logo-steamdeck
+  '';
+}
 
 
