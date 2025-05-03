@@ -1,8 +1,12 @@
-{ ... }:
+# modules/steamdeck-plasma-home.nix
+{ lib, ... }:
+
 {
   programs.plasma = {
     enable = true;
-    workspace.lookAndFeel = "org.kde.vapor.desktop";
+
+    # This outranks any other definition:
+    workspace.lookAndFeel = lib.mkForce "org.kde.vapor.desktop";
   };
 }
 

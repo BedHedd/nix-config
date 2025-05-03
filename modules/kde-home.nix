@@ -5,9 +5,9 @@
   programs.plasma = {
     enable = true;
 
-    workspace = {
-      clickItemTo = "select";
-      lookAndFeel  = "org.kde.breezedark.desktop";
+    #workspace = {
+      #clickItemTo = "select";
+      #lookAndFeel  = "org.kde.breezedark.desktop";
       # …
     };
 
