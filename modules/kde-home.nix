@@ -1,15 +1,16 @@
 # modules/kde-home.nix
-{ pkgs, plasma-manager, ... }:
+{ pkgs, plasma-manager, lib, ... }:
 
 {
   programs.plasma = {
     enable = true;
 
-    #workspace = {
-      #clickItemTo = "select";
-      #lookAndFeel  = "org.kde.breezedark.desktop";
+    workspace = {
+      clickItemTo = "select";
+      lookAndFeel = lib.mkForce "com.valve.vapor.deck.desktop";
+      # lookAndFeel  = "org.kde.breezedark.desktop";
       # …
-    #};
+    };
 
     hotkeys.commands."launch-konsole" = {
       name    = "Launch Konsole";

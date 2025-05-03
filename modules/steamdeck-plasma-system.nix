@@ -6,7 +6,7 @@ let
     version = "0.28";
     src = pkgs.fetchurl {
       url    = "https://github.com/Jovian-Experiments/steamdeck-kde-presets/archive/refs/tags/${version}.tar.gz";
-      sha256 = "sha256-g8frzdFqj1ydZNDLrZ9S3Pe1KCHp3B/XaRO+dKjIOKQ="
+      sha256 = "sha256-g8frzdFqj1ydZNDLrZ9S3Pe1KCHp3B/XaRO+dKjIOKQ=";
     };
     installPhase = ''
       mkdir -p $out
