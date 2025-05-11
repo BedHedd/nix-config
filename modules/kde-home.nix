@@ -11,7 +11,8 @@
         location = "bottom";
         height   = 64;
         floating = false;
-        hiding   = "autoHide";
+        # hiding   = "autoHide";
+        visibility = "autohide";
 
         widgets = [
           "org.kde.plasma.kickoff"
