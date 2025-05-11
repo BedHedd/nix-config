@@ -12,7 +12,8 @@
         height   = 64;
         floating = false;
         # hiding   = "autoHide";
-        visibility = "autohide";
+        # visibility = "autohide";
+        hiding   = "dodgewindows";
 
         widgets = [
           "org.kde.plasma.kickoff"
