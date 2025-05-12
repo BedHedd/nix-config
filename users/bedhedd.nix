@@ -2,7 +2,7 @@
 { config, pkgs, home-manager, plasma-manager, lib, ... }:
 
 let
-  username     = "bedheddt";
+  username     = "bedhedd";
 
   # 👇 Define exactly the packages this user wants
   userPackages = with pkgs; [
