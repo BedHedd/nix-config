@@ -13,6 +13,7 @@
       nixos-hardware.nixosModules.gigabyte-b550
       ./hardware-configuration.nix
       home-manager.nixosModules.home-manager
+      ./users.nix
     ];
 
   # Bootloader.
