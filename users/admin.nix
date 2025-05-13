@@ -1,12 +1,11 @@
 { config, pkgs, home-manager, plasma-manager, lib, ... }:
 
 let
-  username     = "dev";
+  username     = "admin";
 
   # 👇 Define exactly the packages this user wants
   userPackages = with pkgs; [
     vscodium
-    ollama-rocm
     # add more here, e.g.
     # docker
     # firefox
