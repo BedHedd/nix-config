@@ -6,8 +6,18 @@ let
 
   # 👇 Define exactly the packages this user wants
   userPackages = with pkgs; [
-    vscodium
-    ollama-rocm
+    # development packages
+    uv # python
+    vscodium # vscode
+    ollama-rocm # ollama
+    colima # docker containers
+
+    # graphics and video
+    obs-studio # screen recording
+    kdePackages.kdenlive # video editing
+    krita # image manipulation
+
+
     # add more here, e.g.
     # docker
     # firefox
