@@ -9,8 +9,9 @@ let
     # development packages
     uv # python
     vscodium # vscode
-    ollama-rocm # ollama
-    docker
+    ollama-rocm # ollama local llm
+    lmstudio # local llms
+    docker # containers
     colima # docker containers
 
     # graphics and video
