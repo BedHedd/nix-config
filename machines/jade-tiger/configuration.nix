@@ -166,15 +166,6 @@
     plasma-manager.homeManagerModules."plasma-manager"
   ];
 
-  home-manager.users.admin = import ./home.nix {
-    inherit pkgs plasma-manager;
-  };
-
-  users.extraUsers.admin = {
-    isNormalUser = true;
-    home = "/home/admin";
-    extraGroups = [ "wheel" ];
-};
   # Open ports in the firewall.
   # networking.firewall.allowedTCPPorts = [ ... ];
   # networking.firewall.allowedUDPPorts = [ ... ];

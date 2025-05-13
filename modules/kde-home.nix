@@ -29,10 +29,6 @@
   };
 
   # Override Kickoff’s icon at the KConfig level
-  xdg.configFile."plasma-org.kde.plasma.desktop-appletsrc".text = lib.mkForce ''
-    [Containments][1][Applets][1][Configuration][General]
-    icon=distributor-logo-steamdeck
-  '';
 }
 
 
