@@ -10,13 +10,13 @@ let
     uv # python
     vscodium # vscode
     ollama-rocm # ollama
+    docker
     colima # docker containers
 
     # graphics and video
     obs-studio # screen recording
     kdePackages.kdenlive # video editing
     krita # image manipulation
-
 
     # add more here, e.g.
     # docker
