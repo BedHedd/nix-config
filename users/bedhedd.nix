@@ -15,12 +15,11 @@ let
 
     # graphics and video
     obs-studio # screen recording
+    ffmpeg # video encoding
+    vlc # media playback
     kdePackages.kdenlive # video editing
     krita # image manipulation
 
-    # add more here, e.g.
-    # docker
-    # firefox
   ];
 in
 {

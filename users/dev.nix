@@ -14,6 +14,8 @@ let
 
     # graphics and video
     obs-studio # screen recording
+    ffmpeg # video encoding
+    vlc # media playback
     kdePackages.kdenlive # video editing
     krita # image manipulation
   ];
