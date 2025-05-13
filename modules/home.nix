@@ -119,6 +119,7 @@
           };
         };
       };
+    };    
     };
     librewolf = {
       enable = true;
