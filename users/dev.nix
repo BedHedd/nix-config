@@ -30,7 +30,7 @@ in
 
       imports = [
         ../modules/home.nix
-        (import ../modules/kde-home.nix { inherit pkgs plasma-manager lib; })
+        ../modules/kde-home.nix
       ];
 
       programs.fish.enable = true;
