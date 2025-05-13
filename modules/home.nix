@@ -13,11 +13,13 @@
 
   home = { 
     packages = with pkgs; [ 
+      # handy cli packages
       gnupg
       zoxide
       fzf
       tree
       fastfetch
+      tealdeer
 
       # dictionaries
       # aspell
