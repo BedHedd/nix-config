@@ -120,38 +120,6 @@
         };
       };
     };    
-    };
-    librewolf = {
-      enable = true;
-      package = pkgs.librewolf;
-      settings = {
-          "cookiebanners.service.mode.privateBrowsing" = 2; # Block cookie banners in private browsing
-          "cookiebanners.service.mode" = 2; # Block cookie banners
-          "privacy.donottrackheader.enabled" = true;
-          "privacy.fingerprintingProtection" = true;
-          "privacy.resistFingerprinting" = true;
-          "privacy.trackingprotection.emailtracking.enabled" = true;      
-          "privacy.trackingprotection.enabled" = true;
-          "privacy.trackingprotection.fingerprinting.enabled" = true;
-          "privacy.trackingprotection.socialtracking.enabled" = true;
-
-          # do not clear cookies and logins
-          "privacy.clearOnShutdown.cookies" = false;
-          "privacy.clearOnShutdown.siteSettings" = false;
-          "network.cookie.lifetimePolicy" = 0; # 0 = accept normally
-          "privacy.sanitize.sanitizeOnShutdown" = false;
-        };
-      policies = {
-        DisableTelemetry = true;
-        DisableFirefoxStudies = true;
-        ExtensionSettings = {
-          "uBlock0@raymondhill.net" = {
-            install_url = "https://addons.mozilla.org/firefox/downloads/latest/ublock-origin/latest.xpi";
-            installation_mode = "force_installed";
-          };
-        };
-      };
-    };    
     git = {
       enable = true;
       package = pkgs.gitAndTools.gitFull;
