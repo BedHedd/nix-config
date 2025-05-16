@@ -67,6 +67,11 @@ If git is not installed in the terminal, download the repo as a zip.
 1. Navigate and click the green `< > Code` button 
 2. Navigate and click the `Download ZIP` button
 
+## handy commands and resources
+### updating nix
+1. Run the following command `nix flake update`
+2. 
+
 ## applying my config
 After downloading this repo, navigate to the directory using your terminal or a preferred file explorer/text editor. If you run tree, this is the folder structure
 ```bash
@@ -180,3 +185,4 @@ otherwise, you'll want to run this command
 nixos-rebuild switch --flake .#jade-tiger
 ```
 replace `jade-tiger` with the name of the machine you configured in the previous step
+
