@@ -70,7 +70,18 @@ If git is not installed in the terminal, download the repo as a zip.
 ## handy commands and resources
 ### updating nix
 1. Run the following command `nix flake update`
-2. 
+2. Rebuild the os`nixos-rebuild switch --flake .$config-name`, replace `$config-name` with a nixos configuration defined in [flake.nix](flake.nix). Look for the line `nixosConfigurations.$config-name` to get your config. For example `nixosConfigurations.jade-tiger`, the `$config-name` would be `jade-tiger` and the command would be `nixos-rebuild switch --flake .#jade-tiger`
+
+### handy links
+- [NixOS Wiki](https://wiki.nixos.org/wiki/NixOS_Wiki): contains instructions, documentation, and sample configs for system and applications.
+- Recommended Nix Manuals:
+  - [NixOS Manual](https://nixos.org/manual/nixos/stable/): contains instructions for using and configuring  Nix
+  - [Home Manager Manual](https://nix-community.github.io/home-manager/): contains instructions for using and configuring home manager
+  - [Plasma Manager Manual](https://nix-community.github.io/plasma-manager/): contains instructions for using and configuring kde plasma declaratively
+- Nix community spaces
+  - [Nix Community forum](https://discourse.nixos.org/): forum for nix users. People will post issues and solutions
+  - [Nix Reddit](https://www.reddit.com/r/NixOS/): subreddit similar to community forum
+
 
 ## applying my config
 After downloading this repo, navigate to the directory using your terminal or a preferred file explorer/text editor. If you run tree, this is the folder structure
