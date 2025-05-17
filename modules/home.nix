@@ -29,6 +29,15 @@
       tree
       fastfetch
       tealdeer
+      
+      gcc
+      uv
+      (pkgs.writeShellScriptBin "python3" ''
+        export LD_LIBRARY_PATH=$NIX_LD_LIBRARY_PATH
+        exec ${pkgs.python3}/bin/python3 "$@"
+      '')
+      vscode-extensions.ms-toolsai.jupyter
+      vscode-extensions.ms-python.python
 
       # dictionaries
       # aspell
@@ -43,6 +52,11 @@
     stateVersion = "22.05";
   };
 
+  home.sessionVariables = {          # <── needs the `home.` prefix
+    LD_LIBRARY_PATH =
+      "${pkgs.lib.makeLibraryPath [ pkgs.stdenv.cc.cc.lib ]}:$LD_LIBRARY_PATH";
+  };
+  
   #nix = {
     #package = pkgs.nixUnstable;
     #settings = {
@@ -56,7 +70,7 @@
     direnv.enable = true;
     fish = {
       enable = true;
-      interactiveShellInit = import ../dotfiles/fish-config.nix {};
+      interactiveShellInit = import ../dotfiles/fish-config.nix { inherit pkgs; };
       plugins = [
         #{ name = "grc"; src = pkgs.fishPlugins.grc.src; }
         #{
