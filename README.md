@@ -74,6 +74,7 @@ If git is not installed in the terminal, download the repo as a zip.
 
 ### handy links
 - [NixOS Wiki](https://wiki.nixos.org/wiki/NixOS_Wiki): contains instructions, documentation, and sample configs for system and applications.
+- [Nix Packages Search](https://search.nixos.org/): contains the repo to search for nix packages
 - Recommended Nix Manuals:
   - [NixOS Manual](https://nixos.org/manual/nixos/stable/): contains instructions for using and configuring  Nix
   - [Home Manager Manual](https://nix-community.github.io/home-manager/): contains instructions for using and configuring home manager
