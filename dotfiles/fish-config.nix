@@ -43,4 +43,41 @@ function source --wraps=source
     builtin source $argv
 end
 
+function dev_mode
+    # Define a new fish_prompt for developer mode
+    function fish_prompt
+        # Set prompt colors
+        set color_green (set_color green)
+        set color_cyan (set_color cyan)
+        set color_reset (set_color normal)
+
+        # Set custom username and hostname
+        set custom_user "progressEdd"
+        set custom_host "codium"
+
+        # Get the current working directory
+        set full_path (pwd)
+
+        # Process the path to abbreviate each component to its first letter
+        # except for the last component, which is shown in full
+        set -l abbreviated_path
+        set -l path_components (string split '/' $full_path)
+        for i in (seq 2 (math (count $path_components) - 1))
+            set -l component (string sub -l 1 $path_components[$i])
+            set abbreviated_path "$abbreviated_path/$component"
+        end
+        set abbreviated_path "$abbreviated_path/$path_components[-1]"
+
+        # Construct the custom prompt with green username and hostname, and cyan path
+        echo -n "$color_green$custom_user$color_reset@$custom_host $color_cyan$abbreviated_path$color_reset > "
+    end
+
+    echo "Developer mode activated."
+    clear  # Clear the terminal screen
+end
+
+# Auto-detect Codium and activate dev_mode
+if string match -rq 'codium' (ps -o comm= -p (ps -o ppid= -p $fish_pid | string trim))
+    dev_mode
+end
 ''

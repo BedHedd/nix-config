@@ -20,6 +20,7 @@ let
     vlc # media playback
     kdePackages.kdenlive # video editing
     krita # image manipulation
+    guake
 
   ];
 in
@@ -42,6 +43,8 @@ in
       imports = [
         ../modules/home.nix
         ../modules/kde-home.nix
+        ../dotfiles/gitconfig.nix
+        ../dotfiles/multiple-ssh.nix
       ];
 
       programs.fish.enable = true;
@@ -50,5 +53,6 @@ in
       home.packages = userPackages;
     };
   };
+  
 }
 

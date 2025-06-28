@@ -24,6 +24,7 @@
     packages = with pkgs; [ 
       # handy cli packages
       gnupg
+      keychain
       zoxide
       fzf
       tree
@@ -98,7 +99,7 @@
           exec ${pkgs.fish}/bin/fish $LOGIN_OPTION
         fi
       '';
-    };    
+    };   
 #    tmux = {
 #      enable = true;
 #      keyMode = "vi";
@@ -247,13 +248,14 @@
   };
 
   services = {
-#    gpg-agent = {
-#      enable = true;
-#      # one day
-#      maxCacheTtl = 86400;
-#      # six hours
-#      defaultCacheTtl = 21600;
-#      pinentryPackage = pkgs.pinentry-qt;
-#    };
+  #  gpg-agent = {
+  #    enable = true;
+  #    enableSshSupport = true;
+  #    # one day
+  #    maxCacheTtl = 86400;
+  #    # six hours
+  #    defaultCacheTtl = 21600;
+  #    pinentry.package  = pkgs.pinentry-qt;
+  #  };
   };
 }
