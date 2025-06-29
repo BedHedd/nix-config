@@ -43,7 +43,6 @@ in
       imports = [
         ../modules/home.nix
         ../modules/kde-home.nix
-        ../dotfiles/gitconfig.nix
         ../dotfiles/multiple-ssh.nix
       ];
 
