@@ -52,13 +52,8 @@ function dev_mode
         set color_reset (set_color normal)
 
         # Set custom username and hostname
-<<<<<<< HEAD
         set custom_user "progressEdd"
         set custom_host "codium"
-=======
-        set custom_user "bedhedd"
-        set custom_host "code-mode"
->>>>>>> public
 
         # Get the current working directory
         set full_path (pwd)
