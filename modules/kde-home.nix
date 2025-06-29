@@ -8,6 +8,7 @@
 
     panels = lib.mkForce [
       {
+        screen = "all";
         location = "bottom";
         height   = 64;
         floating = false;
