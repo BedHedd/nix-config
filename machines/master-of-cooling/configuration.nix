@@ -10,7 +10,6 @@
       ../../modules/kde.nix
       ../../modules/steamdeck-plasma-system.nix
       nixos-hardware.nixosModules.common-gpu-amd
-      nixos-hardware.nixosModules.gigabyte-b550
       ./hardware-configuration.nix
       home-manager.nixosModules.home-manager
       ./users.nix
@@ -47,6 +46,36 @@
       # For a plug-in USB disk add:
       # "noauto" "x-systemd.automount"
     ];
+  };
+
+  fileSystems."/home/bedhedd/Documents" = {
+    device  = "/mnt/sda1/Documents";
+    options = [ "bind" ];
+    depends = [ "/mnt/sda1" ];   # be sure the disk is mounted first
+  };
+
+  fileSystems."/home/bedhedd/Downloads" = {
+    device  = "/mnt/sda1/Downloads";
+    options = [ "bind" ];
+    depends = [ "/mnt/sda1" ];
+  };
+
+  fileSystems."/home/bedhedd/Music" = {
+    device  = "/mnt/sda1/Music";
+    options = [ "bind" ];
+    depends = [ "/mnt/sda1" ];
+  };
+  
+  fileSystems."/home/bedhedd/Pictures" = {
+    device  = "/mnt/sda1/Pictures";
+    options = [ "bind" ];
+    depends = [ "/mnt/sda1" ];
+  };
+
+  fileSystems."/home/bedhedd/Videos" = {
+    device  = "/mnt/sda1/Videos";
+    options = [ "bind" ];
+    depends = [ "/mnt/sda1" ];
   };
 
   # Set your time zone.
