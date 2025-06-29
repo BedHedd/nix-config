@@ -51,22 +51,6 @@ I have configured this such that `configuration.nix` will import `kde.nix` and t
 
 
 # getting started from scratch
-## background
-This guide assumes that your hardware is similar to mine and you wish to build a config similar to one of my machines. Note that you may need to modify it for your use case, this guide is for myself to remember when I need to come back and setup nix again.
-
-## install nix
-If you have been linked this repo and have not yet installed NixOS, please start by installing nix. Follow the guide from the [wiki](https://wiki.nixos.org/wiki/NixOS_Installation_Guide). Make sure to enable kde, flakes, and unfree software if you are using the graphical installer
-
-## download/clone this repo
-Start by cloning this repo using git. Ensure that you have it installed and you have a internet connection 
-```bash
-git clone https://github.com/BedHedd/nix-config.git
-```
-
-If git is not installed in the terminal, download the repo as a zip. 
-1. Navigate and click the green `< > Code` button 
-2. Navigate and click the `Download ZIP` button
-
 ## handy commands and resources
 ### updating nix
 1. Run the following command `nix flake update`
@@ -83,18 +67,31 @@ If git is not installed in the terminal, download the repo as a zip.
   - [Nix Community forum](https://discourse.nixos.org/): forum for nix users. People will post issues and solutions
   - [Nix Reddit](https://www.reddit.com/r/NixOS/): subreddit similar to community forum
 
+## background
+This guide assumes that your hardware is similar to mine and you wish to build a config similar to one of my machines. Note that you may need to modify it for your use case, this guide is for myself to remember when I need to come back and setup nix again.
 
-## applying my config
+### applying my config
 After downloading this repo, navigate to the directory using your terminal or a preferred file explorer/text editor. If you run tree, this is the folder structure
 ```bash
 ./nix-config
 ├── dotfiles
-│   └── fish-config.nix
+│   ├── example-multiple-ssh.nix
+│   ├── fish-config.nix
+│   └── multiple-ssh.nix
 ├── flake.lock
 ├── flake.nix
 ├── LICENSE
 ├── machines
-│   └── jade-tiger
+│   ├── generic-machine
+│   │   ├── configuration.nix
+│   │   ├── home.nix
+│   │   └── users.nix
+│   ├── jade-tiger
+│   │   ├── configuration.nix
+│   │   ├── hardware-configuration.nix
+│   │   ├── home.nix
+│   │   └── users.nix
+│   └── master-of-cooling
 │       ├── configuration.nix
 │       ├── hardware-configuration.nix
 │       ├── home.nix
@@ -109,25 +106,66 @@ After downloading this repo, navigate to the directory using your terminal or a 
 └── users
     ├── admin.nix
     ├── bedhedd.nix
-    └── dev.nix
+    ├── dev.nix
+    └── generic-user.nix
 ```
-### create a user
-Within the root of the repo, navigate to the `users` folder and create a new file for a user. Feel free to reuse any of the existing user files. `bedhedd.nix` and `dev.nix` are almost identical. `admin` has a minimal configuration. Make sure to rename the username from `bedhedd` or `dev` or `admin` as that is your account name
+
+## high level steps
+1. Install nix on a machine
+2. Clone or download the repository
+3. Open the repository
+4. Modify the following folders and files (by modifying generics or copying the following):
+   - folder:[`generic-machine`](./machines/generic-machine/)
+   - file: [`configuration.nix`](./machines/generic-machine/)
+   - file: [`generic-user` file](./users/generic-user.nix) 
+   - file: [`flake.nix`](./flake.nix)
+
+### install nix
+If you have been linked this repo and have not yet installed NixOS, please start by installing nix. Follow the guide from the [wiki](https://wiki.nixos.org/wiki/NixOS_Installation_Guide). Make sure to enable kde, flakes, and unfree software if you are using the graphical installer
+
+### download/clone this repo
+Start by cloning this repo using git. Ensure that you have it installed and you have a internet connection 
+```bash
+git clone https://github.com/BedHedd/nix-config.git
+```
+
+If git is not installed in the terminal, download the repo as a zip. 
+1. Navigate and click the green `< > Code` button 
+2. Navigate and click the `Download ZIP` button
+
+
+### modify my config
+#### create a user
+Within the root of the repo, navigate to the `users` folder. Copy the [`generic-user.nix`](./users/generic-user.nix) file and update the `username`
 ```nix
 let
-  username     = "bedhedd";
+  username     = "generic-user";
 ```  
+If you need to add any user specific packages, feel free to update this section
+```nix
+  # 👇 Define exactly the packages this user wants
+  userPackages = with pkgs; [
+    # development packages feel free to uncomment or add additional packages
+    # uv # python
+    # vscodium # vscode
+  ];
+```
 
-### add a machine
-#### adding a custom configuration/hardware-configuration 
-After creating a user, navigate to the `machines` folder and copy any machine specific folder. Review the respective `configuration.nix` and `hardware-configuration.nix` to see if your machine will be similar. 
+#### add a machine
+Create a copy of the [`generic-machine`](./machines/generic-machine/) folder, feel free to rename the folder to the desired machine name
 
-If your machine is not the same, copy the `configuration.nix` and `hardware-configuration.nix` generated by NixOS. It is found within `/etc/nixos`.
+Review the respective `configuration.nix` and `hardware-configuration.nix` to the one generated by the installer in `/etc/nixos` to see if your machine will be similar. 
 
-Make sure to create a symlink to the `configuration.nix` and `hardware-configuration.nix` within `/etc/nixos`. Follow the instructions in a reply to this post [Using git to handle and manage `configuration.nix`](https://discourse.nixos.org/t/using-git-to-handle-and-manage-configuration-nix/38337/4)
+For `configuration.nix` these are the recommended variables to replace
+  - `users.users.generic-user`: replacing `generic-user` with the desired username
+  - `networking.hostName`: replacing `generic-machine` with the desired hostname
 
-#### importing my configurations to `configuration.nix`
-Add the following imports to `configuration.nix`
+For`hardware-configuration.nix` copy the source file from `/etc/nixos`and paste it into the machine specific folder
+
+##### importing my configurations to an existing `configuration.nix`
+Follow these instructions if you just copied your `configuration.nix` from `/etc/nixos`
+
+Start by adding the following imports to `configuration.nix`
 ```nix
   imports =
     [
@@ -158,19 +196,18 @@ The last thing to add is home manager and plasma manager, copy and paste the fol
     plasma-manager.homeManagerModules."plasma-manager"
   ];
 ```  
-#### adding users to the machine
+#### adding a user to the machine
 With your configuration set, you will now need to modify the `users.nix` file within your machine specific folder. All `users.nix` does is import the files to the `configuration.nix` file. Make sure to add a new entry if you created your own user.
 
 ### update the flake
-With your machine initialized, you'll now need to update `flake.nix` to include your machine. If you do not want to modify my entry, you can just update replace `jade-tiger` with your machine name.
+With your machine initialized, you'll now need to update `flake.nix` to include your machine. If you do not want to modify my entry, you can just update replace `generic-machine` with your machine name.
 
 ```nix
-{
-    nixosConfigurations.jade-tiger = nixpkgs.lib.nixosSystem {
+    nixosConfigurations.generic-machine = nixpkgs.lib.nixosSystem {
       system = "x86_64-linux";
 
       modules = [
-        (import ./machines/jade-tiger/configuration.nix)
+        (import ./machines/generic-machine/configuration.nix)
         revModule
         localNixpkgsModule
 
@@ -182,19 +219,18 @@ With your machine initialized, you'll now need to update `flake.nix` to include 
       # machine’s specialArgs so that configuration.nix can see them:
       specialArgs = { inherit nixos-hardware home-manager plasma-manager; };
     };
-  };
 ```  
 Otherwise copy the entry above and replace it with your machine name  
 
 ### building my config
-With everything configured you will want to navigate to the root of the zip/repo. Run the following command if you replaced the `jade-tiger` block
+With everything configured you will want to navigate to the root of the zip/repo. Run the following command if `generic-machine` is the only entry
 ```
-nixos-rebuild switch --flake .
+sudo nixos-rebuild switch --flake .
 ```
 
 otherwise, you'll want to run this command
 ```
-nixos-rebuild switch --flake .#jade-tiger
+sudo nixos-rebuild switch --flake .#generic-machine
 ```
-replace `jade-tiger` with the name of the machine you configured in the previous step
+replace `generic-machine` with the name of the machine you configured in the previous step
 
