@@ -34,6 +34,22 @@
     };
   in
   {
+    nixosConfigurations.generic-machine = nixpkgs.lib.nixosSystem {
+      system = "x86_64-linux";
+
+      modules = [
+        (import ./machines/generic-machine/configuration.nix)
+        revModule
+        localNixpkgsModule
+
+        # ← pull in Home‑Manager as a NixOS module:
+        home-manager.nixosModules.home-manager
+      ];
+
+      # expose both home-manager and plasma-manager into your
+      # machine’s specialArgs so that configuration.nix can see them:
+      specialArgs = { inherit nixos-hardware home-manager plasma-manager; };
+    };
     nixosConfigurations.jade-tiger = nixpkgs.lib.nixosSystem {
       system = "x86_64-linux";
 
