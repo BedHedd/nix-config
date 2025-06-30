@@ -17,18 +17,14 @@
 
   # Bootloader.
   boot.loader = {
-    efi.canTouchEfiVariables = true;
-    systemd-boot = {
-      enable = true;
-
-      # helper to find the handle: set edk2-uefi-shell.enable = true,
-      # rebuild, boot the shell, run  `map -c`, then `ls HD0c3:\EFI`
-      windows."10" = {
-        title           = "Windows 10";
-        efiDeviceHandle = "HD0c3";   # whatever handle lists the Microsoft dir
-        sortKey         = "o_windows";
-      };
+    systemd-boot.enable = false;     # turn off the current loader
+    grub = {
+      enable       = true;
+      devices      = [ "nodev" ];    # EFI install, don’t touch MBR
+      efiSupport   = true;
+      useOSProber  = true;           # ← magic line: finds Windows each rebuild
     };
+    efi.canTouchEfiVariables = true;
   };
 
   # Use latest kernel.
