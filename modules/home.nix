@@ -37,6 +37,14 @@
         export LD_LIBRARY_PATH=$NIX_LD_LIBRARY_PATH
         exec ${pkgs.python3}/bin/python3 "$@"
       '')
+      playwright-driver          # CLI wrapper
+      playwright-driver.browsers # Chromium / Firefox / WebKit
+      # runtime libraries (trim if you like)
+      glib gobject-introspection dbus cups nspr nss atk at-spi2-core gtk3
+      libxkbcommon xorg.libxcb xorg.libX11 xorg.libXcomposite
+      xorg.libXdamage xorg.libXext xorg.libXfixes xorg.libXrandr
+      mesa pango cairo alsa-lib
+
 
       # dictionaries
       # aspell
@@ -54,6 +62,9 @@
   home.sessionVariables = {          # <── needs the `home.` prefix
     LD_LIBRARY_PATH =
       "${pkgs.lib.makeLibraryPath [ pkgs.stdenv.cc.cc.lib ]}:$LD_LIBRARY_PATH";
+    PLAYWRIGHT_BROWSERS_PATH = "${pkgs.playwright-driver.browsers}";
+    PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD = "1";
+    PLAYWRIGHT_SKIP_VALIDATE_HOST_REQUIREMENTS = "1";
   };
   
   #nix = {
