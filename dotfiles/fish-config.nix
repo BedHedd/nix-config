@@ -22,7 +22,8 @@ set -gx EDITOR nvim
 set -gx VISUAL nvim
 
 
-set -x UV_PYTHON_PREFERENCE only-system
+# set -x UV_PYTHON_PREFERENCE only-system
+set -Ux UV_PYTHON_PREFERENCE only-managed 
 set -x UV_PYTHON ${pkgs.python312Full}/bin/python
 
 function source --wraps=source
