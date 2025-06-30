@@ -24,6 +24,7 @@
 
   outputs = inputs@{ self, nixpkgs, nixos-hardware, home-manager, plasma-manager, ... }:
   let
+    nixLdModule = { pkgs, ... }: { programs.nix-ld.enable = true; };
     revModule = {
       system.configurationRevision = nixpkgs.lib.mkIf (self ? rev) self.rev;
     };
@@ -41,6 +42,7 @@
         (import ./machines/generic-machine/configuration.nix)
         revModule
         localNixpkgsModule
+        nixLdModule
 
         # ← pull in Home‑Manager as a NixOS module:
         home-manager.nixosModules.home-manager
@@ -57,6 +59,7 @@
         (import ./machines/jade-tiger/configuration.nix)
         revModule
         localNixpkgsModule
+        nixLdModule
 
         # ← pull in Home‑Manager as a NixOS module:
         home-manager.nixosModules.home-manager
@@ -73,6 +76,7 @@
         (import ./machines/master-of-cooling/configuration.nix)
         revModule
         localNixpkgsModule
+        nixLdModule
 
         # ← pull in Home‑Manager as a NixOS module:
         home-manager.nixosModules.home-manager
