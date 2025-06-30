@@ -37,8 +37,6 @@
         export LD_LIBRARY_PATH=$NIX_LD_LIBRARY_PATH
         exec ${pkgs.python3}/bin/python3 "$@"
       '')
-      # vscode-extensions.ms-toolsai.jupyter
-      # vscode-extensions.ms-python.python
 
       # dictionaries
       # aspell
