@@ -22,6 +22,7 @@
 
     # ONE line → menu entry called “11” pointing at fs2:
     systemd-boot.windows."10".efiDeviceHandle = "FS2";
+    systemd-boot.configurationLimit = 8;
   };
 
   # Use latest kernel.
