@@ -8,7 +8,6 @@
   ];
 
   fonts.fontconfig.enable = true;
-  programs.nix-ld.enable = true;
 
   xdg.mimeApps = {
     enable = true;
@@ -122,6 +121,9 @@
       # Optionally, include plugins using an overlay or package reference.
       # For example, using vim-nix if it’s available as a package:
       plugins = with pkgs.vimPlugins; [ vim-nix ];
+    };
+    nix-ld = {
+      enable = true;
     };
     firefox = {
       enable = true;
