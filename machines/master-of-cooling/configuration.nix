@@ -16,11 +16,19 @@
     ];
 
   # Bootloader.
-  boot.loader.systemd-boot.enable = true;
-  boot.loader.efi.canTouchEfiVariables = true;
+  boot.loader = {
+    systemd-boot.enable = true;
+    efi.canTouchEfiVariables = true;
+
+    # ONE line → menu entry called “11” pointing at fs2:
+    systemd-boot.windows."10".efiDeviceHandle = "FS2";
+    systemd-boot.configurationLimit = 8;
+  };
 
   # Use latest kernel.
   boot.kernelPackages = pkgs.linuxPackages_latest;
+
+
 
   networking.hostName = "master-of-cooling"; # Define your hostname.
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
