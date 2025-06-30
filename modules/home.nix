@@ -43,7 +43,7 @@
       glib gobject-introspection dbus cups nspr nss atk at-spi2-core gtk3
       libxkbcommon xorg.libxcb xorg.libX11 xorg.libXcomposite
       xorg.libXdamage xorg.libXext xorg.libXfixes xorg.libXrandr
-      mesa pango cairo alsa-lib
+      mesa pango cairo alsa-lib expat at-spi2-atk libudev0-shim
 
 
       # dictionaries
