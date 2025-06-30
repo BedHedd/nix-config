@@ -17,14 +17,11 @@
 
   # Bootloader.
   boot.loader = {
-    systemd-boot.enable = false;     # turn off the current loader
-    grub = {
-      enable       = true;
-      devices      = [ "nodev" ];    # EFI install, don’t touch MBR
-      efiSupport   = true;
-      useOSProber  = true;           # ← magic line: finds Windows each rebuild
-    };
+    systemd-boot.enable = true;
     efi.canTouchEfiVariables = true;
+
+    # ONE line → menu entry called “11” pointing at fs2:
+    systemd-boot.windows."10".efiDeviceHandle = "FS2";
   };
 
   # Use latest kernel.
