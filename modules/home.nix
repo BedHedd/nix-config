@@ -66,6 +66,8 @@
     #};
   #};
 
+  programs.nix-ld.enable = true;
+  
   programs = {
     home-manager.enable = true;
     direnv.enable = true;
@@ -121,9 +123,6 @@
       # Optionally, include plugins using an overlay or package reference.
       # For example, using vim-nix if it’s available as a package:
       plugins = with pkgs.vimPlugins; [ vim-nix ];
-    };
-    nix-ld = {
-      enable = true;
     };
     firefox = {
       enable = true;
