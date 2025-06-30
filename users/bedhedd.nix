@@ -18,9 +18,13 @@ let
     obs-studio # screen recording
     ffmpeg # video encoding
     vlc # media playback
+    strawberry
     kdePackages.kdenlive # video editing
     krita # image manipulation
     guake
+
+    # social apps
+    vesktop
 
   ];
 in
