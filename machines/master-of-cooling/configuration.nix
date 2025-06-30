@@ -10,7 +10,6 @@
       ../../modules/kde.nix
       ../../modules/steamdeck-plasma-system.nix
       nixos-hardware.nixosModules.common-gpu-amd
-      nixos-hardware.nixosModules.gigabyte-b550
       ./hardware-configuration.nix
       home-manager.nixosModules.home-manager
       ./users.nix
@@ -34,6 +33,50 @@
   networking.networkmanager.enable = true;
 
   nix.settings.experimental-features = [ "nix-command" "flakes"];
+
+  fileSystems."/mnt/sda1" = {
+    device  = "/dev/disk/by-uuid/027f2550-4813-20d9-ac54-fc87dc4612eb";
+    fsType  = "btrfs";
+
+    # Fine-tune options to taste.  Good defaults for a personal btrfs data disk:
+    options = [
+      "compress=zstd"    # transparent compression
+      "noatime"          # don’t update atime on every read
+      "ssd"              # if the drive is actually an SSD
+      # For a plug-in USB disk add:
+      # "noauto" "x-systemd.automount"
+    ];
+  };
+
+  fileSystems."/home/bedhedd/Documents" = {
+    device  = "/mnt/sda1/Documents";
+    options = [ "bind" ];
+    depends = [ "/mnt/sda1" ];   # be sure the disk is mounted first
+  };
+
+  fileSystems."/home/bedhedd/Downloads" = {
+    device  = "/mnt/sda1/Downloads";
+    options = [ "bind" ];
+    depends = [ "/mnt/sda1" ];
+  };
+
+  fileSystems."/home/bedhedd/Music" = {
+    device  = "/mnt/sda1/Music";
+    options = [ "bind" ];
+    depends = [ "/mnt/sda1" ];
+  };
+  
+  fileSystems."/home/bedhedd/Pictures" = {
+    device  = "/mnt/sda1/Pictures";
+    options = [ "bind" ];
+    depends = [ "/mnt/sda1" ];
+  };
+
+  fileSystems."/home/bedhedd/Videos" = {
+    device  = "/mnt/sda1/Videos";
+    options = [ "bind" ];
+    depends = [ "/mnt/sda1" ];
+  };
 
   # Set your time zone.
   time.timeZone = "America/Chicago";
