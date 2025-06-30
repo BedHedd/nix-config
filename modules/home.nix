@@ -8,6 +8,7 @@
   ];
 
   fonts.fontconfig.enable = true;
+  programs.nix-ld.enable = true;
 
   xdg.mimeApps = {
     enable = true;
