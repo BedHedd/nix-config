@@ -52,7 +52,8 @@
       }
     ];
   };
-
+  
+  xdg.dataFile."kservices5/ServiceMenus/open-with-codium.desktop".text = builtins.readFile ./open-with-codium.desktop;
   # Override Kickoff’s icon at the KConfig level
 }
 
