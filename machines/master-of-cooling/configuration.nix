@@ -14,7 +14,7 @@
       home-manager.nixosModules.home-manager
       ./users.nix
     ];
-
+  programs.nix-ld.enable = true;
   # Bootloader.
   boot.loader = {
     systemd-boot.enable = true;
