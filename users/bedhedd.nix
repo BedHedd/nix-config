@@ -22,6 +22,9 @@ let
     krita # image manipulation
     guake
 
+    # social apps
+    vesktop
+
   ];
 in
 {
