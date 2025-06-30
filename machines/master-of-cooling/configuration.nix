@@ -16,15 +16,20 @@
     ];
 
   # Bootloader.
-  boot.loader.systemd-boot = {
-    enable = true;
-    extraEntries."windows.conf" = ''
-      title  Windows 11
-      efi    /EFI/Microsoft/Boot/bootmgfw.efi
-      sort-key windows   # keeps it near the top; optional
-    '';
+  boot.loader = {
+    efi.canTouchEfiVariables = true;
+    systemd-boot = {
+      enable = true;
+
+      # helper to find the handle: set edk2-uefi-shell.enable = true,
+      # rebuild, boot the shell, run  `map -c`, then `ls HD0c3:\EFI`
+      windows."10" = {
+        title           = "Windows 10";
+        efiDeviceHandle = "HD0c3";   # whatever handle lists the Microsoft dir
+        sortKey         = "o_windows";
+      };
+    };
   };
-  boot.loader.efi.canTouchEfiVariables = true;
 
   # Use latest kernel.
   boot.kernelPackages = pkgs.linuxPackages_latest;
