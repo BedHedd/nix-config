@@ -37,14 +37,8 @@
         export LD_LIBRARY_PATH=$NIX_LD_LIBRARY_PATH
         exec ${pkgs.python3}/bin/python3 "$@"
       '')
-      playwright-driver          # CLI wrapper
-      playwright-driver.browsers # Chromium / Firefox / WebKit
-      # runtime libraries (trim if you like)
-      glib gobject-introspection dbus cups nspr nss atk at-spi2-core gtk3
-      libxkbcommon xorg.libxcb xorg.libX11 xorg.libXcomposite
-      xorg.libXdamage xorg.libXext xorg.libXfixes xorg.libXrandr
-      mesa pango cairo alsa-lib expat at-spi2-atk libudev0-shim
-
+      playwright-driver
+      playwright-driver.browsers
 
       # dictionaries
       # aspell
