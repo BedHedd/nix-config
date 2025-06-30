@@ -37,8 +37,6 @@
         export LD_LIBRARY_PATH=$NIX_LD_LIBRARY_PATH
         exec ${pkgs.python3}/bin/python3 "$@"
       '')
-      vscode-extensions.ms-toolsai.jupyter
-      vscode-extensions.ms-python.python
 
       # dictionaries
       # aspell
@@ -121,6 +119,15 @@
       # Optionally, include plugins using an overlay or package reference.
       # For example, using vim-nix if it’s available as a package:
       plugins = with pkgs.vimPlugins; [ vim-nix ];
+    };
+    vscode = {
+      enable  = true;                       # create the wrapper script and dirs
+      package = pkgs.vscodium;              # use VSCodium instead of Microsoft VS Code
+      
+      extensions = with pkgs.vscode-extensions; [
+        ms-python.python
+        ms-toolsai.jupyter
+        ];
     };
     firefox = {
       enable = true;
