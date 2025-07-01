@@ -37,6 +37,7 @@
         export LD_LIBRARY_PATH=$NIX_LD_LIBRARY_PATH
         exec ${pkgs.python3}/bin/python3 "$@"
       '')
+      playwright-driver
       playwright-driver.browsers
 
       # dictionaries
@@ -49,7 +50,7 @@
       wl-clipboard
       xclip
     ];
-    stateVersion = "22.05";
+    stateVersion = "unstable";
   };
 
   home.sessionVariables = {          # <── needs the `home.` prefix
