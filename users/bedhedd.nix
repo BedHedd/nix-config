@@ -47,6 +47,7 @@ in
       imports = [
         ../modules/home.nix
         ../modules/kde-home.nix
+        ../modules/development.nix
         ../dotfiles/multiple-ssh.nix
       ];
 

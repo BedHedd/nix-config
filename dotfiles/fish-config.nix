@@ -21,10 +21,6 @@ end
 set -gx EDITOR nvim
 set -gx VISUAL nvim
 
-
-set -x UV_PYTHON_PREFERENCE only-system
-set -x UV_PYTHON ${pkgs.python312Full}/bin/python
-
 function source --wraps=source
     set -l file $argv[1]
     if test -n "$file"
@@ -53,7 +49,7 @@ function dev_mode
 
         # Set custom username and hostname
         set custom_user "bedhedd"
-        set custom_host "code-mode"
+        set custom_host "codium"
 
         # Get the current working directory
         set full_path (pwd)
