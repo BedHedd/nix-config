@@ -37,6 +37,7 @@
         export LD_LIBRARY_PATH=$NIX_LD_LIBRARY_PATH
         exec ${pkgs.python3}/bin/python3 "$@"
       '')
+      playwright-driver.browsers
 
       # dictionaries
       # aspell
@@ -54,6 +55,11 @@
   home.sessionVariables = {          # <── needs the `home.` prefix
     LD_LIBRARY_PATH =
       "${pkgs.lib.makeLibraryPath [ pkgs.stdenv.cc.cc.lib ]}:$LD_LIBRARY_PATH";
+    PLAYWRIGHT_BROWSERS_PATH =
+      "${pkgs.playwright-driver.browsers}";
+    
+    PLAYWRIGHT_SKIP_VALIDATE_HOST_REQUIREMENTS = 
+      "true";
   };
   
   #nix = {
