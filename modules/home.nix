@@ -50,7 +50,7 @@
       wl-clipboard
       xclip
     ];
-    stateVersion = "unstable";
+    stateVersion = "25.05";
   };
 
   home.sessionVariables = {          # <── needs the `home.` prefix
