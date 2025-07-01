@@ -24,8 +24,7 @@ set -gx VISUAL nvim
 
 set -Ux UV_PYTHON_PREFERENCE only-managed
 set -e  UV_PYTHON
-set -gx PLAYWRIGHT_BROWSERS_PATH (nix eval --raw nixpkgs#playwright-driver.browsers)
-set -gx PLAYWRIGHT_SKIP_VALIDATE_HOST_REQUIREMENTS true
+uv generate-shell-completion fish | source' > ~/.config/fish/completions/uv.fish
 
 function source --wraps=source
     set -l file $argv[1]
