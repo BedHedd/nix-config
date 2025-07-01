@@ -6,7 +6,6 @@
   imports = [ 
     ../../modules/home.nix 
     ../../modules/kde-home.nix
-
   ];
 
 }

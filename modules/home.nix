@@ -30,13 +30,6 @@
       tree
       fastfetch
       tealdeer
-      
-      gcc
-      uv
-      (pkgs.writeShellScriptBin "python3" ''
-        export LD_LIBRARY_PATH=$NIX_LD_LIBRARY_PATH
-        exec ${pkgs.python3}/bin/python3 "$@"
-      '')
 
       # dictionaries
       # aspell
@@ -48,7 +41,7 @@
       wl-clipboard
       xclip
     ];
-    stateVersion = "22.05";
+    stateVersion = "25.05";
   };
 
   home.sessionVariables = {          # <── needs the `home.` prefix
