@@ -21,10 +21,6 @@ end
 set -gx EDITOR nvim
 set -gx VISUAL nvim
 
-
-set -Ux UV_PYTHON_PREFERENCE only-managed
-set -e  UV_PYTHON
-
 function source --wraps=source
     set -l file $argv[1]
     if test -n "$file"

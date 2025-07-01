@@ -30,15 +30,6 @@
       tree
       fastfetch
       tealdeer
-      
-      gcc
-      uv
-      (pkgs.writeShellScriptBin "python3" ''
-        export LD_LIBRARY_PATH=$NIX_LD_LIBRARY_PATH
-        exec ${pkgs.python3}/bin/python3 "$@"
-      '')
-      playwright-driver
-      playwright-driver.browsers
 
       # dictionaries
       # aspell
