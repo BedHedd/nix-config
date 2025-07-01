@@ -52,7 +52,7 @@
       }
     ];
   };
-
+  
   # Override Kickoff’s icon at the KConfig level
 }
 
