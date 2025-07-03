@@ -48,6 +48,7 @@ in
         ../modules/home.nix
         ../modules/kde-home.nix
         ../modules/development.nix
+        ../modules/guake.nix
         ../dotfiles/multiple-ssh.nix
       ];
 
