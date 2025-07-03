@@ -19,7 +19,6 @@ let
     ffmpeg # video encoding
     vlc # media playback
     strawberry
-    strawberry
     kdePackages.kdenlive # video editing
     krita # image manipulation
     guake
