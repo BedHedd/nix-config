@@ -41,7 +41,7 @@ in
   # ──────────────────────────────────────────────────────────────────────────
   programs.keychain = {
     enable                = true;
-    agents                = [ "ssh" ];      # also "gpg" if you like
+    # agents                = [ "ssh" ];      # also "gpg" if you like
     keys                  = [
       # "${primaryKeyFile}"
       # "${secondaryKeyFile}"
