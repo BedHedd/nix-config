@@ -15,7 +15,10 @@ in
     playwright-driver.browsers      # patched Chromium / Firefox / WebKit
     gcc                             # compile native wheels
     fastfetch                       # misc CLI goodies
+    # selenium dependencies
     chromium                        # for selenium
+    glib                            
+    cacert
 
     # Wrapper so wheels can find libstdc++, libgcc_s, etc. at runtime
     (pkgs.writeShellScriptBin "python3" ''
