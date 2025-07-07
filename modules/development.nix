@@ -17,7 +17,8 @@ in
     fastfetch                       # misc CLI goodies
     # selenium dependencies
     chromium                        # for selenium
-    chromium.chromedriver
+    # chromium.chromedriver
+    undetected-chromedriver
     glib                            
     cacert
 
