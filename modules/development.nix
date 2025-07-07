@@ -33,6 +33,7 @@ in
   # Environment variables for every shell (bash, zsh, fish …)
   ##########################################################################
   home.sessionVariables = {
+    SSL_CERT_FILE = "${pkgs.cacert}/etc/ssl/certs/ca-bundle.crt";
     LD_LIBRARY_PATH =
       "${pkgs.lib.makeLibraryPath [ pkgs.stdenv.cc.cc.lib ]}:$LD_LIBRARY_PATH";
     
