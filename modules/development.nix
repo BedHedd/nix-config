@@ -17,6 +17,7 @@ in
     fastfetch                       # misc CLI goodies
     # selenium dependencies
     chromium                        # for selenium
+    chromedriver
     glib                            
     cacert
 
