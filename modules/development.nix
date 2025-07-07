@@ -25,9 +25,6 @@ in
       export LD_LIBRARY_PATH=$NIX_LD_LIBRARY_PATH
       exec ${python}/bin/python3 "$@"
     '')
-    (pkgs.writeShellScriptBin "chromium-browser" ''
-      exec ${pkgs.chromium}/bin/chromium "$@"
-      '')
   ];
 
   ##########################################################################
