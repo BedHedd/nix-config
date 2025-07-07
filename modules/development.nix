@@ -51,6 +51,9 @@ in
     # Playwright on NixOS
     set -gx PLAYWRIGHT_BROWSERS_PATH ${pkgs.playwright-driver.browsers}
     set -gx PLAYWRIGHT_SKIP_VALIDATE_HOST_REQUIREMENTS true
+    
+    # selenium chrome driver
+    set -gx SE_CHROMEDRIVER ${pkgs.chromedriver}/bin/chromedriver
 
     # Tell uv to prefer its own managed runtimes; unset hard pins
     if not set -q UV_PYTHON_PREFERENCE
