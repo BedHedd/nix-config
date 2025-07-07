@@ -41,7 +41,7 @@ in
     
     PLAYWRIGHT_SKIP_VALIDATE_HOST_REQUIREMENTS = "true";
     
-    SE_CHROMEDRIVER = "${pkgs.chromium.chromedriver}/bin/chromedriver";
+    SE_CHROMEDRIVER = "${pkgs.undetected-chromedriver}/bin/chromedriver";
   };
 
   ##########################################################################
