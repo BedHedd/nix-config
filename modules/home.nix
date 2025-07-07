@@ -117,10 +117,12 @@
       enable  = true;                       # create the wrapper script and dirs
       package = pkgs.vscodium;              # use VSCodium instead of Microsoft VS Code
       
-      extensions = with pkgs.vscode-extensions; [
-        ms-python.python
-        ms-toolsai.jupyter
+      profiles.default = {
+        extensions = with pkgs.vscode-extensions; [
+          ms-python.python
+          ms-toolsai.jupyter
         ];
+    };
     };
     firefox = {
       enable = true;
