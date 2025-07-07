@@ -17,7 +17,7 @@ in
     fastfetch                       # misc CLI goodies
     # selenium dependencies
     chromium                        # for selenium
-    chromedriver
+    chromium.chromedriver
     glib                            
     cacert
 
@@ -34,9 +34,13 @@ in
   home.sessionVariables = {
     LD_LIBRARY_PATH =
       "${pkgs.lib.makeLibraryPath [ pkgs.stdenv.cc.cc.lib ]}:$LD_LIBRARY_PATH";
+    
     PLAYWRIGHT_BROWSERS_PATH =
       "${pkgs.playwright-driver.browsers}";
+    
     PLAYWRIGHT_SKIP_VALIDATE_HOST_REQUIREMENTS = "true";
+    
+    SE_CHROMEDRIVER = "${pkgs.chromium.chromedriver}/bin/chromedriver";
   };
 
   ##########################################################################
