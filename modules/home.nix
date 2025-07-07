@@ -56,7 +56,8 @@
       #allow-import-from-derivation = true;
     #};
   #};
-
+  home.shell.enableFishIntegration = true;
+  
   programs = {
     home-manager.enable = true;
     direnv.enable = true;
