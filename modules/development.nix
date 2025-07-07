@@ -48,12 +48,8 @@ in
   # Extra initialisation for fish (runs only when the interactive shell is fish)
   ##########################################################################
   programs.fish.shellInit = ''
-    # Playwright on NixOS
-    set -gx PLAYWRIGHT_BROWSERS_PATH ${pkgs.playwright-driver.browsers}
-    set -gx PLAYWRIGHT_SKIP_VALIDATE_HOST_REQUIREMENTS true
-    
-    # selenium chrome driver
-    set -gx SE_CHROMEDRIVER ${pkgs.chromedriver}/bin/chromedriver
+    # have fish load home manager variables
+    [ -f ~/.profile ]; and source ~/.profile
 
     # Tell uv to prefer its own managed runtimes; unset hard pins
     if not set -q UV_PYTHON_PREFERENCE
