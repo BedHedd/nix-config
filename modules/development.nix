@@ -49,8 +49,8 @@ in
   # Extra initialisation for fish (runs only when the interactive shell is fish)
   ##########################################################################
   programs.fish.shellInit = ''
-    # set -gx SSL_CERT_FILE ${pkgs.cacert}/etc/ssl/certs/ca-bundle.crt
-    # set -gx SE_CHROMEDRIVER ${pkgs.chromedriver}/bin/chromedriver
+    set -gx SSL_CERT_FILE ${pkgs.cacert}/etc/ssl/certs/ca-bundle.crt
+    set -gx SE_CHROMEDRIVER ${pkgs.chromedriver}/bin/chromedriver
 
     # Tell uv to prefer its own managed runtimes; unset hard pins
     if not set -q UV_PYTHON_PREFERENCE
