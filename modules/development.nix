@@ -17,7 +17,7 @@ in
     fastfetch                       # misc CLI goodies
     # selenium dependencies
     chromium                        # for selenium
-    # chromium.chromedriver
+    chromedriver
     undetected-chromedriver
     glib                            
     cacert
@@ -41,7 +41,7 @@ in
     
     PLAYWRIGHT_SKIP_VALIDATE_HOST_REQUIREMENTS = "true";
     
-    SE_CHROMEDRIVER = "${pkgs.undetected-chromedriver}/bin/chromedriver";
+    SE_CHROMEDRIVER = "${pkgs.chromedriver}/bin/chromedriver";
   };
 
   ##########################################################################
