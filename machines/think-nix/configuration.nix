@@ -21,6 +21,21 @@
   # Use latest kernel.
   boot.kernelPackages = pkgs.linuxPackages_latest;
 
+  boot.kernelModules = [ "nvidia" "nvidia_modeset" "nvidia_uvm" "nvidia_drm" ];
+  boot.kernelParams  = [ "nvidia-drm.modeset=1" ];
+  hardware.opengl = {
+    enable        = true;
+    extraPackages = with pkgs; [ nvidia_x11 ];
+  };
+
+  hardware.nvidia = {
+    modesetting.enable            = true;  # required for KMS/Wayland :contentReference[oaicite:3]{index=3}
+    prime.offload.enable          = true;
+    prime.offload.enableOffloadCmd= true;
+    powerManagement.enable        = true;
+    open                          = false; # legacy-style kernel module
+  };
+
   networking.hostName = "think-nix"; # Define your hostname.
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
 
