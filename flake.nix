@@ -86,6 +86,23 @@
       # machine’s specialArgs so that configuration.nix can see them:
       specialArgs = { inherit nixos-hardware home-manager plasma-manager; };
     };
+    nixosConfigurations.think-nix = nixpkgs.lib.nixosSystem {
+      system = "x86_64-linux";
+
+      modules = [
+        (import ./machines/think-nix/configuration.nix)
+        revModule
+        localNixpkgsModule
+        nixLdModule
+
+        # ← pull in Home‑Manager as a NixOS module:
+        home-manager.nixosModules.home-manager
+      ];
+
+      # expose both home-manager and plasma-manager into your
+      # machine’s specialArgs so that configuration.nix can see them:
+      specialArgs = { inherit nixos-hardware home-manager plasma-manager; };
+    };
   };
 }
 
