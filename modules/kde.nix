@@ -1,21 +1,20 @@
-
-{ config, pkgs, lib, ... }:
+{ config, pkgs, lib, ...}:
 
 {
-  # Enable SDDM & Plasma at the system level:
-  services.displayManager.sddm.enable       = true;
+  # 1) Enable SDDM & Plasma
+  services.displayManager.sddm.enable        = true;
   services.displayManager.sddm.wayland.enable = true;
-  services.desktopManager.plasma6.enable    = true;
+  services.desktopManager.plasma6.enable     = true;
 
-  # Your KDE apps:
+  # 2) Install Dolphin, Kate, Konsole—and VSCodium itself
   environment.systemPackages = with pkgs; [
-     kdePackages.dolphin      # Qt6-based Dolphin
-     kdePackages.konsole      # Qt6-based Konsole
-     kdePackages.kate         # Qt6-based Kate
-     # more KDE apps, e.g. kdePackages.okular, etc.
-   ];
+    kdePackages.dolphin
+    kdePackages.konsole
+    kdePackages.kate
+    vscodium                         # ← make sure codium exists
+  ];
 
- # 1) Drop the desktop file globally
+  # 3) Drop your custom “VSCodium (Folder)” desktop globally
   environment.etc."xdg/applications/vscodium-folder.desktop".text = ''
     [Desktop Entry]
     Type=Application
@@ -26,21 +25,18 @@
     NoDisplay=true
   '';
 
-  # 2) Tell XDG to add it to the “Open With…” list
+  # 4) Register it with XDG so it shows up in “Open With…”
   xdg.mime = {
     enable = true;
 
-    # keep dolphin if you like…
+    # keep Dolphin as the default folder opener
     defaultApplications = {
       "inode/directory" = [ "org.kde.dolphin.desktop" ];
     };
 
-    # …but also add codium
+    # but also add VSCodium to the “Open With” list
     addedAssociations = {
       "inode/directory" = [ "vscodium-folder.desktop" ];
     };
-
   };
- 
 }
-
