@@ -58,7 +58,7 @@
     name        = "VSCodium";
     genericName = "Source-code Editor";
     exec        = "codium %F";
-    icon        = "codium";
+    icon        = "vscodium";
     mimeType    = [ "inode/directory" ];
     categories  = [ "Utility" "Development" "TextEditor" "IDE" ];
     terminal    = false;
