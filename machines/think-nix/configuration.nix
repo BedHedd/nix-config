@@ -9,6 +9,7 @@
     [
       ../../modules/kde.nix
       ../../modules/steamdeck-plasma-system.nix
+      nixos-hardware.nixosModules.lenovo-thinkpad-e470
       ./hardware-configuration.nix
       home-manager.nixosModules.home-manager
       ./users.nix
