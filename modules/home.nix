@@ -40,15 +40,11 @@
       wget
       wl-clipboard
       xclip
+      kdePackages.kdeconnect-kde
     ];
     stateVersion = "25.05";
   };
 
-  home.sessionVariables = {          # <── needs the `home.` prefix
-    LD_LIBRARY_PATH =
-      "${pkgs.lib.makeLibraryPath [ pkgs.stdenv.cc.cc.lib ]}:$LD_LIBRARY_PATH";
-  };
-  
   #nix = {
     #package = pkgs.nixUnstable;
     #settings = {
@@ -56,6 +52,7 @@
       #allow-import-from-derivation = true;
     #};
   #};
+  home.shell.enableFishIntegration = true;
 
   programs = {
     home-manager.enable = true;
@@ -117,10 +114,12 @@
       enable  = true;                       # create the wrapper script and dirs
       package = pkgs.vscodium;              # use VSCodium instead of Microsoft VS Code
       
-      extensions = with pkgs.vscode-extensions; [
-        ms-python.python
-        ms-toolsai.jupyter
+      profiles.default = {
+        extensions = with pkgs.vscode-extensions; [
+          ms-python.python
+          ms-toolsai.jupyter
         ];
+    };
     };
     firefox = {
       enable = true;
