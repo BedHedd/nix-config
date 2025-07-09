@@ -1,18 +1,17 @@
-
-{ config, pkgs, lib, ... }:
+{ config, pkgs, lib, ...}:
 
 {
-  # Enable SDDM & Plasma at the system level:
-  services.displayManager.sddm.enable       = true;
+  # 1) Enable SDDM & Plasma
+  services.displayManager.sddm.enable        = true;
   services.displayManager.sddm.wayland.enable = true;
-  services.desktopManager.plasma6.enable    = true;
+  services.desktopManager.plasma6.enable     = true;
 
-  # Your KDE apps:
+  # 2) Install Dolphin, Kate, Konsole—and VSCodium itself
   environment.systemPackages = with pkgs; [
-     kdePackages.dolphin      # Qt6-based Dolphin
-     kdePackages.konsole      # Qt6-based Konsole
-     kdePackages.kate         # Qt6-based Kate
-     # more KDE apps, e.g. kdePackages.okular, etc.
-   ];
-}
+    kdePackages.dolphin
+    kdePackages.konsole
+    kdePackages.kate
+    vscodium                         # ← make sure codium exists
+  ];
 
+}

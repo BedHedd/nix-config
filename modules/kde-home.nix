@@ -51,9 +51,27 @@
         ];
       }
     ];
-  };
-  
+  };  
   # Override Kickoff’s icon at the KConfig level
+  # 1 ▸ the launcher itself
+  xdg.desktopEntries.vscodium = {
+    name        = "VSCodium";
+    genericName = "Source-code Editor";
+    exec        = "codium %F";
+    icon        = "vscodium";
+    mimeType    = [ "inode/directory" ];
+    categories  = [ "Utility" "Development" "TextEditor" "IDE" ];
+    terminal    = false;
+  };
+
+  # 2 ▸ MIME associations (***note the path***)
+  xdg.mimeApps = {
+    enable = true;
+
+    associations.added."inode/directory"   = [ "vscodium.desktop" ];
+    defaultApplications."inode/directory"  = [ "org.kde.dolphin.desktop" ];
+  };
+
 }
 
 

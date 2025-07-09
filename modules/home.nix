@@ -40,6 +40,7 @@
       wget
       wl-clipboard
       xclip
+      kdePackages.kdeconnect-kde
     ];
     stateVersion = "25.05";
   };

@@ -1,4 +1,4 @@
-# machines/jade-tiger/home.nix
+# machines/think-nix/home.nix
 { pkgs, plasma-manager, ... }:
 
 {
@@ -8,6 +8,11 @@
     ../../modules/kde-home.nix
 
   ];
+  
+  environment.systemPackages = with pkgs; [
+    tlp
+  ];
+  
 
 }
 
