@@ -15,16 +15,15 @@
   ];
 
   # 3) Drop your custom “VSCodium (Folder)” desktop globally
-  environment.etc."xdg/applications/vscodium-folder.desktop".text = ''
-    [Desktop Entry]
-    Type=Application
-    Name=VSCodium (Folder)
-    Exec=codium %F
-    Icon=codium
-    MimeType=inode/directory;
-    Categories=Utility;Development;TextEditor;IDE;
-    NoDisplay=false
-  '';
+  xdg.desktopEntries.vscodium-folder = {
+    name        = "VSCodium (Folder)";
+    genericName = "Source-code Editor";
+    exec        = "codium %F";
+    icon        = "codium";
+    mimeType    = [ "inode/directory" ];
+    categories  = [ "Utility" "Development" "TextEditor" "IDE" ];
+    terminal    = false;
+  };
 
   # 4) Register it with XDG so it shows up in “Open With…”
   xdg.mime = {
