@@ -22,7 +22,8 @@
     Exec=codium %F
     Icon=codium
     MimeType=inode/directory;
-    NoDisplay=true
+    Categories=Utility;Development;TextEditor;IDE;
+    NoDisplay=false
   '';
 
   # 4) Register it with XDG so it shows up in “Open With…”
