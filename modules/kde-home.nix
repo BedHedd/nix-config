@@ -52,6 +52,30 @@
       }
     ];
   };
+
+  home.file."${config.xdg.configHome}/applications/vscodium-folder.desktop".text = ''
+    [Desktop Entry]
+    Type=Application
+    Name=VSCodium (Folder)
+    Exec=codium %F
+    Icon=codium
+    MimeType=inode/directory;
+    NoDisplay=true
+  '';
+
+  home.xdg.mimeApps = {
+    enable = true;
+
+    # this goes in the “Open With” list
+    addedAssociations = {
+      "inode/directory" = [ "vscodium-folder.desktop" ];
+    };
+
+    # optional: make it your default instead of dolphin
+    defaultApplications = {
+      "inode/directory" = [ "vscodium-folder.desktop" ];
+    };
+  };
   
   # Override Kickoff’s icon at the KConfig level
 }

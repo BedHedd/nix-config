@@ -1,4 +1,4 @@
-# machines/jade-tiger/home.nix
+# machines/think-nix/home.nix
 { pkgs, plasma-manager, ... }:
 
 {
