@@ -8,6 +8,11 @@
     ../../modules/kde-home.nix
 
   ];
+  
+  environment.systemPackages = with pkgs; [
+    tlp
+  ];
+  
 
 }
 
