@@ -5,10 +5,8 @@
     let
       scriptDrv = pkgs.writeShellScriptBin "host-wizard" ''
         #!${pkgs.runtimeShell}
-
-        # put lspci on PATH
-        export PATH=${pkgs.pciutils}/bin:$PATH
-
+        export PATH=${pkgs.pciutils}/bin:$PATH           # for lspci
+        export REPO_ROOT="$PWD"                          # ← add this line
         exec ${pkgs.python3}/bin/python ${./scripts/setup-wizard.py} "$@"
       '';
     in {
@@ -16,6 +14,5 @@
         type    = "app";
         program = "${scriptDrv}/bin/host-wizard";
       };
-    };
-
+    }
 }

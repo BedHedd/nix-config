@@ -1,9 +1,13 @@
 #!/usr/bin/env python3
 from pathlib import Path
-import subprocess, json, re, textwrap, shutil, sys
+import os, sys, subprocess, json, re, textwrap
 
-ROOT = Path(__file__).resolve().parent.parent      # repo root
+ROOT = Path(os.environ.get("REPO_ROOT", Path.cwd())).resolve()
 
+if not (ROOT / "flake.nix").exists():
+    sys.exit(
+      "❌  Please run `nix run .#host-wizard` **from the root of your nix-config repo**."
+    )
 def run(cmd): return subprocess.check_output(cmd, text=True).strip()
 
 def is_linux():  return sys.platform.startswith("linux")
@@ -36,6 +40,8 @@ def scrape_existing(path: Path):
         out["timezone"] = m.group(1)
     if m := re.search(r'networking\.hostName\s*=\s*"([^"]+)"', txt):
         out["hostname"] = m.group(1)
+    if m := re.search(r'i18n\.defaultLocale\s*=\s*"([^"]+)"', txt):
+        out["locale"] = m.group(1)    
     if   "common-gpu-amd"    in txt: out["gpu"] = "amd"
     elif "common-gpu-nvidia" in txt: out["gpu"] = "nvidia"
     elif "common-gpu-intel"  in txt: out["gpu"] = "intel"
@@ -87,7 +93,8 @@ def main():
           modules.{ 'linux' if role.startswith('linux') else 'darwin' }
         ] ++ (pkgs.lib.optionals pkgs.stdenv.isLinux
                [ modules.kde ])  # change if you only want on desktops
-          ++ [ ./hardware-configuration.nix ../../users/{user}.nix ];
+          ++ [ ./hardware-configuration.nix 
+               ../../users/{user}.nix ];
 
         networking.hostName = host;
         time.timeZone = "{tz}";
