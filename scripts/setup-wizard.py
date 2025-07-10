@@ -33,15 +33,31 @@ def default_tz():
       in  (import ./modules/universal.nix { inherit pkgs lib; }).time.timeZone
     """)
 
+
+def _parse_extra_locale(block: str) -> LocaleBlock:
+    """
+    Convert 6-8 lines of   LC_FOO = "xx_YY.UTF-8";   into a dict.
+    """
+    pairs = re.findall(r'([A-Z_]+)\s*=\s*"([^"]+)"', block)
+    return { k: v for k, v in pairs }
+
 def scrape_existing(path: Path):
     txt = path.read_text()
     out = {}
+    
     if m := re.search(r'time\.timeZone\s*=\s*"([^"]+)"', txt):
         out["timezone"] = m.group(1)
+   
     if m := re.search(r'networking\.hostName\s*=\s*"([^"]+)"', txt):
         out["hostname"] = m.group(1)
+
     if m := re.search(r'i18n\.defaultLocale\s*=\s*"([^"]+)"', txt):
-        out["locale"] = m.group(1)    
+        out["locale"] = m.group(1)
+
+    block_re = r'i18n\.extraLocaleSettings\s*=\s*\{\s*([^}]+)\}'
+    if m := re.search(block_re, txt, re.S):
+        out["extra_locale"] = _parse_extra_locale(m.group(1))  
+        
     if   "common-gpu-amd"    in txt: out["gpu"] = "amd"
     elif "common-gpu-nvidia" in txt: out["gpu"] = "nvidia"
     elif "common-gpu-intel"  in txt: out["gpu"] = "intel"
