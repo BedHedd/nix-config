@@ -9,6 +9,8 @@
 
   ];
   
+  programs.plasma.workspace.lockAndFeel = lib.mkForce "com.valve.vgui.desktop";
+
   environment.systemPackages = with pkgs; [
     tlp
   ];
