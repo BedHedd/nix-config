@@ -9,7 +9,7 @@
 
   ];
   
-  programs.plasma.workspace.lookAndFeel = with lib; mkOverride 50 "com.valve.vgui.desktop";
+  programs.plasma.workspace.lookAndFeel = with lib;  lib.mkForce 50 "com.valve.vgui.desktop";
 
   environment.systemPackages = with pkgs; [
     tlp
