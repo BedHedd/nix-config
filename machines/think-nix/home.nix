@@ -4,6 +4,7 @@
 {
   # import your global home.nix (fonts, fish, etc.)
   imports = [ 
+    plasma-manager.homeModule 
     ../../modules/home.nix 
     ../../modules/kde-home.nix
 
