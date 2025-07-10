@@ -2,9 +2,10 @@
 { lib, ... }:
 
 {
-  # put *cross-platform* defaults here
-  time.timeZone      = "America/Chicago";
-  i18n.defaultLocale = "en_US.UTF-8";
+  nix.settings.experimental-features = [ "nix-command" "flakes" ];
+  nixpkgs.config.allowUnfree         = true;
 
-  # (add other options that every OS should see)
+  # Home-Manager boiler-plate that applies everywhere
+  home-manager.useGlobalPkgs   = true;
+  home-manager.useUserPackages = true;
 }

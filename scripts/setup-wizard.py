@@ -16,6 +16,50 @@ def run(cmd): return subprocess.check_output(cmd, text=True).strip()
 def is_linux():  return sys.platform.startswith("linux")
 def is_darwin(): return sys.platform == "darwin"
 
+def menu_select(
+    prompt: str,
+    choices: list[str],
+    default: str | None = None
+) -> str:
+    """
+    Print a numbered menu and return the chosen item.
+
+    • `prompt`  – heading shown above the list.
+    • `choices` – list of strings to choose from.
+    • `default` – the default item (must be in choices) or None.
+
+    The user can:
+      • press <Enter> → get the default;
+      • type the number (1-N) → get that item;
+      • type the full string → get that item.
+    """
+    if not choices:
+        raise ValueError("choices list is empty")
+    if default is None:
+        default = choices[0]
+    if default not in choices:
+        raise ValueError("default must be one of the choices")
+
+    def show_menu():
+        print(prompt)
+        for i, item in enumerate(choices, 1):
+            mark = " ← default" if item == default else ""
+            print(f"  [{i}] {item}{mark}")
+
+    show_menu()
+    while True:
+        ans = input(f"Choice (1-{len(choices)}) [{choices.index(default)+1}]: ").strip()
+        if ans == "":
+            return default
+        if ans.isdigit():
+            n = int(ans)
+            if 1 <= n <= len(choices):
+                return choices[n-1]
+        elif ans in choices:
+            return ans
+        print("  ⚠️  Invalid selection.")
+
+
 def detect_gpu() -> str | None:
     if not is_linux():
         return None
@@ -28,13 +72,14 @@ def nix_json(expr: str):
     return json.loads(run(["nix", "eval", "--impure", "--expr",
                            f"builtins.toJSON ({expr})"]))
 
-### FIX — read defaults from modules/default.nix.universal
-def _universal_expr(attr: str) -> str:
-    # Nix needs an absolute path as a string literal
-    path = json.dumps(str(MODULES_FILE))
-    return (f'let pkgs=import <nixpkgs> {{}}; lib=pkgs.lib; '
-            f'mods=import {path} {{ inherit pkgs lib; }}; '
-            f'in mods.universal.{attr}')
+MODULES_FILE = ROOT / "modules" / "universal.nix"           # ← point straight
+def _universal_expr(attr: str) -> str:                      #   at the module
+    path = json.dumps(str(MODULES_FILE))                    #   itself
+    return (
+      f'let pkgs=import <nixpkgs> {{}}; lib=pkgs.lib; '
+      f'mod=(import {path} {{ inherit pkgs lib; }}); '
+      f'in mod.config.{attr}'                         # ← note config.
+    )
 
 def default_tz()     -> str: return nix_json(_universal_expr("time.timeZone"))
 def default_locale() -> str: return nix_json(_universal_expr("i18n.defaultLocale"))
@@ -87,7 +132,7 @@ def main():
     # Interactive prompts
     hostname = ask("Hostname", existing.get("hostname") or "my-machine")
     user     = ask("Primary user", "progressedd")
-    role     = ask("Role (linux-desktop/linux-laptop/mac-laptop/headless)", role_default)
+    role     = menu_select(prompt="Select role:", choices=["linux-desktop", "linux-laptop", "mac-laptop", "headless"], default=role_default)
     tz       = ask("Timezone", existing.get("timezone") or default_tz())
     loc      = ask("Locale",   existing.get("locale")   or default_locale())
 
@@ -101,15 +146,20 @@ def main():
 
     # Build override snippets
     override_locale = (
-        f'  i18n.defaultLocale = "{loc}";\n'
-        if loc != default_locale() else ""
-    )
-    override_extra = (
-        textwrap.dedent(f"""
-          i18n.extraLocaleSettings = {{
-{_dict_to_nix_block(extra_locale)}
-          }};
-        """) if extra_locale else "")
+    f'i18n.defaultLocale  = "{loc}";\n'
+    if loc != default_locale() else ""
+)
+
+    override_extra = ""
+    if extra_locale:
+        # one attr per line, 4-space indent
+        body      = _dict_to_nix_block(extra_locale)          # "LC_TIME = …"
+        body_ind  = textwrap.indent(body, "      ")             # add 4 spaces
+        override_extra = (
+            "i18n.extraLocaleSettings = {\n"
+            f"{body_ind}\n"
+            "  };\n"
+        )
 
     # Write default.nix
     (host_dir / "default.nix").write_text(textwrap.dedent(f"""
@@ -119,11 +169,13 @@ def main():
           modules.universal
           modules.{"linux" if role.startswith("linux") else "darwin"}
         ] ++ (pkgs.lib.optionals pkgs.stdenv.isLinux [ modules.kde ])
-          ++ [ ./hardware-configuration.nix ../../users/{user}.nix ];
+          ++ [ ./hardware-configuration.nix 
+               ../../users/{user}.nix ];
 
         networking.hostName = host;
         time.timeZone       = "{tz}";
-{override_locale}{override_extra}
+        {override_locale}
+        {override_extra}
       }}
     """).lstrip())
 
