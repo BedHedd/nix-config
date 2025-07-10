@@ -4,182 +4,61 @@ import os, sys, subprocess, json, re, textwrap
 from pathlib import Path
 from typing import Dict, Tuple
 
-# ─────────── repo root (must contain flake.nix) ──────────────────────────
-ROOT = Path(os.environ.get("REPO_ROOT", Path.cwd())).resolve()
-if not (ROOT / "flake.nix").exists():
-    sys.exit("❌  Run the wizard from the root of your nix-config repo.")
+REPO_PATH = Path(os.environ.get("REPO_ROOT", Path.cwd())).resolve()
+sys.path.insert(0, str(REPO_PATH)) 
 
-MODULES_FILE = ROOT / "modules" / "default.nix"   ### FIX — single-level modules
-
-# ─────────── tiny helpers ────────────────────────────────────────────────
-def run(cmd): return subprocess.check_output(cmd, text=True).strip()
-def is_linux():  return sys.platform.startswith("linux")
-def is_darwin(): return sys.platform == "darwin"
-
-def menu_select(
-    prompt: str,
-    choices: list[str],
-    default: str | None = None
-) -> str:
-    """
-    Print a numbered menu and return the chosen item.
-
-    • `prompt`  – heading shown above the list.
-    • `choices` – list of strings to choose from.
-    • `default` – the default item (must be in choices) or None.
-
-    The user can:
-      • press <Enter> → get the default;
-      • type the number (1-N) → get that item;
-      • type the full string → get that item.
-    """
-    if not choices:
-        raise ValueError("choices list is empty")
-    if default is None:
-        default = choices[0]
-    if default not in choices:
-        raise ValueError("default must be one of the choices")
-
-    def show_menu():
-        print(prompt)
-        for i, item in enumerate(choices, 1):
-            mark = " ← default" if item == default else ""
-            print(f"  [{i}] {item}{mark}")
-
-    show_menu()
-    while True:
-        ans = input(f"Choice (1-{len(choices)}) [{choices.index(default)+1}]: ").strip()
-        if ans == "":
-            return default
-        if ans.isdigit():
-            n = int(ans)
-            if 1 <= n <= len(choices):
-                return choices[n-1]
-        elif ans in choices:
-            return ans
-        print("  ⚠️  Invalid selection.")
-
-
-def detect_gpu() -> str | None:
-    if not is_linux():
-        return None
-    out = run(["lspci", "-nn"])
-    if   "NVIDIA" in out: return "nvidia"
-    elif "AMD"   in out: return "amd"
-    else:                 return "intel"
-
-def nix_json(expr: str):
-    return json.loads(run(["nix", "eval", "--impure", "--expr",
-                           f"builtins.toJSON ({expr})"]))
-
-MODULES_FILE = ROOT / "modules" / "universal.nix"           # ← point straight
-def _universal_expr(attr: str) -> str:                      #   at the module
-    path = json.dumps(str(MODULES_FILE))                    #   itself
-    return (
-      f'let pkgs=import <nixpkgs> {{}}; lib=pkgs.lib; '
-      f'mod=(import {path} {{ inherit pkgs lib; }}); '
-      f'in mod.config.{attr}'                         # ← note config.
-    )
-
-def default_tz()     -> str: return nix_json(_universal_expr("time.timeZone"))
-def default_locale() -> str: return nix_json(_universal_expr("i18n.defaultLocale"))
-
-def _parse_extra_locale(block: str) -> Dict[str, str]:
-    return {k: v for k, v in re.findall(r'([A-Z_]+)\s*=\s*"([^"]+)"', block)}
-
-def _dict_to_nix_block(d: Dict[str, str]) -> str:
-    return "\n".join(f'    {k} = "{v}";' for k, v in d.items())
-
-# ─────────── scrape existing configuration.nix ───────────────────────────
-def scrape_existing(path: Path) -> Tuple[Dict[str, object], str]:
-    txt = path.read_text()
-    out: Dict[str, object] = {}
-    if m := re.search(r'time\.timeZone\s*=\s*"([^"]+)"', txt):
-        out["timezone"] = m.group(1)
-    if m := re.search(r'networking\.hostName\s*=\s*"([^"]+)"', txt):
-        out["hostname"] = m.group(1)
-    if m := re.search(r'i18n\.defaultLocale\s*=\s*"([^"]+)"', txt):
-        out["locale"]   = m.group(1)
-    if m := re.search(r'i18n\.extraLocaleSettings\s*=\s*\{([^}]+)\}', txt, re.S):
-        out["extra_locale"] = _parse_extra_locale(m.group(1))
-    if   "common-gpu-amd"    in txt: out["gpu"] = "amd"
-    elif "common-gpu-nvidia" in txt: out["gpu"] = "nvidia"
-    elif "common-gpu-intel"  in txt: out["gpu"] = "intel"
-    return out, txt
-
-# ─────────── minimal TUI helpers ─────────────────────────────────────────
-def ask(q, default=None): return input(f"{q} [{default}]: ").strip() or default
-def ask_yn(q, default="y"):
-    a = input(f"{q} (y/n) [{default}]: ").lower().strip()
-    return (a or default).startswith("y")
-
+from helper import *
+from template import *
 # ─────────── main wizard flow ────────────────────────────────────────────
-def main():
+def main() -> None:
     print("🔧  Nix Host-Wizard\n")
 
     role_default = "darwin-laptop" if is_darwin() else "linux-desktop"
-    gpu = detect_gpu()
+    gpu          = detect_gpu()
 
-    # Import existing cfg?
+    # ── import existing cfg? ────────────────────────────────────────────
     existing, existing_txt = {}, None
     cfg_path = Path("/etc/nixos/configuration.nix")
     if is_linux() and cfg_path.exists() and ask_yn("Found /etc/nixos/configuration.nix → import settings?"):
         existing, existing_txt = scrape_existing(cfg_path)
     elif ask_yn("No config found. Supply a path?", "n"):
         p = Path(ask("Path to configuration.nix")).expanduser()
-        if p.exists(): existing, existing_txt = scrape_existing(p)
+        if p.exists():
+            existing, existing_txt = scrape_existing(p)
 
-    # Interactive prompts
+    # ── interactive prompts ────────────────────────────────────────────
     hostname = ask("Hostname", existing.get("hostname") or "my-machine")
     user     = ask("Primary user", "progressedd")
-    role     = menu_select(prompt="Select role:", choices=["linux-desktop", "linux-laptop", "mac-laptop", "headless"], default=role_default)
-    tz       = ask("Timezone", existing.get("timezone") or default_tz())
-    loc      = ask("Locale",   existing.get("locale")   or default_locale())
+    role     = menu_select(
+        prompt="Select role:",
+        choices=["linux-desktop", "linux-laptop", "mac-laptop", "headless"],
+        default=role_default,
+    )
+    is_laptop = (role == "linux-laptop") 
+    tz  = ask("Timezone", existing.get("timezone") or default_tz())
+    loc = ask("Locale",   existing.get("locale")   or default_locale())
 
     extra_locale = None
     if "extra_locale" in existing and ask_yn("Copy extraLocaleSettings?", "y"):
         extra_locale = existing["extra_locale"]
 
-    # Create host folder
+    # ── create host folder ──────────────────────────────────────────────
     host_dir = ROOT / "hosts" / hostname
     host_dir.mkdir(parents=True, exist_ok=True)
 
-    # Build override snippets
+    # ── build override snippets ─────────────────────────────────────────
     override_locale = (
-    f'i18n.defaultLocale  = "{loc}";\n'
-    if loc != default_locale() else ""
-)
+        f'  i18n.defaultLocale  = "{loc}";\n'
+        if loc != default_locale() else ""
+    )
+    override_extra = build_extra_locale(extra_locale)
 
-    override_extra = ""
-    if extra_locale:
-        # one attr per line, 4-space indent
-        body      = _dict_to_nix_block(extra_locale)          # "LC_TIME = …"
-        body_ind  = textwrap.indent(body, "      ")             # add 4 spaces
-        override_extra = (
-            "i18n.extraLocaleSettings = {\n"
-            f"{body_ind}\n"
-            "  };\n"
-        )
+    # ── write hosts/<hostname>/default.nix ──────────────────────────────
+    
 
-    # Write default.nix
-    (host_dir / "default.nix").write_text(textwrap.dedent(f"""
-      {{ modules, pkgs, host, ... }}:
-      {{
-        imports = [
-          modules.universal
-          modules.{"linux" if role.startswith("linux") else "darwin"}
-        ] ++ (pkgs.lib.optionals pkgs.stdenv.isLinux [ modules.kde ])
-          ++ [ ./hardware-configuration.nix 
-               ../../users/{user}.nix ];
+    (host_dir / "default.nix").write_text(tmpl)
 
-        networking.hostName = host;
-        time.timeZone       = "{tz}";
-        {override_locale}
-        {override_extra}
-      }}
-    """).lstrip())
-
-    # Save original config & hardware-configuration.nix
+    # ── save original cfg & hw-config ──────────────────────────────────
     if existing_txt:
         (host_dir / "original-configuration.nix").write_text(existing_txt)
 
@@ -189,10 +68,11 @@ def main():
     else:
         (host_dir / "hardware-configuration.nix").write_text("# nix-darwin: no hw file\n")
 
-    # Final message
+    # ── final message ──────────────────────────────────────────────────
     rebuild = "darwin-rebuild" if is_darwin() else "sudo nixos-rebuild"
     print(f"\n✅  Created hosts/{hostname}")
     print(f"   Next: {rebuild} switch --flake .#{hostname}\n")
+
 
 if __name__ == "__main__":
     main()

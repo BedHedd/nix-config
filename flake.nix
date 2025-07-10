@@ -26,9 +26,14 @@
             export REPO_ROOT="$PWD"
             exec ${pkgs.python3}/bin/python ${./scripts/setup-wizard.py} "$@"
           '';
-        in {
-          type    = "app";
-          program = "${scriptDrv}/bin/host-wizard";  # plain string path
+        in
+        {
+          # ── each app goes here ─────────────────────────────
+          host-wizard = {
+            type    = "app";
+            program = "${scriptDrv}/bin/host-wizard";
+          };
         });
+
     };
 }
