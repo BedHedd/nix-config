@@ -9,7 +9,7 @@
 
   ];
   
-  programs.plasma.workspace.lookAndFeel = lib.mkForce "com.valve.vgui.desktop";
+  programs.plasma.workspace.lookAndFeel = lib.mkForce "com.valve.vgui2.desktop";
 
   environment.systemPackages = with pkgs; [
     tlp
