@@ -1,5 +1,5 @@
 # machines/think-nix/home.nix
-{ pkgs, plasma-manager, ... }:
+{ pkgs, plasma-manager, lib, ... }:
 
 {
   # import your global home.nix (fonts, fish, etc.)
@@ -9,7 +9,7 @@
 
   ];
   
-  programs.plasma.workspace.lookAndFeel = with lib;  lib.mkForce 50 "com.valve.vgui.desktop";
+  programs.plasma.workspace.lookAndFeel = lib.mkForce "com.valve.vgui.desktop";
 
   environment.systemPackages = with pkgs; [
     tlp
