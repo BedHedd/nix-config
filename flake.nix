@@ -97,6 +97,7 @@
 
         # ← pull in Home‑Manager as a NixOS module:
         home-manager.nixosModules.home-manager
+        plasma-manager.homeModule
       ];
 
       # expose both home-manager and plasma-manager into your
