@@ -1,28 +1,34 @@
 {
-  inputs = {
-    nixpkgs.url       = "github:NixOS/nixpkgs/nixos-unstable";
-    flake-utils.url   = "github:numtide/flake-utils";
-  };
+  inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
 
-  outputs = inputs@{ self, nixpkgs, flake-utils, ... }:
-    flake-utils.lib.eachDefaultSystem (system:
-      let
-        # Import nixpkgs for THIS system → gives us `pkgs`
-        pkgs = import nixpkgs { inherit system; };
+  outputs = { self, nixpkgs, ... }:
+    ############################################################
+    # 1) list the platforms you want to support
+    ############################################################
+    let
+      systems = [
+        "x86_64-linux"
+        "aarch64-linux"
+        "x86_64-darwin"
+        "aarch64-darwin"
+      ];
+    ############################################################
+    # 2) build an `apps` attr-set for every system
+    ############################################################
+    in {
+      apps = nixpkgs.lib.genAttrs systems (system:
+        let
+          pkgs = import nixpkgs { inherit system; };
 
-        # Build a tiny wrapper that:
-        #   • puts pciutils (lspci) on PATH
-        #   • passes the repo directory via $REPO_ROOT
-        #   • runs the Python wizard
-        scriptDrv = pkgs.writeShellScriptBin "host-wizard" ''
-          #!${pkgs.runtimeShell}
-          export PATH=${pkgs.pciutils}/bin:$PATH
-          export REPO_ROOT="$PWD"
-          exec ${pkgs.python3}/bin/python ${./scripts/setup-wizard.py} "$@"
-        '';
-      in {
-        apps.host-wizard = flake-utils.lib.mkApp {
-          drv = scriptDrv;                 # mkApp returns just the path string
-        };
-      });
+          scriptDrv = pkgs.writeShellScriptBin "host-wizard" ''
+            #!${pkgs.runtimeShell}
+            export PATH=${pkgs.pciutils}/bin:$PATH
+            export REPO_ROOT="$PWD"
+            exec ${pkgs.python3}/bin/python ${./scripts/setup-wizard.py} "$@"
+          '';
+        in {
+          type    = "app";
+          program = "${scriptDrv}/bin/host-wizard";  # plain string path
+        });
+    };
 }
