@@ -11,4 +11,8 @@
     # Home-Manager boiler-plate that applies everywhere
     home-manager.useGlobalPkgs   = true;
     home-manager.useUserPackages = true;
+
+    home-manager.sharedModules = [
+    ../modules/home.nix        # ← your “global home” module
+  ];
 }
