@@ -2,10 +2,13 @@
 # scripts/setup-wizard.py
 import os, sys, subprocess, json, re, textwrap
 from pathlib import Path
-from typing import Dict, Tuple
 
-REPO_PATH = Path(os.environ.get("REPO_ROOT", Path.cwd())).resolve()
-sys.path.insert(0, str(REPO_PATH)) 
+ROOT = Path(os.environ.get("REPO_ROOT", Path.cwd())).resolve()
+if not (ROOT / "flake.nix").exists():
+    sys.exit("❌  Run the wizard from the root of your nix-config repo.")
+
+SCRIPTS_DIR = ROOT / "scripts"          # ← repo’s scripts directory
+sys.path.insert(0, str(SCRIPTS_DIR))    # helper.py, template.py
 
 from helper import *
 from template import *
@@ -35,6 +38,8 @@ def main() -> None:
         default=role_default,
     )
     is_laptop = (role == "linux-laptop") 
+    is_laptop_str = str(is_laptop).lower() 
+    os_module = "linux" if role.startswith("linux") else "darwin"
     tz  = ask("Timezone", existing.get("timezone") or default_tz())
     loc = ask("Locale",   existing.get("locale")   or default_locale())
 
@@ -54,9 +59,15 @@ def main() -> None:
     override_extra = build_extra_locale(extra_locale)
 
     # ── write hosts/<hostname>/default.nix ──────────────────────────────
-    
-
-    (host_dir / "default.nix").write_text(tmpl)
+    rendered = tmpl.format(os_module = os_module,
+                role=role, 
+                user=user, 
+                is_laptop=is_laptop_str, 
+                tz=tz, 
+                override_locale=override_locale,
+                override_extra=override_extra
+                )
+    (host_dir / "default.nix").write_text(rendered)
 
     # ── save original cfg & hw-config ──────────────────────────────────
     if existing_txt:
@@ -68,6 +79,8 @@ def main() -> None:
     else:
         (host_dir / "hardware-configuration.nix").write_text("# nix-darwin: no hw file\n")
 
+    ensure_user_file(ROOT, user) 
+    
     # ── final message ──────────────────────────────────────────────────
     rebuild = "darwin-rebuild" if is_darwin() else "sudo nixos-rebuild"
     print(f"\n✅  Created hosts/{hostname}")

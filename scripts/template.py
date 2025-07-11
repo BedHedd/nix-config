@@ -1,10 +1,11 @@
-tmpl = f"""\
+# templates for host files
+tmpl = r"""
 {{ modules, pkgs, host, ... }}:
 
 {{
   imports = [
     modules.universal
-    modules.{"linux" if role.startswith("linux") else "darwin"}
+    modules.{os_module}
   ] ++ (pkgs.lib.optionals pkgs.stdenv.isLinux [ modules.kde ])
     ++ [
       ./hardware-configuration.nix
@@ -12,7 +13,7 @@ tmpl = f"""\
     ];
 
   networking.hostName = host;
-  my.isLaptop = {str(is_laptop).lower()};   # --- NEW
+  my.isLaptop = {is_laptop};
 
   time.timeZone       = "{tz}";
 {override_locale}{override_extra}}}

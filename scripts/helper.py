@@ -1,7 +1,10 @@
+import os, sys, subprocess, json, re, textwrap
+from pathlib import Path
+from typing import Dict, Tuple
+
 ROOT = Path(os.environ.get("REPO_ROOT", Path.cwd())).resolve()
 if not (ROOT / "flake.nix").exists():
     sys.exit("❌  Run the wizard from the root of your nix-config repo.")
-sys.path.insert(0, str(REPO_PATH)) 
 MODULES_FILE = ROOT / "modules" / "universal.nix"
 
 def run(cmd): return subprocess.check_output(cmd, text=True).strip()
@@ -42,6 +45,28 @@ def build_extra_locale(extra: dict[str, str] | None) -> str:
         f"{body}\n"
         "  };\n"
     )
+
+def ensure_user_file(root: Path, user: str, template_name: str = "generic-user.nix"):
+    """
+    Make sure users/<user>.nix exists.
+    If missing, copy users/generic-user.nix and patch __USERNAME__.
+    """
+    users_dir  = root / "users"
+    users_dir.mkdir(exist_ok=True)
+
+    target   = users_dir / f"{user}.nix"
+    template = users_dir / template_name
+
+    if target.exists():
+        print(f"ℹ️   users/{user}.nix already exists – leaving it untouched")
+        return
+
+    if not template.exists():
+        sys.exit(f"❌  template {template} not found")
+
+    txt = template.read_text().replace("__USERNAME__", user)
+    target.write_text(txt)
+    print(f"🆕  Created users/{user}.nix from {template_name}")
 
 def default_tz()     -> str: return nix_json(_universal_expr("time.timeZone"))
 def default_locale() -> str: return nix_json(_universal_expr("i18n.defaultLocale"))
