@@ -2,8 +2,8 @@
 { config, pkgs, lib, ... }:
 
 lib.mkMerge
-[ 
-  # ── 1) Declare your my.isLaptop flag ────────────────────────────
+[
+  # ── 1) Declare the `my.isLaptop` option ────────────────────────────────
   {
     options.my.isLaptop = lib.mkOption {
       type        = lib.types.bool;
@@ -12,12 +12,12 @@ lib.mkMerge
     };
   }
 
-  # ── 2) The actual module body ────────────────────────────────────
+  # ── 2) All your Linux configuration ────────────────────────────────────
   {
-    imports = 
-      [ ../modules/kde.nix
-        ../modules/steamdeck-plasma-system.nix
-      ];
+    imports = [
+      ./kde.nix
+      ./steamdeck-plasma-system.nix
+    ];
 
     # Boot & kernel
     boot.loader.systemd-boot.enable      = true;
@@ -25,7 +25,7 @@ lib.mkMerge
     boot.kernelPackages                  = pkgs.linuxPackages_latest;
 
     # Core services
-    networking.networkmanager.enable     = true;
+    networking.networkmanager.enable = true;
 
     # Plasma
     services.displayManager.sddm.enable         = true;
@@ -43,7 +43,7 @@ lib.mkMerge
       pulse.enable      = true;
     };
 
-    # Power‐management on laptops vs desktops
+    # Power management on laptop vs desktop
     services.tlp.enable = lib.mkIf config.my.isLaptop true;
     services.tlp.settings = lib.mkIf config.my.isLaptop {
       CPU_SCALING_GOVERNOR_ON_AC  = "performance";
