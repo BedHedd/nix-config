@@ -1,5 +1,5 @@
 
-{config,  modules, pkgs, host, nixos-hardware, ... }:
+{config,  modules, pkgs, host, home-manager, nixos-hardware, ... }:
 
 {
   imports = [
