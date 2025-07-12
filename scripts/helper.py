@@ -97,6 +97,8 @@ def _dict_to_nix_block(d: Dict[str, str]) -> str:
 def scrape_existing(path: Path) -> Tuple[Dict[str, object], str]:
     txt = path.read_text()
     out: Dict[str, object] = {}
+    if m := re.search(r'system\.stateVersion\s*=\s*"([^"]+)"', txt):
+        out["state_version"] = m.group(1)
     if m := re.search(r'time\.timeZone\s*=\s*"([^"]+)"', txt):
         out["timezone"] = m.group(1)
     if m := re.search(r'networking\.hostName\s*=\s*"([^"]+)"', txt):

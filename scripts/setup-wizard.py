@@ -29,7 +29,9 @@ def main() -> None:
         p = Path(ask("Path to configuration.nix")).expanduser()
         if p.exists():
             existing, existing_txt = scrape_existing(p)
-
+    
+    state_version = existing.get("state_version") or "<your-default-stateVersion>"
+        
     # ── interactive prompts ────────────────────────────────────────────
     hostname = ask("Hostname", existing.get("hostname") or "my-machine")
     user     = ask("Primary user", "progressedd")
@@ -71,7 +73,8 @@ def main() -> None:
                 is_laptop=is_laptop_str, 
                 tz=tz, 
                 override_locale=override_locale,
-                override_extra=override_extra
+                override_extra=override_extra,
+                state_version    = state_version,
                 )
     (host_dir / "default.nix").write_text(rendered)
 

@@ -1,21 +1,22 @@
 # templates for host files
-tmpl = r"""
-{{ modules, pkgs, host, nixos-hardware, ... }}:
+tmpl = r"""{{ config, modules, pkgs, host, home-manager, nixos-hardware, ... }}:
 
 {{
   imports = [
     modules.universal
     modules.{os_module}
     {gpu_import}
-  ] ++ (pkgs.lib.optionals pkgs.stdenv.isLinux [ modules.kde ])
-    ++ [
-      ./hardware-configuration.nix
-      ../../users/{user}.nix
+    home-manager.nixosModules.home-manager
+    ./hardware-configuration.nix
+    ../../users/{user}.nix
     ];
 
-  networking.hostName = host;
-  my.isLaptop = {is_laptop};
+  networking.hostName  = host;
+  my.isLaptop          = {is_laptop};
 
-  time.timeZone       = "{tz}";
-{override_locale}{override_extra}}}
+  time.timeZone        = "{tz}";
+{override_locale}{override_extra}
+
+  system.stateVersion  = "{state_version}";
+}}
 """
