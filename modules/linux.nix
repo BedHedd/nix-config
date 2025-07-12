@@ -3,7 +3,7 @@
 
 {
   #######################################################################
-  # 1.  Declare the flag                                                 #
+  # 1. Flag declaring laptop/desktop                                    #
   #######################################################################
   options.my.isLaptop = lib.mkOption {
     type        = lib.types.bool;
@@ -11,12 +11,8 @@
     description = "Whether this Linux host is a laptop (enables TLP)";
   };
 
-  home-manager.sharedModules = [
-    plasma-manager.homeManagerModules."plasma-manager"
-  ];
-
   #######################################################################
-  # 2.  Extra modules to import                                          #
+  # 2. Extra system modules to import                                   #
   #######################################################################
   imports = [
     ../modules/kde.nix
@@ -24,16 +20,22 @@
   ];
 
   #######################################################################
-  # 3.  Actual system configuration (wrapped in `config = { … };`)       #
+  # 3. System-wide configuration                                        #
   #######################################################################
   config = {
 
-    # ── Boot & kernel ────────────────────────────────────────────────
+    ####################   Home-Manager glue   ####################
+    home-manager.sharedModules = [
+      plasma-manager.homeManagerModules."plasma-manager"  # provides `programs.plasma`
+      ../modules/kde-home.nix                             # your own Plasma tweaks
+    ];
+
+    ####################   Boot & kernel   ####################
     boot.loader.systemd-boot.enable      = true;
     boot.loader.efi.canTouchEfiVariables = true;
     boot.kernelPackages                  = pkgs.linuxPackages_latest;
 
-    # ── Core services ────────────────────────────────────────────────
+    ####################   Core services   ####################
     networking.networkmanager.enable = true;
 
     services.displayManager.sddm = {
@@ -44,8 +46,7 @@
 
     services.printing.enable   = true;
     services.pulseaudio.enable = false;
-
-    security.rtkit.enable = true;
+    security.rtkit.enable      = true;
 
     services.pipewire = {
       enable            = true;
@@ -54,7 +55,7 @@
       pulse.enable      = true;
     };
 
-    # ── Power management: laptop vs. desktop ─────────────────────────
+    ####################   Power management   ####################
     services.tlp.enable   = lib.mkIf config.my.isLaptop true;
     services.tlp.settings = lib.mkIf config.my.isLaptop {
       CPU_SCALING_GOVERNOR_ON_AC  = "performance";
