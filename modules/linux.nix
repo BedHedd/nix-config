@@ -1,5 +1,5 @@
 # modules/linux.nix
-{ config, pkgs, lib, ... }:
+{ config, pkgs, lib, plasma-manager, ... }:
 
 {
   #######################################################################
