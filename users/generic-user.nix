@@ -19,8 +19,9 @@ in
     home.homeDirectory = "/home/${username}";
     imports = [
       ../modules/kde-home.nix
+      ../modules/guake.nix
+      # uncomment development if you need python, uv, selenium, and playwright      
       # ../modules/development.nix
-      # ../modules/guake.nix
       # ../dotfiles/multiple-ssh.nix
     ];
     programs.fish.enable = true;
