@@ -56,7 +56,7 @@
     };
 
     ####################   Power management   ####################
-    services.tlp.enable   = lib.mkIf config.my.isLaptop true;
+    services.tlp.enable = config.my.isLaptop;
     services.tlp.settings = lib.mkIf config.my.isLaptop {
       CPU_SCALING_GOVERNOR_ON_AC  = "performance";
       CPU_SCALING_GOVERNOR_ON_BAT = "powersave";
@@ -64,7 +64,6 @@
       STOP_CHARGE_THRESH_BAT0     = 80;
     };
 
-    services.power-profiles-daemon.enable =
-      lib.mkIf (!config.my.isLaptop) true;
+    services.power-profiles-daemon.enable = !config.my.isLaptop;
   };
 }
