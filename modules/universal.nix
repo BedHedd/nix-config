@@ -15,4 +15,6 @@
     home-manager.sharedModules = [
     ../modules/home.nix        # ← your “global home” module
   ];
+
+  programs.nix-ld.enable = true;
 }
