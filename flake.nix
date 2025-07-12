@@ -29,10 +29,10 @@
     # line in each hosts/<name>/default.nix and read it here with import.
     defaultSystem = "x86_64-linux";
 
-    modules = import ./modules;   # attr-set with .universal .linux …
+    extraModules = import ./modules;   # attr-set with .universal .linux …
 
     mkSpecialArgs = {
-      inherit modules home-manager plasma-manager nixos-hardware;
+      inherit home-manager plasma-manager nixos-hardware extraModules;
     };
 
   ########################################################################
@@ -44,7 +44,7 @@
           system  = defaultSystem;
           modules =
             [ ./hosts/${host}/default.nix ]
-            ++ nixpkgs.lib.optionals (defaultSystem == "x86_64-linux") [ modules.kde ];
+            ++ nixpkgs.lib.optionals (defaultSystem == "x86_64-linux") [ extraModules.kde ];
           specialArgs = mkSpecialArgs // { inherit host; };
         });
 
