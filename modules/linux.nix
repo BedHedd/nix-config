@@ -3,7 +3,7 @@
 
 {
   # ── Conditional imports as a list ─────────────────────────────────────
-  imports = lib.optionals pkgs.stdenv.isLinux [
+  imports = [
     ../modules/kde.nix
     ../modules/steamdeck-plasma-system.nix
   ];
