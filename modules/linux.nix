@@ -3,7 +3,9 @@
 
 lib.mkMerge
 [
-  # ── 1) Declare the `my.isLaptop` option ────────────────────────────────
+  #######################################################################
+  # 1.  Declare your custom flag: my.isLaptop
+  #######################################################################
   {
     options.my.isLaptop = lib.mkOption {
       type        = lib.types.bool;
@@ -12,30 +14,31 @@ lib.mkMerge
     };
   }
 
-  # ── 2) All your Linux configuration ────────────────────────────────────
+  #######################################################################
+  # 2.  Actual Linux configuration
+  #######################################################################
   {
     imports = [
-      ./kde.nix
-      ./steamdeck-plasma-system.nix
+      ../modules/kde.nix
+      ../modules/steamdeck-plasma-system.nix
     ];
 
-    # Boot & kernel
+    # ─ Boot & kernel
     boot.loader.systemd-boot.enable      = true;
     boot.loader.efi.canTouchEfiVariables = true;
     boot.kernelPackages                  = pkgs.linuxPackages_latest;
 
-    # Core services
-    networking.networkmanager.enable = true;
+    # ─ Core services
+    networking.networkmanager.enable     = true;
 
-    # Plasma
-    services.displayManager.sddm.enable         = true;
-    services.displayManager.sddm.wayland.enable = true;
-    services.desktopManager.plasma6.enable      = true;
+    services.displayManager.sddm.enable          = true;
+    services.displayManager.sddm.wayland.enable  = true;
+    services.desktopManager.plasma6.enable       = true;
 
-    # Audio & printing
     services.printing.enable   = true;
     services.pulseaudio.enable = false;
     security.rtkit.enable      = true;
+
     services.pipewire = {
       enable            = true;
       alsa.enable       = true;
@@ -43,7 +46,7 @@ lib.mkMerge
       pulse.enable      = true;
     };
 
-    # Power management on laptop vs desktop
+    # ─ Power management
     services.tlp.enable = lib.mkIf config.my.isLaptop true;
     services.tlp.settings = lib.mkIf config.my.isLaptop {
       CPU_SCALING_GOVERNOR_ON_AC  = "performance";
@@ -51,6 +54,7 @@ lib.mkMerge
       START_CHARGE_THRESH_BAT0    = 40;
       STOP_CHARGE_THRESH_BAT0     = 80;
     };
+
     services.power-profiles-daemon.enable =
       lib.mkIf (!config.my.isLaptop) true;
   }
