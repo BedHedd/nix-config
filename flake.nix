@@ -45,7 +45,7 @@
           modules = [
             ./hosts/${host}/default.nix
           ];
-          specialArgs = mkSpecialArgs;
+          specialArgs = mkSpecialArgs // { inherit host; };
         });
 
   ########################################################################
