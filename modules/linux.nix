@@ -32,22 +32,20 @@ lib.mkIf pkgs.stdenv.isLinux {
   # ─ Power (laptop only; see note)
   lib.mkIf pkgs.stdenv.isLinux {
 
-  # …imports, boot, Plasma, PipeWire, etc…
-
   # ── Power management conditional on my.isLaptop ───────────────────
-  services.tlp = lib.mkIf config.my.isLaptop {
-    enable   = true;
-    settings = {
-      CPU_SCALING_GOVERNOR_ON_AC  = "performance";
-      CPU_SCALING_GOVERNOR_ON_BAT = "powersave";
-      START_CHARGE_THRESH_BAT0    = 40;
-      STOP_CHARGE_THRESH_BAT0     = 80;
+    services.tlp = lib.mkIf config.my.isLaptop {
+      enable   = true;
+      settings = {
+        CPU_SCALING_GOVERNOR_ON_AC  = "performance";
+        CPU_SCALING_GOVERNOR_ON_BAT = "powersave";
+        START_CHARGE_THRESH_BAT0    = 40;
+        STOP_CHARGE_THRESH_BAT0     = 80;
+      };
     };
-  };
 
-  # Desktops get the lighter daemon instead
-  services.power-profiles-daemon.enable =
-    lib.mkIf (!config.my.isLaptop) true;
+    # Desktops get the lighter daemon instead
+    services.power-profiles-daemon.enable =
+      lib.mkIf (!config.my.isLaptop) true;
 }
 
   # leave users and hardware-configuration.nix to each host file
