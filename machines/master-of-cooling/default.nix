@@ -28,6 +28,16 @@
     LC_TIME = "en_US.UTF-8";
   };
 
+  # Bootloader.
+  boot.loader = {
+    systemd-boot.enable = true;
+    efi.canTouchEfiVariables = true;
+
+    # ONE line → menu entry called “11” pointing at fs2:
+    systemd-boot.windows."10".efiDeviceHandle = "FS2";
+    systemd-boot.configurationLimit = 8;
+  };
+
   fileSystems."/mnt/sda1" = {
     device  = "/dev/disk/by-uuid/027f2550-4813-20d9-ac54-fc87dc4612eb";
     fsType  = "btrfs";
