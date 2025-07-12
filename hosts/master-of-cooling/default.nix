@@ -1,5 +1,4 @@
-
-{config,  modules, pkgs, host, home-manager, nixos-hardware, ... }:
+{ config, modules, pkgs, host, home-manager, nixos-hardware, ... }:
 
 {
   imports = [
@@ -7,14 +6,15 @@
     modules.linux
     nixos-hardware.nixosModules.common-gpu-amd
     home-manager.nixosModules.home-manager
-    ./hardware-configuration.nix
+  ] ++ (pkgs.lib.optionals pkgs.stdenv.isLinux [ modules.kde ]) ++ [
+      ./hardware-configuration.nix
       ../../users/bedhedd.nix
-  ];
+    ];
 
-  networking.hostName = host;
-  my.isLaptop = false;
+  networking.hostName  = host;
+  my.isLaptop          = false;
 
-  time.timeZone       = "America/Chicago";
+  time.timeZone        = "America/Chicago";
   i18n.defaultLocale  = "en_US.UTF-8";
   i18n.extraLocaleSettings = {
     LC_ADDRESS = "en_US.UTF-8";
@@ -27,6 +27,7 @@
     LC_TELEPHONE = "en_US.UTF-8";
     LC_TIME = "en_US.UTF-8";
   };
+
   fileSystems."/mnt/sda1" = {
     device  = "/dev/disk/by-uuid/027f2550-4813-20d9-ac54-fc87dc4612eb";
     fsType  = "btrfs";
@@ -70,4 +71,6 @@
     options = [ "bind" ];
     depends = [ "/mnt/sda1" ];
   };
+
+  system.stateVersion  = "25.05";
 }
