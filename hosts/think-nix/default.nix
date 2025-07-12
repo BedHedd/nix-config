@@ -1,20 +1,19 @@
-
-{ modules, pkgs, host, ... }:
+{ config, modules, pkgs, host, home-manager, nixos-hardware, ... }:
 
 {
   imports = [
     modules.universal
     modules.linux
-  ] ++ (pkgs.lib.optionals pkgs.stdenv.isLinux [ modules.kde ])
-    ++ [
-      ./hardware-configuration.nix
-      ../../users/progressedd.nix
+    nixos-hardware.nixosModules.lenovo-thinkpad-e470
+    home-manager.nixosModules.home-manager
+    ./hardware-configuration.nix
+    ../../users/bedhedd.nix
     ];
 
-  networking.hostName = host;
-  my.isLaptop = true;
+  networking.hostName  = host;
+  my.isLaptop          = true;
 
-  time.timeZone       = "America/Chicago";
+  time.timeZone        = "America/Chicago";
   i18n.defaultLocale  = "en_US.UTF-8";
   i18n.extraLocaleSettings = {
     LC_ADDRESS = "en_US.UTF-8";
@@ -27,4 +26,7 @@
     LC_TELEPHONE = "en_US.UTF-8";
     LC_TIME = "en_US.UTF-8";
   };
+
+
+  system.stateVersion  = "25.05";
 }
