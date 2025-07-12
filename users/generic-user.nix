@@ -3,7 +3,9 @@
 
 let
   username     = "__USERNAME__";   # ← token the script will replace
-  userPackages = with pkgs; [ … ];
+  userPackages = with pkgs; [
+    # add account specific packages here
+  ];
 in
 {
   users.extraUsers.${username} = {
@@ -17,9 +19,9 @@ in
     home.homeDirectory = "/home/${username}";
     imports = [
       ../modules/kde-home.nix
-      ../modules/development.nix
-      ../modules/guake.nix
-      ../dotfiles/multiple-ssh.nix
+      # ../modules/development.nix
+      # ../modules/guake.nix
+      # ../dotfiles/multiple-ssh.nix
     ];
     programs.fish.enable = true;
     home.packages        = userPackages;
