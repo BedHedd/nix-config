@@ -1,11 +1,12 @@
 # templates for host files
 tmpl = r"""
-{{ modules, pkgs, host, ... }}:
+{{ modules, pkgs, host, nixos-hardware, ... }}:
 
 {{
   imports = [
     modules.universal
     modules.{os_module}
+    {gpu_import}
   ] ++ (pkgs.lib.optionals pkgs.stdenv.isLinux [ modules.kde ])
     ++ [
       ./hardware-configuration.nix

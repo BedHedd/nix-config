@@ -14,10 +14,11 @@ from helper import *
 from template import *
 # ─────────── main wizard flow ────────────────────────────────────────────
 def main() -> None:
-    print("🔧  Nix Host-Wizard\n")
+    print("🔧  Nix setup-wizard\n")
 
     role_default = "darwin-laptop" if is_darwin() else "linux-desktop"
     gpu          = detect_gpu()
+    gpu_import = ""
 
     # ── import existing cfg? ────────────────────────────────────────────
     existing, existing_txt = {}, None
@@ -32,6 +33,10 @@ def main() -> None:
     # ── interactive prompts ────────────────────────────────────────────
     hostname = ask("Hostname", existing.get("hostname") or "my-machine")
     user     = ask("Primary user", "progressedd")
+    if gpu:
+        prompt = f"Detected GPU: {gpu}. Add a import from nixos-hardware (https://github.com/NixOS/nixos-hardware/tree/master/common/gpu) for the gpu?"
+        if ask_yn(prompt, "y"):
+            gpu_import = f"nixos-hardware.nixosModules.common-gpu-{gpu}\n"
     role     = menu_select(
         prompt="Select role:",
         choices=["linux-desktop", "linux-laptop", "mac-laptop", "headless"],
@@ -62,6 +67,7 @@ def main() -> None:
     rendered = tmpl.format(os_module = os_module,
                 role=role, 
                 user=user, 
+                gpu_import=gpu_import,
                 is_laptop=is_laptop_str, 
                 tz=tz, 
                 override_locale=override_locale,
@@ -70,12 +76,16 @@ def main() -> None:
     (host_dir / "default.nix").write_text(rendered)
 
     # ── save original cfg & hw-config ──────────────────────────────────
-    if existing_txt:
-        (host_dir / "original-configuration.nix").write_text(existing_txt)
-
     if is_linux():
-        hw = run(["nixos-generate-config", "--show-hardware-config"])
-        (host_dir / "hardware-configuration.nix").write_text(hw)
+        src_hw = Path("/etc/nixos/hardware-configuration.nix")
+        if src_hw.exists():
+            (host_dir / "hardware-configuration.nix").write_text(src_hw.read_text())
+            print("✓  Copied current /etc/nixos/hardware-configuration.nix")
+        else:
+            # very unlikely, but leave a stub so the import doesn't break
+            (host_dir / "hardware-configuration.nix").write_text(
+                "# TODO: add hardware-configuration.nix for this host\n"
+            )
     else:
         (host_dir / "hardware-configuration.nix").write_text("# nix-darwin: no hw file\n")
 

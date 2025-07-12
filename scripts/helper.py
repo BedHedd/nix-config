@@ -12,13 +12,29 @@ def is_linux():  return sys.platform.startswith("linux")
 def is_darwin(): return sys.platform == "darwin"
 
 def detect_gpu() -> str | None:
+    """
+    Return 'nvidia', 'amd', or 'intel' based on the primary GPU in `lspci`.
+    """
     if not is_linux():
         return None
-    out = run(["lspci", "-nn"])
-    if   "NVIDIA" in out: return "nvidia"
-    elif "AMD"   in out: return "amd"
-    else:                 return "intel"
 
+    out = run(["lspci", "-nn"])
+    # keep only VGA or 3D controller entries
+    gpu_lines = [
+        line for line in out.splitlines()
+        if re.search(r"\b(VGA compatible controller|3D controller)\b", line)
+    ]
+
+    for line in gpu_lines:
+        if "NVIDIA" in line:
+            return "nvidia"
+        if re.search(r"\b(AMD|ATI)\b", line):
+            return "amd"
+        if "Intel" in line:
+            return "intel"
+
+    # fallback: if there are any VGA lines but no known vendor, just return None
+    return None
 def nix_json(expr: str):
     return json.loads(run(["nix", "eval", "--impure", "--expr",
                            f"builtins.toJSON ({expr})"]))
@@ -89,9 +105,6 @@ def scrape_existing(path: Path) -> Tuple[Dict[str, object], str]:
         out["locale"]   = m.group(1)
     if m := re.search(r'i18n\.extraLocaleSettings\s*=\s*\{([^}]+)\}', txt, re.S):
         out["extra_locale"] = _parse_extra_locale(m.group(1))
-    if   "common-gpu-amd"    in txt: out["gpu"] = "amd"
-    elif "common-gpu-nvidia" in txt: out["gpu"] = "nvidia"
-    elif "common-gpu-intel"  in txt: out["gpu"] = "intel"
     return out, txt
 
 # ─────────── minimal TUI helpers ─────────────────────────────────────────
