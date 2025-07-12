@@ -1,5 +1,5 @@
 
-{ modules, pkgs, host, ... }:
+{ modules, pkgs, host, nixos-hardware, ... }:
 
 {
   imports = [
@@ -29,7 +29,6 @@
     LC_TELEPHONE = "en_US.UTF-8";
     LC_TIME = "en_US.UTF-8";
   };
-
   fileSystems."/mnt/sda1" = {
     device  = "/dev/disk/by-uuid/027f2550-4813-20d9-ac54-fc87dc4612eb";
     fsType  = "btrfs";
