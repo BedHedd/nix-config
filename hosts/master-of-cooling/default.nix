@@ -6,12 +6,10 @@
     modules.universal
     modules.linux
     nixos-hardware.nixosModules.common-gpu-amd
-
-  ] ++ (modules.kde)
-    ++ [
-      ./hardware-configuration.nix
-      ../../users/bedhedd.nix
-    ];
+    modules.kde 
+    ./hardware-configuration.nix
+    ../../users/bedhedd.nix    
+  ];
 
   networking.hostName = host;
   my.isLaptop = false;
