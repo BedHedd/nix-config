@@ -2,8 +2,8 @@
 { config, pkgs, lib, ... }:
 
 lib.mkMerge
-[
-  # ── 1) Declare the `my.isLaptop` option for Linux hosts ────────────────
+[ 
+  # ── 1) Declare your my.isLaptop flag ────────────────────────────
   {
     options.my.isLaptop = lib.mkOption {
       type        = lib.types.bool;
@@ -12,13 +12,12 @@ lib.mkMerge
     };
   }
 
-  # ── 2) Your existing Linux module settings ──────────────────────────────
+  # ── 2) The actual module body ────────────────────────────────────
   {
-    # Conditional imports (always a list)
-    imports = [
-      ../modules/kde.nix
-      ../modules/steamdeck-plasma-system.nix
-    ];
+    imports = 
+      [ ../modules/kde.nix
+        ../modules/steamdeck-plasma-system.nix
+      ];
 
     # Boot & kernel
     boot.loader.systemd-boot.enable      = true;
@@ -28,14 +27,15 @@ lib.mkMerge
     # Core services
     networking.networkmanager.enable     = true;
 
-    services.displayManager.sddm.enable          = true;
-    services.displayManager.sddm.wayland.enable  = true;
-    services.desktopManager.plasma6.enable       = true;
+    # Plasma
+    services.displayManager.sddm.enable         = true;
+    services.displayManager.sddm.wayland.enable = true;
+    services.desktopManager.plasma6.enable      = true;
 
+    # Audio & printing
     services.printing.enable   = true;
     services.pulseaudio.enable = false;
     security.rtkit.enable      = true;
-
     services.pipewire = {
       enable            = true;
       alsa.enable       = true;
@@ -43,7 +43,7 @@ lib.mkMerge
       pulse.enable      = true;
     };
 
-    # Power management on laptop vs. desktop
+    # Power‐management on laptops vs desktops
     services.tlp.enable = lib.mkIf config.my.isLaptop true;
     services.tlp.settings = lib.mkIf config.my.isLaptop {
       CPU_SCALING_GOVERNOR_ON_AC  = "performance";
@@ -51,7 +51,6 @@ lib.mkMerge
       START_CHARGE_THRESH_BAT0    = 40;
       STOP_CHARGE_THRESH_BAT0     = 80;
     };
-
     services.power-profiles-daemon.enable =
       lib.mkIf (!config.my.isLaptop) true;
   }
