@@ -29,9 +29,6 @@ lib.mkIf pkgs.stdenv.isLinux {
     pulse.enable  = true;
   };
 
-  # ─ Power (laptop only; see note)
-  lib.mkIf pkgs.stdenv.isLinux {
-
   # ── Power management conditional on my.isLaptop ───────────────────
     services.tlp = lib.mkIf config.my.isLaptop {
       enable   = true;
@@ -46,7 +43,6 @@ lib.mkIf pkgs.stdenv.isLinux {
     # Desktops get the lighter daemon instead
     services.power-profiles-daemon.enable =
       lib.mkIf (!config.my.isLaptop) true;
-}
 
   # leave users and hardware-configuration.nix to each host file
 }
