@@ -2,18 +2,18 @@
 { config, pkgs, lib, ... }:
 
 {
-  # only import KDE+Steamdeck on Linux
-  imports = lib.mkIf pkgs.stdenv.isLinux [
+  # ── Conditional imports as a list ─────────────────────────────────────
+  imports = lib.optionals pkgs.stdenv.isLinux [
     ../modules/kde.nix
     ../modules/steamdeck-plasma-system.nix
   ];
 
-  # ── Boot & kernel
+  # ── Boot & kernel ───────────────────────────────────────────────────────
   boot.loader.systemd-boot.enable      = true;
   boot.loader.efi.canTouchEfiVariables = true;
   boot.kernelPackages                  = pkgs.linuxPackages_latest;
 
-  # ── Core services
+  # ── Core services ──────────────────────────────────────────────────────
   networking.networkmanager.enable     = true;
 
   services.displayManager.sddm.enable         = true;
@@ -31,7 +31,7 @@
     pulse.enable      = true;
   };
 
-  # ── Power management on laptop vs. desktop
+  # ── Power management on laptop vs. desktop ─────────────────────────────
   services.tlp.enable = lib.mkIf config.my.isLaptop true;
   services.tlp.settings = lib.mkIf config.my.isLaptop {
     CPU_SCALING_GOVERNOR_ON_AC  = "performance";
