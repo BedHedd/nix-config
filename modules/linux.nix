@@ -11,6 +11,10 @@
     description = "Whether this Linux host is a laptop (enables TLP)";
   };
 
+  home-manager.sharedModules = [
+    plasma-manager.homeManagerModules."plasma-manager"
+  ];
+
   #######################################################################
   # 2.  Extra modules to import                                          #
   #######################################################################
