@@ -12,10 +12,10 @@
   outputs = { self, nixpkgs, home-manager, plasma-manager, nixos-hardware, ... }:
 
   let
-    # your hosts:
+    # your machines:
     hostNames     = builtins.filter
-                      (n: builtins.pathExists ./hosts/${n}/default.nix)
-                      (builtins.attrNames (builtins.readDir ./hosts));
+                      (n: builtins.pathExists ./machines/${n}/default.nix)
+                      (builtins.attrNames (builtins.readDir ./machines));
 
     defaultSystem = "x86_64-linux";
 
@@ -29,7 +29,7 @@
     nixosConfigurations = nixpkgs.lib.genAttrs hostNames (host:
       nixpkgs.lib.nixosSystem {
         system     = defaultSystem;
-        modules    = [ ./hosts/${host}/default.nix ]
+        modules    = [ ./machines/${host}/default.nix ]
                      ++ nixpkgs.lib.optionals (defaultSystem == "x86_64-linux") [ modules.kde ];
         specialArgs = mkSpecialArgs // { inherit host; };
       });

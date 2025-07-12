@@ -34,7 +34,7 @@ def main() -> None:
         
     # ── interactive prompts ────────────────────────────────────────────
     hostname = ask("Hostname", existing.get("hostname") or "my-machine")
-    user     = ask("Primary user", "progressedd")
+    user     = ask("Primary user", "bedhedd")
     if gpu:
         prompt = f"Detected GPU: {gpu}. Add a import from nixos-hardware (https://github.com/NixOS/nixos-hardware/tree/master/common/gpu) for the gpu?"
         if ask_yn(prompt, "y"):
@@ -55,7 +55,7 @@ def main() -> None:
         extra_locale = existing["extra_locale"]
 
     # ── create host folder ──────────────────────────────────────────────
-    host_dir = ROOT / "hosts" / hostname
+    host_dir = ROOT / "machines" / hostname
     host_dir.mkdir(parents=True, exist_ok=True)
 
     # ── build override snippets ─────────────────────────────────────────
@@ -65,7 +65,7 @@ def main() -> None:
     )
     override_extra = build_extra_locale(extra_locale)
 
-    # ── write hosts/<hostname>/default.nix ──────────────────────────────
+    # ── write machines/<hostname>/default.nix ──────────────────────────────
     rendered = tmpl.format(os_module = os_module,
                 role=role, 
                 user=user, 
@@ -96,7 +96,7 @@ def main() -> None:
     
     # ── final message ──────────────────────────────────────────────────
     rebuild = "darwin-rebuild" if is_darwin() else "sudo nixos-rebuild"
-    print(f"\n✅  Created hosts/{hostname}")
+    print(f"\n✅  Created machines/{hostname}")
     print(f"   Next: {rebuild} switch --flake .#{hostname}\n")
 
 
