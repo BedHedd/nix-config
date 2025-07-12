@@ -61,6 +61,7 @@ in
       {
         condition = "gitdir:*/${primaryFolder}/";
         contents = {
+          user.name  =" bedhedd";
           user.email = "zbedhedd@gmail.com";
           url."git@github.com-primary:".insteadOf = [
             "https://github.com/"
