@@ -7,7 +7,7 @@
     modules.linux
     nixos-hardware.nixosModules.common-gpu-amd
 
-  ] ++ (pkgs.lib.optionals pkgs.stdenv.isLinux [ modules.kde ])
+  ] ++ (modules.kde)
     ++ [
       ./hardware-configuration.nix
       ../../users/bedhedd.nix
