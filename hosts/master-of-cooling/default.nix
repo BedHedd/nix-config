@@ -6,6 +6,7 @@
     modules.universal
     modules.linux
     nixos-hardware.nixosModules.common-gpu-amd
+    home-manager.nixosModules.home-manager
     ./hardware-configuration.nix
       ../../users/bedhedd.nix
   ];
