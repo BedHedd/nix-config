@@ -42,9 +42,9 @@
       nixpkgs.lib.genAttrs hostNames (host:
         nixpkgs.lib.nixosSystem {
           system  = defaultSystem;
-          modules = [
-            ./hosts/${host}/default.nix
-          ];
+          modules =
+            [ ./hosts/${host}/default.nix ]
+            ++ nixpkgs.lib.optionals (defaultSystem == "x86_64-linux") [ modules.kde ];
           specialArgs = mkSpecialArgs // { inherit host; };
         });
 

@@ -1,14 +1,13 @@
 
-{config, lib, modules, pkgs, host, nixos-hardware, ... }:
+{config,  modules, pkgs, host, nixos-hardware, ... }:
 
 {
   imports = [
     modules.universal
     modules.linux
     nixos-hardware.nixosModules.common-gpu-amd
-    modules.kde 
     ./hardware-configuration.nix
-    ../../users/bedhedd.nix    
+      ../../users/bedhedd.nix
   ];
 
   networking.hostName = host;
