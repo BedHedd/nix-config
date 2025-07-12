@@ -45,7 +45,6 @@ in
       home.homeDirectory = "/home/${username}";
 
       imports = [
-        ../modules/home.nix
         ../modules/kde-home.nix
         ../modules/development.nix
         ../modules/guake.nix
