@@ -118,6 +118,7 @@
         extensions = with pkgs.vscode-extensions; [
           ms-python.python
           ms-toolsai.jupyter
+          jnoortheen.nix-ide
         ];
     };
     };

@@ -19,13 +19,9 @@ let
     ffmpeg # video encoding
     vlc # media playback
     strawberry
-    strawberry
     kdePackages.kdenlive # video editing
     krita # image manipulation
     guake
-
-    # social apps
-    vesktop
 
     # social apps
     vesktop
@@ -49,11 +45,9 @@ in
       home.homeDirectory = "/home/${username}";
 
       imports = [
-        ../modules/home.nix
         ../modules/kde-home.nix
         ../modules/development.nix
         ../modules/guake.nix
-        ../modules/development.nix
         ../dotfiles/multiple-ssh.nix
       ];
 
