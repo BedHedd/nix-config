@@ -4,7 +4,9 @@
 {
   programs.plasma = {
     enable = true;
+    overrideConfig = true;
     workspace.lookAndFeel = "com.valve.vgui.desktop";
+
 
     kwin.nightLight = {
       enable = true;
