@@ -4,7 +4,7 @@
 {
   programs.plasma = {
     enable = true;
-    workspace.lookAndFeel = lib.mkForce "com.valve.vapor.deck.desktop";
+    workspace.lookAndFeel = "com.valve.vgui.desktop";
 
     kwin.nightLight = {
       enable = true;
