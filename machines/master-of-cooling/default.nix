@@ -5,6 +5,7 @@
     modules.universal
     modules.linux
     nixos-hardware.nixosModules.common-gpu-amd
+    rocmPackages.rocm-runtime
 
     home-manager.nixosModules.home-manager
     ./hardware-configuration.nix
