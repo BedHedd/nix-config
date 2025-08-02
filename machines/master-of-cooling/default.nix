@@ -5,7 +5,6 @@
     modules.universal
     modules.linux
     nixos-hardware.nixosModules.common-gpu-amd
-    rocmPackages.rocm-runtime
 
     home-manager.nixosModules.home-manager
     ./hardware-configuration.nix
@@ -86,7 +85,11 @@
   system.stateVersion  = "25.05";
 
   services.ollama = {
-    enable  = true;
+      enable = true;
+      acceleration = "rocm";
+      environmentVariables = {
+        HSA_OVERRIDE_GFX_VERSION = "11.0.2";
+      };
     models  = "/mnt/sda1/Documents/ollama-models";  # <-- custom model dir
   };
 }
