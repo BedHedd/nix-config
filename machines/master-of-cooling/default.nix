@@ -83,4 +83,9 @@
   };
 
   system.stateVersion  = "25.05";
+
+  services.ollama = {
+    enable  = true;
+    models  = "/mnt/sda1/Documents/ollama-models";  # <-- custom model dir
+  };
 }
