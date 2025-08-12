@@ -68,6 +68,7 @@ I have configured this such that each unique machine will have a `default.nix` t
 - [`machines`](./machines/): contains all specific customizations for a given hardware configuration
 - [`modules`](./modules/): contains all customizations for packages I use, shared across all machines
 - [`users`](./modules/): contains all user file customizations, allows me to pull user configs for machines
+- [`scripts`]: contains setup wizard scripts which will help create a config for a new machine
 
 
 # getting started from scratch
@@ -141,11 +142,11 @@ After downloading this repo, navigate to the directory using your terminal or a 
 1. Install nix on a machine
 2. Clone or download the repository
 3. Open the repository
-4. Modify the following folders and files (by modifying generics or copying the following):
-   - folder:[`generic-machine`](./machines/generic-machine/)
-   - file: [`configuration.nix`](./machines/generic-machine/)
-   - file: [`generic-user` file](./users/generic-user.nix) 
-   - file: [`flake.nix`](./flake.nix)
+4. Run the following command `nix run .#setup-wizard`, this will launch the setup wizard to pull your nixos config from `/etc/nixos` and create a config based on some questions:
+  - Machine name 
+  - Username
+  - GPU manufacturer for drivers
+  - The machine type (linux desktop/laptop/server, macos)
 
 ### install nix
 If you have been linked this repo and have not yet installed NixOS, please start by installing nix. Follow the guide from the [wiki](https://wiki.nixos.org/wiki/NixOS_Installation_Guide). Make sure to enable kde, flakes, and unfree software if you are using the graphical installer
@@ -161,7 +162,7 @@ If git is not installed in the terminal, download the repo as a zip.
 2. Navigate and click the `Download ZIP` button
 
 
-### modify my config
+### manually modifying my config
 #### create a user
 Within the root of the repo, navigate to the `users` folder. Copy the [`generic-user.nix`](./users/generic-user.nix) file and update the `username`
 ```nix
