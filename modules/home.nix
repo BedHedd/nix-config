@@ -31,6 +31,8 @@
       fastfetch
       tealdeer
 
+      rustdesk
+
       # dictionaries
       # aspell
       # aspellDicts.en
