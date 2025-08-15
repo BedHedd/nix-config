@@ -4,8 +4,7 @@
 {
   programs.plasma = {
     enable = true;
-    overrideConfig = true;
-    workspace.lookAndFeel = "com.valve.vapor.deck.desktop";
+    workspace.lookAndFeel = lib.mkForce "com.valve.vapor.deck.desktop";
 
     kwin.nightLight = {
       enable = true;
