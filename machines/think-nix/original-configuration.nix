@@ -2,17 +2,12 @@
 # your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 
-{ config, pkgs, nixos-hardware, home-manager, plasma-manager, ... }:
+{ config, pkgs, ... }:
 
 {
   imports =
-    [
-      ../../modules/kde.nix
-      ../../modules/steamdeck-plasma-system.nix
-      nixos-hardware.nixosModules.common-gpu-amd # replace this with your desired graphics driver
+    [ # Include the results of the hardware scan.
       ./hardware-configuration.nix
-      home-manager.nixosModules.home-manager
-      ./users.nix
     ];
 
   # Bootloader.
@@ -22,7 +17,7 @@
   # Use latest kernel.
   boot.kernelPackages = pkgs.linuxPackages_latest;
 
-  networking.hostName = "generic-machine"; # Define your hostname.
+  networking.hostName = "nixos"; # Define your hostname.
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
 
   # Configure network proxy if necessary
@@ -31,8 +26,6 @@
 
   # Enable networking
   networking.networkmanager.enable = true;
-
-  nix.settings.experimental-features = [ "nix-command" "flakes"];
 
   # Set your time zone.
   time.timeZone = "America/Chicago";
@@ -54,18 +47,17 @@
 
   # Enable the X11 windowing system.
   # You can disable this if you're only using the Wayland session.
-  # services.xserver.enable = true;
+  services.xserver.enable = true;
 
   # Enable the KDE Plasma Desktop Environment.
   services.displayManager.sddm.enable = true;
-  services.displayManager.sddm.wayland.enable = true;
   services.desktopManager.plasma6.enable = true;
 
   # Configure keymap in X11
-#   services.xserver.xkb = {
-#     layout = "us";
-#     variant = "";
-#   };
+  services.xserver.xkb = {
+    layout = "us";
+    variant = "";
+  };
 
   # Enable CUPS to print documents.
   services.printing.enable = true;
@@ -90,15 +82,18 @@
   # services.xserver.libinput.enable = true;
 
   # Define a user account. Don't forget to set a password with ‘passwd’.
-  users.users.generic-user = {
+  users.users.bedhedd = {
     isNormalUser = true;
-    description = "generic-user";
+    description = "bedhedd";
     extraGroups = [ "networkmanager" "wheel" ];
     packages = with pkgs; [
       kdePackages.kate
     #  thunderbird
     ];
   };
+
+  # Install firefox.
+  programs.firefox.enable = true;
 
   # Allow unfree packages
   nixpkgs.config.allowUnfree = true;
@@ -122,15 +117,6 @@
 
   # Enable the OpenSSH daemon.
   # services.openssh.enable = true;
-
-  # Home‑Manager setup for plasma‑manager
-
-  home-manager.useGlobalPkgs   = true;
-  home-manager.useUserPackages = true;
-
-  home-manager.sharedModules = [
-    plasma-manager.homeManagerModules."plasma-manager"
-  ];
 
   # Open ports in the firewall.
   # networking.firewall.allowedTCPPorts = [ ... ];

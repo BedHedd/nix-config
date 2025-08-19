@@ -2,34 +2,22 @@
 # your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 
-{ config, pkgs, nixos-hardware, home-manager, plasma-manager, ... }:
+{ config, pkgs, ... }:
 
 {
   imports =
-    [
-      ../../modules/kde.nix
-      ../../modules/steamdeck-plasma-system.nix
-      nixos-hardware.nixosModules.common-gpu-amd
+    [ # Include the results of the hardware scan.
       ./hardware-configuration.nix
-      home-manager.nixosModules.home-manager
-      ./users.nix
     ];
-  # Bootloader.
-  boot.loader = {
-    systemd-boot.enable = true;
-    efi.canTouchEfiVariables = true;
 
-    # ONE line → menu entry called “11” pointing at fs2:
-    systemd-boot.windows."10".efiDeviceHandle = "FS2";
-    systemd-boot.configurationLimit = 8;
-  };
+  # Bootloader.
+  boot.loader.systemd-boot.enable = true;
+  boot.loader.efi.canTouchEfiVariables = true;
 
   # Use latest kernel.
   boot.kernelPackages = pkgs.linuxPackages_latest;
 
-
-
-  networking.hostName = "master-of-cooling"; # Define your hostname.
+  networking.hostName = "nixos"; # Define your hostname.
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
 
   # Configure network proxy if necessary
@@ -38,52 +26,6 @@
 
   # Enable networking
   networking.networkmanager.enable = true;
-
-  nix.settings.experimental-features = [ "nix-command" "flakes"];
-
-  fileSystems."/mnt/sda1" = {
-    device  = "/dev/disk/by-uuid/027f2550-4813-20d9-ac54-fc87dc4612eb";
-    fsType  = "btrfs";
-
-    # Fine-tune options to taste.  Good defaults for a personal btrfs data disk:
-    options = [
-      "compress=zstd"    # transparent compression
-      "noatime"          # don’t update atime on every read
-      "ssd"              # if the drive is actually an SSD
-      # For a plug-in USB disk add:
-      # "noauto" "x-systemd.automount"
-    ];
-  };
-
-  fileSystems."/home/bedhedd/Documents" = {
-    device  = "/mnt/sda1/Documents";
-    options = [ "bind" ];
-    depends = [ "/mnt/sda1" ];   # be sure the disk is mounted first
-  };
-
-  fileSystems."/home/bedhedd/Downloads" = {
-    device  = "/mnt/sda1/Downloads";
-    options = [ "bind" ];
-    depends = [ "/mnt/sda1" ];
-  };
-
-  fileSystems."/home/bedhedd/Music" = {
-    device  = "/mnt/sda1/Music";
-    options = [ "bind" ];
-    depends = [ "/mnt/sda1" ];
-  };
-  
-  fileSystems."/home/bedhedd/Pictures" = {
-    device  = "/mnt/sda1/Pictures";
-    options = [ "bind" ];
-    depends = [ "/mnt/sda1" ];
-  };
-
-  fileSystems."/home/bedhedd/Videos" = {
-    device  = "/mnt/sda1/Videos";
-    options = [ "bind" ];
-    depends = [ "/mnt/sda1" ];
-  };
 
   # Set your time zone.
   time.timeZone = "America/Chicago";
@@ -105,18 +47,17 @@
 
   # Enable the X11 windowing system.
   # You can disable this if you're only using the Wayland session.
-  # services.xserver.enable = true;
+  services.xserver.enable = true;
 
   # Enable the KDE Plasma Desktop Environment.
   services.displayManager.sddm.enable = true;
-  services.displayManager.sddm.wayland.enable = true;
   services.desktopManager.plasma6.enable = true;
 
   # Configure keymap in X11
-#   services.xserver.xkb = {
-#     layout = "us";
-#     variant = "";
-#   };
+  services.xserver.xkb = {
+    layout = "us";
+    variant = "";
+  };
 
   # Enable CUPS to print documents.
   services.printing.enable = true;
@@ -151,6 +92,9 @@
     ];
   };
 
+  # Install firefox.
+  programs.firefox.enable = true;
+
   # Allow unfree packages
   nixpkgs.config.allowUnfree = true;
 
@@ -173,15 +117,6 @@
 
   # Enable the OpenSSH daemon.
   # services.openssh.enable = true;
-
-  # Home‑Manager setup for plasma‑manager
-
-  home-manager.useGlobalPkgs   = true;
-  home-manager.useUserPackages = true;
-
-  home-manager.sharedModules = [
-    plasma-manager.homeManagerModules."plasma-manager"
-  ];
 
   # Open ports in the firewall.
   # networking.firewall.allowedTCPPorts = [ ... ];
