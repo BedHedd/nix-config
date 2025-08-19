@@ -11,6 +11,7 @@ in
   ##########################################################################
   home.packages = with pkgs; [
     uv
+    git-lfs
     nodejs_20                       # helper scripts used by Playwright
     playwright-driver.browsers      # patched Chromium / Firefox / WebKit
     gcc                             # compile native wheels
