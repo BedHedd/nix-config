@@ -1,12 +1,22 @@
 # modules/kde-home.nix
-{ pkgs, plasma-manager, lib, ... }:
-
-{
+{ config, lib, pkgs, plasma-manager, ... }:
+let
+  wpDir = "${config.home.homeDirectory}/Pictures/desktop_backgrounds";
+in {
   programs.plasma = {
     enable = true;
     overrideConfig = true;
     workspace.lookAndFeel = "com.valve.vgui.desktop";
 
+    workspace.wallpaperSlideShow = {
+      path     = wpDir;
+      interval = 900; # 15 minutes
+    };
+
+    kscreenlocker.appearance.wallpaperSlideShow = {
+      path     = wpDir;
+      interval = 900;
+    };
 
     kwin.nightLight = {
       enable = true;
