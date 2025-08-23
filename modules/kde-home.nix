@@ -47,6 +47,8 @@ in {
     # workspace.wallpaperSlideShow = { # uncomment this block if you want to use the native slideshow, but wallpapers won't be synced
     #   path     = wpDir;
     #   interval = 900;
+    #   randomize = true;
+    #   fillMode  = "zoom"; 
     # };
     
     # Lock screen can keep using slideshow (independent of desktop sync)
