@@ -88,12 +88,13 @@ in {
           {
             name = "org.kde.plasma.icontasks";
             config = {
-              "General/launchers" = [
+              "launchers" = [
                 "preferred://browser"
                 "preferred://filemanager"
                 "applications:org.strawberrymusicplayer.strawberry.desktop"
                 "applications:steam.desktop"
               ];
+
               "General/sortingStrategy"   = 0;
               "General/separateLaunchers" = true;
             };
