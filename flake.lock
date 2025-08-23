@@ -7,11 +7,19 @@
         ]
       },
       "locked": {
+<<<<<<< HEAD
         "lastModified": 1751824240,
         "narHash": "sha256-aDDC0CHTlL7QDKWWhdbEgVPK6KwWt+ca0QkmHYZxMzI=",
         "owner": "nix-community",
         "repo": "home-manager",
         "rev": "fd9e55f5fac45a26f6169310afca64d56b681935",
+=======
+        "lastModified": 1754950654,
+        "narHash": "sha256-30f9MF+zIKLodQRuSLyY4OSDZSOy5O+/FslgPt/prbc=",
+        "owner": "nix-community",
+        "repo": "home-manager",
+        "rev": "d19f3213e51469321835a9188adfa20391ff9371",
+>>>>>>> refs/rewritten/updates
         "type": "github"
       },
       "original": {
@@ -22,11 +30,19 @@
     },
     "nixos-hardware": {
       "locked": {
+<<<<<<< HEAD
         "lastModified": 1751432711,
         "narHash": "sha256-136MeWtckSHTN9Z2WRNRdZ8oRP3vyx3L8UxeBYE+J9w=",
         "owner": "NixOS",
         "repo": "nixos-hardware",
         "rev": "497ae1357f1ac97f1aea31a4cb74ad0d534ef41f",
+=======
+        "lastModified": 1754564048,
+        "narHash": "sha256-dz303vGuzWjzOPOaYkS9xSW+B93PSAJxvBd6CambXVA=",
+        "owner": "NixOS",
+        "repo": "nixos-hardware",
+        "rev": "26ed7a0d4b8741fe1ef1ee6fa64453ca056ce113",
+>>>>>>> refs/rewritten/updates
         "type": "github"
       },
       "original": {
@@ -37,11 +53,19 @@
     },
     "nixpkgs": {
       "locked": {
+<<<<<<< HEAD
         "lastModified": 1751792365,
         "narHash": "sha256-J1kI6oAj25IG4EdVlg2hQz8NZTBNYvIS0l4wpr9KcUo=",
         "owner": "NixOS",
         "repo": "nixpkgs",
         "rev": "1fd8bada0b6117e6c7eb54aad5813023eed37ccb",
+=======
+        "lastModified": 1754725699,
+        "narHash": "sha256-iAcj9T/Y+3DBy2J0N+yF9XQQQ8IEb5swLFzs23CdP88=",
+        "owner": "NixOS",
+        "repo": "nixpkgs",
+        "rev": "85dbfc7aaf52ecb755f87e577ddbe6dbbdbc1054",
+>>>>>>> refs/rewritten/updates
         "type": "github"
       },
       "original": {
@@ -61,11 +85,19 @@
         ]
       },
       "locked": {
+<<<<<<< HEAD
         "lastModified": 1748196248,
         "narHash": "sha256-1iHjsH6/5UOerJEoZKE+Gx1BgAoge/YcnUsOA4wQ/BU=",
         "owner": "nix-community",
         "repo": "plasma-manager",
         "rev": "b7697abe89967839b273a863a3805345ea54ab56",
+=======
+        "lastModified": 1754501628,
+        "narHash": "sha256-FExJ54tVB5iu7Dh2tLcyCSWpaV+lmUzzWKZUkemwXvo=",
+        "owner": "nix-community",
+        "repo": "plasma-manager",
+        "rev": "cca090f8115c4172b9aef6c5299ae784bdd5e133",
+>>>>>>> refs/rewritten/updates
         "type": "github"
       },
       "original": {
