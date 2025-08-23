@@ -30,7 +30,7 @@ in {
       transitionTime    = 30;
     };
 
-    # Panel cloned from your appletsrc (Containment 98)
+    # Keep widgets as plain strings (broadly compatible)
     panels = lib.mkForce [
       {
         screen   = "all";
@@ -40,146 +40,64 @@ in {
         hiding   = "dodgewindows";
 
         widgets = [
-          # Kickoff (99)
-          {
-            type = "org.kde.plasma.kickoff";
-            config = {
-              PreloadWeight = 100;
-              popupHeight   = 508;
-              popupWidth    = 647;
-              General.icon  = "distributor-logo-steamdeck";
-            };
-          }
-
-          # Pager (100)
-          { type = "org.kde.plasma.pager"; }
-
-          # Icon Tasks (101) — KDE preferred handlers + Strawberry
-          {
-            type = "org.kde.plasma.icontasks";
-            config = {
-              General.launchers = [
-                "preferred://browser"
-                "preferred://filemanager"
-                "applications:org.strawberrymusicplayer.strawberry.desktop"
-              ];
-            };
-          }
-
-          # System Monitor: Network (126)
-          {
-            type = "org.kde.plasma.systemmonitor.net";
-            config = {
-              CurrentPreset = "org.kde.plasma.systemmonitor";
-              PreloadWeight = 90;
-              popupHeight   = 200;
-              popupWidth    = 210;
-              Appearance = {
-                chartFace = "org.kde.ksysguard.linechart";
-                title     = "Network Speed";
-              };
-              Sensors.highPrioritySensorIds = [
-                "network/all/download"
-                "network/all/upload"
-              ];
-              SensorColors."network/all/download" = "0,255,255";
-              SensorColors."network/all/upload"   = "170,0,255";
-            };
-          }
-
-          # System Monitor: CPU cores (123)
-          {
-            type = "org.kde.plasma.systemmonitor.cpucore";
-            config = {
-              CurrentPreset = "org.kde.plasma.systemmonitor";
-              PreloadWeight = 65;
-              popupHeight   = 386;
-              popupWidth    = 306;
-              Appearance = {
-                chartFace = "org.kde.ksysguard.barchart";
-                title     = "Individual Core Usage";
-              };
-              Sensors = {
-                highPrioritySensorIds = [ "cpu/cpu.*/usage" ];
-                totalSensors          = [ "cpu/all/usage" ];
-              };
-            };
-          }
-
-          # System Monitor: GPU “cores” (124)
-          {
-            type = "org.kde.plasma.systemmonitor.cpucore";
-            config = {
-              CurrentPreset = "org.kde.plasma.systemmonitor";
-              PreloadWeight = 100;
-              popupHeight   = 306;
-              popupWidth    = 271;
-              Appearance = {
-                chartFace = "org.kde.ksysguard.piechart";
-                title     = "Individual GPU Core Usage";
-              };
-              FaceGrid = {
-                Appearance = {
-                  chartFace = "org.kde.ksysguard.linechart";
-                  showTitle = false;
-                };
-                Sensors.highPrioritySensorIds = [ "gpu/gpu1/usage" ];
-              };
-              Sensors = {
-                highPrioritySensorIds = [
-                  "gpu/gpu1/usedVram"
-                  "gpu/gpu1/usage"
-                  "gpu/gpu1/coreFrequency"
-                  "gpu/gpu1/fan1"
-                  "gpu/gpu1/temperature"
-                ];
-                totalSensors = [ "cpu/all/usage" ];
-              };
-            };
-          }
-
-          # System Monitor: Memory (125)
-          {
-            type = "org.kde.plasma.systemmonitor.memory";
-            config = {
-              CurrentPreset = "org.kde.plasma.systemmonitor";
-              PreloadWeight = 95;
-              popupHeight   = 240;
-              popupWidth    = 244;
-              Appearance = {
-                chartFace = "org.kde.ksysguard.piechart";
-                title     = "Memory Usage";
-              };
-              Sensors = {
-                highPrioritySensorIds = [ "memory/physical/used" ];
-                lowPrioritySensorIds  = [ "memory/physical/total" ];
-                totalSensors          = [ "memory/physical/usedPercent" ];
-              };
-              SensorColors."memory/physical/used" = "0,0,255";
-            };
-          }
-
-          # Separator (102)
-          { type = "org.kde.plasma.marginsseparator"; }
-
-          # System Tray (103)
-          { type = "org.kde.plasma.systemtray"; }
-
-          # Digital Clock (116)
-          {
-            type = "org.kde.plasma.digitalclock";
-            config = {
-              popupHeight = 400;
-              popupWidth  = 560;
-              Appearance.fontWeight = 400;
-            };
-          }
-
-          # Show Desktop (117)
-          { type = "org.kde.plasma.showdesktop"; }
+          "org.kde.plasma.kickoff"          # 99
+          "org.kde.plasma.pager"            # 100
+          "org.kde.plasma.icontasks"        # 101
+          "org.kde.plasma.systemmonitor.net"# 126
+          "org.kde.plasma.systemmonitor.cpucore" # 123
+          "org.kde.plasma.systemmonitor.cpucore" # 124
+          "org.kde.plasma.systemmonitor.memory"  # 125
+          "org.kde.plasma.marginsseparator" # 102
+          "org.kde.plasma.systemtray"       # 103
+          "org.kde.plasma.digitalclock"     # 116
+          "org.kde.plasma.showdesktop"      # 117
         ];
       }
     ];
+
+    # KConfig overrides that Plasma-Manager will merge into appletsrc
+    # (These mirror the sections from your pasted file.)
+    configFile."plasma-org.kde.plasma.desktop-appletsrc" = {
+      # Panel order
+      "Containments][98][General".AppletOrder =
+        "99;100;101;126;123;124;125;102;103;116;117";
+
+      # Kickoff icon
+      "Containments][98][Applets][99][Configuration][General".icon =
+        "distributor-logo-steamdeck";
+
+      # Icon Tasks launchers (preferred handlers + Strawberry)
+      "Containments][98][Applets][101][Configuration][General".launchers =
+        "preferred://browser,preferred://filemanager,applications:org.strawberrymusicplayer.strawberry.desktop";
+
+      # System Monitor: Network (title + face)
+      "Containments][98][Applets][126][Configuration][Appearance".chartFace =
+        "org.kde.ksysguard.linechart";
+      "Containments][98][Applets][126][Configuration][Appearance".title =
+        "Network Speed";
+
+      # System Monitor: CPU cores
+      "Containments][98][Applets][123][Configuration][Appearance".chartFace =
+        "org.kde.ksysguard.barchart";
+      "Containments][98][Applets][123][Configuration][Appearance".title =
+        "Individual Core Usage";
+
+      # System Monitor: GPU “cores”
+      "Containments][98][Applets][124][Configuration][Appearance".chartFace =
+        "org.kde.ksysguard.piechart";
+      "Containments][98][Applets][124][Configuration][Appearance".title =
+        "Individual GPU Core Usage";
+      "Containments][98][Applets][124][Configuration][FaceGrid][Appearance".chartFace =
+        "org.kde.ksysguard.linechart";
+      "Containments][98][Applets][124][Configuration][FaceGrid][Appearance".showTitle =
+        "false";
+
+      # Memory applet
+      "Containments][98][Applets][125][Configuration][Appearance".chartFace =
+        "org.kde.ksysguard.piechart";
+      "Containments][98][Applets][125][Configuration][Appearance".title =
+        "Memory Usage";
+    };
   };
 
   # VSCodium desktop entry override
