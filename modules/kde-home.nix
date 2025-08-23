@@ -1,7 +1,36 @@
 # modules/kde-home.nix
 { config, lib, pkgs, plasma-manager, ... }:
 let
-  wpDir = "${config.home.homeDirectory}/Pictures/desktop backgrounds";
+  wpDir        = "${config.home.homeDirectory}/Pictures/desktop backgrounds";
+  intervalS    = 900; # seconds between wallpaper changes (sync cadence)
+
+  # Script: pick frame deterministically and set same image on ALL desktops
+  syncWallpapers = pkgs.writeShellScriptBin "sync-wallpapers" ''
+    set -euo pipefail
+    DIR=${lib.escapeShellArg wpDir}
+    INTERVAL=${toString intervalS}
+
+    # Collect images (stable order)
+    mapfile -t FILES < <(${pkgs.findutils}/bin/find "$DIR" -type f \
+      \( -iname '*.jpg' -o -iname '*.jpeg' -o -iname '*.png' -o -iname '*.webp' \) \
+      | ${pkgs.coreutils}/bin/sort)
+
+    [ "''${#FILES[@]}" -gt 0 ] || exit 0
+
+    now=$(${pkgs.coreutils}/bin/date +%s)
+    idx=$(( (now / INTERVAL) % ''${#FILES[@]} ))
+    img="''${FILES[$idx]}"
+
+    # Plasma JS: set same static image on every desktop
+    js='var ds = desktops();
+        for (var i = 0; i < ds.length; ++i) {
+          var d = ds[i];
+          d.wallpaperPlugin = "org.kde.image";
+          d.currentConfigGroup = ["Wallpaper","org.kde.image","General"];
+          d.writeConfig("Image", "file://'"$img"'" );
+        }'
+    ${pkgs.qt6.qttools}/bin/qdbus org.kde.plasmashell /PlasmaShell org.kde.PlasmaShell.evaluateScript "$js"
+  '';
 in {
   programs.plasma = {
     enable = true;
@@ -9,14 +38,15 @@ in {
 
     workspace.lookAndFeel = "com.valve.vgui.desktop";
 
-    # Desktop & lock screen slideshows — 15 minutes
-    workspace.wallpaperSlideShow = {
-      path     = wpDir;
-      interval = 900;
-    };
+    # IMPORTANT: Do NOT use Plasma's slideshow for the desktop; our timer drives it.
+    # Provide any static fallback image; the timer will immediately override it at login.
+    workspace.wallpaper =
+      "${pkgs.kdePackages.plasma-workspace-wallpapers}/share/wallpapers/Patak/contents/images/1920x1080.jpg";
+
+    # Lock screen can keep using slideshow (independent of desktop sync)
     kscreenlocker.appearance.wallpaperSlideShow = {
       path     = wpDir;
-      interval = 900;
+      interval = intervalS;
     };
 
     # Night Light
@@ -30,6 +60,7 @@ in {
       transitionTime    = 30;
     };
 
+    # Panel layout (unchanged)
     panels = lib.mkForce [
       {
         screen   = "all";
@@ -74,17 +105,14 @@ in {
               popupHeight   = 200;
               popupWidth    = 210;
 
-              # Face + title
               "Appearance/chartFace" = "org.kde.ksysguard.linechart";
               "Appearance/title"     = "Network Speed";
 
-              # Sensors
               "Sensors/highPrioritySensorIds" = [
                 "network/all/download"
                 "network/all/upload"
               ];
 
-              # Per-sensor colors
               "SensorColors/network/all/download" = "0,255,255";
               "SensorColors/network/all/upload"   = "170,0,255";
             };
@@ -119,10 +147,9 @@ in {
               "Appearance/chartFace" = "org.kde.ksysguard.piechart";
               "Appearance/title"     = "Individual GPU Core Usage";
 
-              # Inner grid face + sensors
-              "FaceGrid/Appearance/chartFace"      = "org.kde.ksysguard.linechart";
-              "FaceGrid/Appearance/showTitle"      = false;
-              "FaceGrid/Sensors/highPrioritySensorIds" = [ "gpu/gpu1/usage" ];
+              "FaceGrid/Appearance/chartFace"           = "org.kde.ksysguard.linechart";
+              "FaceGrid/Appearance/showTitle"           = false;
+              "FaceGrid/Sensors/highPrioritySensorIds"  = [ "gpu/gpu1/usage" ];
 
               "Sensors/highPrioritySensorIds" = [
                 "gpu/gpu1/usedVram"
@@ -155,13 +182,9 @@ in {
             };
           }
 
-          # Separator
           "org.kde.plasma.marginsseparator"
-
-          # System Tray
           "org.kde.plasma.systemtray"
 
-          # Digital Clock
           {
             name = "org.kde.plasma.digitalclock";
             config = {
@@ -171,11 +194,36 @@ in {
             };
           }
 
-          # Show Desktop
           "org.kde.plasma.showdesktop"
         ];
       }
     ];
+
+    # Run once at login so you start in sync immediately (after Plasma init)
+    startup.desktopScript."sync-wallpapers-on-login" = {
+      text = ''"${syncWallpapers}/bin/sync-wallpapers"'';
+      priority = 3; # after other Plasma startup scripts
+    };
+  };
+
+  # Timer/service to update every intervalS seconds (keeps all monitors in lockstep)
+  systemd.user.services.sync-wallpapers = {
+    Unit.Description = "Sync KDE wallpapers across monitors";
+    Service = {
+      Type = "oneshot";
+      ExecStart = "${syncWallpapers}/bin/sync-wallpapers";
+    };
+    Install.WantedBy = [ "default.target" ];
+  };
+
+  systemd.user.timers.sync-wallpapers = {
+    Unit.Description = "Timer for synced wallpapers";
+    Timer = {
+      OnBootSec = "7s";
+      OnUnitActiveSec = "${toString intervalS}s";
+      AccuracySec = "1s";
+    };
+    Install.WantedBy = [ "timers.target" ];
   };
 
   # VSCodium desktop entry override
