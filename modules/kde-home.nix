@@ -93,6 +93,8 @@ in {
                 "preferred://filemanager"
                 "applications:org.strawberrymusicplayer.strawberry.desktop"
               ];
+              "General/sortingStrategy"   = 0;
+              "General/separateLaunchers" = true;
             };
           }
 
