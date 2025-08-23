@@ -43,6 +43,12 @@ in {
     workspace.wallpaper =
       "${pkgs.kdePackages.plasma-workspace-wallpapers}/share/wallpapers/Patak/contents/images/1920x1080.jpg";
 
+    # Desktop & lock screen slideshows — 15 minutes
+    # workspace.wallpaperSlideShow = { # uncomment this block if you want to use the native slideshow, but wallpapers won't be synced
+    #   path     = wpDir;
+    #   interval = 900;
+    # };
+    
     # Lock screen can keep using slideshow (independent of desktop sync)
     kscreenlocker.appearance.wallpaperSlideShow = {
       path     = wpDir;
