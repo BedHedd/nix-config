@@ -92,6 +92,7 @@ in {
                 "preferred://browser"
                 "preferred://filemanager"
                 "applications:org.strawberrymusicplayer.strawberry.desktop"
+                "applications:steam.desktop"
               ];
               "General/sortingStrategy"   = 0;
               "General/separateLaunchers" = true;
