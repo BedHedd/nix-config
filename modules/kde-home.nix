@@ -52,8 +52,13 @@ in {
     # Verbatim KConfig mapped to your latest snippet
     configFile."plasma-org.kde.plasma.desktop-appletsrc" = {
       # Actions
-      "[Containments][346][Applets][349][Configuration][General]".launchers = 
-        "preferred://browser,preferred://filemanager,applications:org.strawberrymusicplayer.strawberry.desktop";
+      "[Containments][346][Applets][349][Configuration][General]" = {
+        sortingStrategy   = 0;   # 0 = Manual
+        separateLaunchers = true;
+        launchers =
+          "preferred://browser,preferred://filemanager,applications:org.strawberrymusicplayer.strawberry.desktop";
+      };
+      
       "[ActionPlugins][0]"."MiddleButton;NoModifier" = "org.kde.paste";
       "[ActionPlugins][0]"."RightButton;NoModifier"  = "org.kde.contextmenu";
       "[ActionPlugins][1]"."RightButton;NoModifier"  = "org.kde.contextmenu";
