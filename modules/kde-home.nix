@@ -30,7 +30,6 @@ in {
       transitionTime    = 30;
     };
 
-    # Panel cloned from your appletsrc (Containment 98)
     panels = lib.mkForce [
       {
         screen   = "all";
@@ -40,25 +39,25 @@ in {
         hiding   = "dodgewindows";
 
         widgets = [
-          # Kickoff (99)
+          # Kickoff
           {
             name = "org.kde.plasma.kickoff";
             config = {
-              PreloadWeight = 100;
-              popupHeight   = 508;
-              popupWidth    = 647;
-              General.icon  = "distributor-logo-steamdeck";
+              PreloadWeight   = 100;
+              popupHeight     = 508;
+              popupWidth      = 647;
+              "General/icon"  = "distributor-logo-steamdeck";
             };
           }
 
-          # Pager (100)
+          # Pager
           "org.kde.plasma.pager"
 
-          # Icon Tasks (101)
+          # Icon Tasks
           {
             name = "org.kde.plasma.icontasks";
             config = {
-              General.launchers = [
+              "General/launchers" = [
                 "preferred://browser"
                 "preferred://filemanager"
                 "applications:org.strawberrymusicplayer.strawberry.desktop"
@@ -66,7 +65,7 @@ in {
             };
           }
 
-          # System Monitor: Network (126)
+          # System Monitor: Network
           {
             name = "org.kde.plasma.systemmonitor.net";
             config = {
@@ -76,24 +75,22 @@ in {
               popupWidth    = 210;
 
               # Face + title
-              "org.kde.ksysguard.linechart/General" = {
-                title     = "Network Speed";
-                chartFace = "org.kde.ksysguard.linechart";
-              };
+              "Appearance/chartFace" = "org.kde.ksysguard.linechart";
+              "Appearance/title"     = "Network Speed";
 
               # Sensors
-              Sensors.highPrioritySensorIds = [
+              "Sensors/highPrioritySensorIds" = [
                 "network/all/download"
                 "network/all/upload"
               ];
 
               # Per-sensor colors
-              SensorColors."network/all/download" = "0,255,255";
-              SensorColors."network/all/upload"   = "170,0,255";
+              "SensorColors/network/all/download" = "0,255,255";
+              "SensorColors/network/all/upload"   = "170,0,255";
             };
           }
 
-          # System Monitor: CPU cores (123)
+          # System Monitor: CPU cores
           {
             name = "org.kde.plasma.systemmonitor.cpucore";
             config = {
@@ -102,19 +99,15 @@ in {
               popupHeight   = 386;
               popupWidth    = 306;
 
-              "org.kde.ksysguard.barchart/General" = {
-                title     = "Individual Core Usage";
-                chartFace = "org.kde.ksysguard.barchart";
-              };
+              "Appearance/chartFace" = "org.kde.ksysguard.barchart";
+              "Appearance/title"     = "Individual Core Usage";
 
-              Sensors = {
-                highPrioritySensorIds = [ "cpu/cpu.*/usage" ];
-                totalSensors          = [ "cpu/all/usage" ];
-              };
+              "Sensors/highPrioritySensorIds" = [ "cpu/cpu.*/usage" ];
+              "Sensors/totalSensors"          = [ "cpu/all/usage" ];
             };
           }
 
-          # System Monitor: GPU “cores” (124)
+          # System Monitor: GPU “cores”
           {
             name = "org.kde.plasma.systemmonitor.cpucore";
             config = {
@@ -123,34 +116,26 @@ in {
               popupHeight   = 306;
               popupWidth    = 271;
 
-              "org.kde.ksysguard.piechart/General" = {
-                title     = "Individual GPU Core Usage";
-                chartFace = "org.kde.ksysguard.piechart";
-              };
+              "Appearance/chartFace" = "org.kde.ksysguard.piechart";
+              "Appearance/title"     = "Individual GPU Core Usage";
 
-              # Grid face inside popup
-              FaceGrid = {
-                "org.kde.ksysguard.linechart/General" = {
-                  chartFace = "org.kde.ksysguard.linechart";
-                  showTitle = false;
-                };
-                Sensors.highPrioritySensorIds = [ "gpu/gpu1/usage" ];
-              };
+              # Inner grid face + sensors
+              "FaceGrid/Appearance/chartFace"      = "org.kde.ksysguard.linechart";
+              "FaceGrid/Appearance/showTitle"      = false;
+              "FaceGrid/Sensors/highPrioritySensorIds" = [ "gpu/gpu1/usage" ];
 
-              Sensors = {
-                highPrioritySensorIds = [
-                  "gpu/gpu1/usedVram"
-                  "gpu/gpu1/usage"
-                  "gpu/gpu1/coreFrequency"
-                  "gpu/gpu1/fan1"
-                  "gpu/gpu1/temperature"
-                ];
-                totalSensors = [ "cpu/all/usage" ];
-              };
+              "Sensors/highPrioritySensorIds" = [
+                "gpu/gpu1/usedVram"
+                "gpu/gpu1/usage"
+                "gpu/gpu1/coreFrequency"
+                "gpu/gpu1/fan1"
+                "gpu/gpu1/temperature"
+              ];
+              "Sensors/totalSensors" = [ "cpu/all/usage" ];
             };
           }
 
-          # System Monitor: Memory (125)
+          # System Monitor: Memory
           {
             name = "org.kde.plasma.systemmonitor.memory";
             config = {
@@ -159,38 +144,34 @@ in {
               popupHeight   = 240;
               popupWidth    = 244;
 
-              "org.kde.ksysguard.piechart/General" = {
-                title     = "Memory Usage";
-                chartFace = "org.kde.ksysguard.piechart";
-              };
+              "Appearance/chartFace" = "org.kde.ksysguard.piechart";
+              "Appearance/title"     = "Memory Usage";
 
-              Sensors = {
-                highPrioritySensorIds = [ "memory/physical/used" ];
-                lowPrioritySensorIds  = [ "memory/physical/total" ];
-                totalSensors          = [ "memory/physical/usedPercent" ];
-              };
+              "Sensors/highPrioritySensorIds" = [ "memory/physical/used" ];
+              "Sensors/lowPrioritySensorIds"  = [ "memory/physical/total" ];
+              "Sensors/totalSensors"          = [ "memory/physical/usedPercent" ];
 
-              SensorColors."memory/physical/used" = "0,0,255";
+              "SensorColors/memory/physical/used" = "0,0,255";
             };
           }
 
-          # Separator (102)
+          # Separator
           "org.kde.plasma.marginsseparator"
 
-          # System Tray (103)
+          # System Tray
           "org.kde.plasma.systemtray"
 
-          # Digital Clock (116)
+          # Digital Clock
           {
             name = "org.kde.plasma.digitalclock";
             config = {
               popupHeight = 400;
               popupWidth  = 560;
-              Appearance.fontWeight = 400;
+              "Appearance/fontWeight" = 400;
             };
           }
 
-          # Show Desktop (117)
+          # Show Desktop
           "org.kde.plasma.showdesktop"
         ];
       }
