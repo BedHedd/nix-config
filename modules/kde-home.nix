@@ -1,7 +1,7 @@
 # modules/kde-home.nix
 { config, lib, pkgs, plasma-manager, ... }:
 let
-  wpDir = "${config.home.homeDirectory}/Pictures/desktop_backgrounds";
+  wpDir = "${config.home.homeDirectory}/Pictures/desktop backgrounds";
 in {
   programs.plasma = {
     enable = true;
@@ -42,7 +42,7 @@ in {
         widgets = [
           # Kickoff (99)
           {
-            type = "org.kde.plasma.kickoff";
+            widget = "org.kde.plasma.kickoff";
             config = {
               PreloadWeight = 100;
               popupHeight   = 508;
@@ -52,23 +52,21 @@ in {
           }
 
           # Pager (100)
-          { type = "org.kde.plasma.pager"; }
+          "org.kde.plasma.pager"
 
           # Icon Tasks (101) — KDE preferred handlers + Strawberry
           {
-            type = "org.kde.plasma.icontasks";
-            config = {
-              General.launchers = [
-                "preferred://browser"
-                "preferred://filemanager"
-                "applications:org.strawberrymusicplayer.strawberry.desktop"
-              ];
-            };
+            widget = "org.kde.plasma.icontasks";
+            config.General.launchers = [
+              "preferred://browser"
+              "preferred://filemanager"
+              "applications:org.strawberrymusicplayer.strawberry.desktop"
+            ];
           }
 
           # System Monitor: Network (126)
           {
-            type = "org.kde.plasma.systemmonitor.net";
+            widget = "org.kde.plasma.systemmonitor.net";
             config = {
               CurrentPreset = "org.kde.plasma.systemmonitor";
               PreloadWeight = 90;
@@ -89,7 +87,7 @@ in {
 
           # System Monitor: CPU cores (123)
           {
-            type = "org.kde.plasma.systemmonitor.cpucore";
+            widget = "org.kde.plasma.systemmonitor.cpucore";
             config = {
               CurrentPreset = "org.kde.plasma.systemmonitor";
               PreloadWeight = 65;
@@ -108,7 +106,7 @@ in {
 
           # System Monitor: GPU “cores” (124)
           {
-            type = "org.kde.plasma.systemmonitor.cpucore";
+            widget = "org.kde.plasma.systemmonitor.cpucore";
             config = {
               CurrentPreset = "org.kde.plasma.systemmonitor";
               PreloadWeight = 100;
@@ -140,7 +138,7 @@ in {
 
           # System Monitor: Memory (125)
           {
-            type = "org.kde.plasma.systemmonitor.memory";
+            widget = "org.kde.plasma.systemmonitor.memory";
             config = {
               CurrentPreset = "org.kde.plasma.systemmonitor";
               PreloadWeight = 95;
@@ -160,14 +158,14 @@ in {
           }
 
           # Separator (102)
-          { type = "org.kde.plasma.marginsseparator"; }
+          "org.kde.plasma.marginsseparator"
 
           # System Tray (103)
-          { type = "org.kde.plasma.systemtray"; }
+          "org.kde.plasma.systemtray"
 
           # Digital Clock (116)
           {
-            type = "org.kde.plasma.digitalclock";
+            widget = "org.kde.plasma.digitalclock";
             config = {
               popupHeight = 400;
               popupWidth  = 560;
@@ -176,7 +174,7 @@ in {
           }
 
           # Show Desktop (117)
-          { type = "org.kde.plasma.showdesktop"; }
+          "org.kde.plasma.showdesktop"
         ];
       }
     ];
