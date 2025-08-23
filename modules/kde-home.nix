@@ -1,7 +1,7 @@
 # modules/kde-home.nix
 { config, lib, pkgs, plasma-manager, ... }:
 let
-  wpDir = "${config.home.homeDirectory}/Pictures/desktop_backgrounds";
+  wpDir = "${config.home.homeDirectory}/Pictures/desktop backgrounds";
 in {
   programs.plasma = {
     enable = true;
