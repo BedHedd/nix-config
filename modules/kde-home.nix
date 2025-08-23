@@ -139,42 +139,6 @@ in {
         "cpu/cpu15/usage" = "149,99,49";
       };
 
-      # System Monitor: second cpucore instance (298) — GPU-focused
-      "[Containments][292][Applets][298]".plugin = "org.kde.plasma.systemmonitor.cpucore";
-      "[Containments][292][Applets][298][Configuration]".CurrentPreset = "org.kde.plasma.systemmonitor";
-      "[Containments][292][Applets][298][Configuration]".PreloadWeight = 65;
-      "[Containments][292][Applets][298][Configuration]".popupHeight   = 240;
-      "[Containments][292][Applets][298][Configuration]".popupWidth    = 271;
-      "[Containments][292][Applets][298][Configuration][Appearance]".chartFace = "org.kde.ksysguard.piechart";
-      "[Containments][292][Applets][298][Configuration][Appearance]".title     = "Individual Core Usage";
-      "[Containments][292][Applets][298][Configuration][ConfigDialog]".DialogHeight = 540;
-      "[Containments][292][Applets][298][Configuration][ConfigDialog]".DialogWidth  = 720;
-      "[Containments][292][Applets][298][Configuration][Sensors]".highPrioritySensorIds =
-        ''["gpu/gpu1/usage","gpu/gpu1/usedVram"]'';
-      "[Containments][292][Applets][298][Configuration][Sensors]".totalSensors =
-        ''["cpu/all/usage"]'';
-      "[Containments][292][Applets][298][Configuration][SensorColors]" = {
-        "cpu/cpu.*/usage"  = "149,136,49";
-        "cpu/cpu0/usage"   = "149,136,49";
-        "cpu/cpu1/usage"   = "125,149,49";
-        "cpu/cpu2/usage"   = "87,149,49";
-        "cpu/cpu3/usage"   = "50,149,49";
-        "cpu/cpu4/usage"   = "49,149,86";
-        "cpu/cpu5/usage"   = "49,149,124";
-        "cpu/cpu6/usage"   = "49,137,149";
-        "cpu/cpu7/usage"   = "49,100,149";
-        "cpu/cpu8/usage"   = "49,62,149";
-        "cpu/cpu9/usage"   = "74,49,149";
-        "cpu/cpu10/usage"  = "111,49,149";
-        "cpu/cpu11/usage"  = "149,49,149";
-        "cpu/cpu12/usage"  = "149,49,112";
-        "cpu/cpu13/usage"  = "149,49,75";
-        "cpu/cpu14/usage"  = "149,61,49";
-        "cpu/cpu15/usage"  = "149,99,49";
-        "gpu/gpu1/usage"   = "49,149,51";
-        "gpu/gpu1/usedVram"= "49,149,94";
-      };
-
       # Memory (299)
       "[Containments][292][Applets][299]".plugin = "org.kde.plasma.systemmonitor.memory";
       "[Containments][292][Applets][299][Configuration]".CurrentPreset = "org.kde.plasma.systemmonitor";
