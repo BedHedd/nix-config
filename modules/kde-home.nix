@@ -6,66 +6,183 @@ in {
   programs.plasma = {
     enable = true;
     overrideConfig = true;
+
     workspace.lookAndFeel = "com.valve.vgui.desktop";
 
+    # Desktop & lock screen slideshows — 15 minutes
     workspace.wallpaperSlideShow = {
       path     = wpDir;
-      interval = 900; # 15 minutes
+      interval = 900;
     };
-
     kscreenlocker.appearance.wallpaperSlideShow = {
       path     = wpDir;
       interval = 900;
     };
 
+    # Night Light
     kwin.nightLight = {
       enable = true;
-
-      # Pick ONE of the following modes ↓
-
-      ## 1. Always-on (“constant”)
-      # mode = "constant";
-
-      ## 2. Follow sunrise/sunset for your place (“location”)
       mode = "location";
-      location.latitude  = "41.8781";   # ≈ Chicago – tweak if you’re elsewhere
+      location.latitude  = "41.8781";
       location.longitude = "-87.6298";
+      temperature.day   = 6500;
+      temperature.night = 4500;
+      transitionTime    = 30;
+    };
 
-      ## 3. Fixed schedule (“times”)
-      # mode = "times";
-      # time.morning = "06:30";  # when Night Light turns *off*
-      # time.evening = "19:30";  # when it turns *on*
-
-      # Optional fine-tuning
-      temperature.day   = 6500;  # K
-      temperature.night = 4500;  # K
-      transitionTime    = 30;    # minutes for the fade
-      };
-
+    # Panel cloned from your appletsrc (Containment 98)
     panels = lib.mkForce [
       {
-        screen = "all";
+        screen   = "all";
         location = "bottom";
         height   = 64;
         floating = false;
-        # hiding   = "autoHide";
-        # visibility = "autohide";
         hiding   = "dodgewindows";
 
         widgets = [
-          "org.kde.plasma.kickoff"
-          "org.kde.plasma.pager"
-          "org.kde.plasma.icontasks"
-          "org.kde.plasma.marginsseparator"
-          "org.kde.plasma.systemtray"
-          "org.kde.plasma.digitalclock"
-          "org.kde.plasma.showdesktop"
+          # Kickoff (99)
+          {
+            type = "org.kde.plasma.kickoff";
+            config = {
+              PreloadWeight = 100;
+              popupHeight   = 508;
+              popupWidth    = 647;
+              General.icon  = "distributor-logo-steamdeck";
+            };
+          }
+
+          # Pager (100)
+          { type = "org.kde.plasma.pager"; }
+
+          # Icon Tasks (101) — KDE preferred handlers + Strawberry
+          {
+            type = "org.kde.plasma.icontasks";
+            config = {
+              General.launchers = [
+                "preferred://browser"
+                "preferred://filemanager"
+                "applications:org.strawberrymusicplayer.strawberry.desktop"
+              ];
+            };
+          }
+
+          # System Monitor: Network (126)
+          {
+            type = "org.kde.plasma.systemmonitor.net";
+            config = {
+              CurrentPreset = "org.kde.plasma.systemmonitor";
+              PreloadWeight = 90;
+              popupHeight   = 200;
+              popupWidth    = 210;
+              Appearance = {
+                chartFace = "org.kde.ksysguard.linechart";
+                title     = "Network Speed";
+              };
+              Sensors.highPrioritySensorIds = [
+                "network/all/download"
+                "network/all/upload"
+              ];
+              SensorColors."network/all/download" = "0,255,255";
+              SensorColors."network/all/upload"   = "170,0,255";
+            };
+          }
+
+          # System Monitor: CPU cores (123)
+          {
+            type = "org.kde.plasma.systemmonitor.cpucore";
+            config = {
+              CurrentPreset = "org.kde.plasma.systemmonitor";
+              PreloadWeight = 65;
+              popupHeight   = 386;
+              popupWidth    = 306;
+              Appearance = {
+                chartFace = "org.kde.ksysguard.barchart";
+                title     = "Individual Core Usage";
+              };
+              Sensors = {
+                highPrioritySensorIds = [ "cpu/cpu.*/usage" ];
+                totalSensors          = [ "cpu/all/usage" ];
+              };
+            };
+          }
+
+          # System Monitor: GPU “cores” (124)
+          {
+            type = "org.kde.plasma.systemmonitor.cpucore";
+            config = {
+              CurrentPreset = "org.kde.plasma.systemmonitor";
+              PreloadWeight = 100;
+              popupHeight   = 306;
+              popupWidth    = 271;
+              Appearance = {
+                chartFace = "org.kde.ksysguard.piechart";
+                title     = "Individual GPU Core Usage";
+              };
+              FaceGrid = {
+                Appearance = {
+                  chartFace = "org.kde.ksysguard.linechart";
+                  showTitle = false;
+                };
+                Sensors.highPrioritySensorIds = [ "gpu/gpu1/usage" ];
+              };
+              Sensors = {
+                highPrioritySensorIds = [
+                  "gpu/gpu1/usedVram"
+                  "gpu/gpu1/usage"
+                  "gpu/gpu1/coreFrequency"
+                  "gpu/gpu1/fan1"
+                  "gpu/gpu1/temperature"
+                ];
+                totalSensors = [ "cpu/all/usage" ];
+              };
+            };
+          }
+
+          # System Monitor: Memory (125)
+          {
+            type = "org.kde.plasma.systemmonitor.memory";
+            config = {
+              CurrentPreset = "org.kde.plasma.systemmonitor";
+              PreloadWeight = 95;
+              popupHeight   = 240;
+              popupWidth    = 244;
+              Appearance = {
+                chartFace = "org.kde.ksysguard.piechart";
+                title     = "Memory Usage";
+              };
+              Sensors = {
+                highPrioritySensorIds = [ "memory/physical/used" ];
+                lowPrioritySensorIds  = [ "memory/physical/total" ];
+                totalSensors          = [ "memory/physical/usedPercent" ];
+              };
+              SensorColors."memory/physical/used" = "0,0,255";
+            };
+          }
+
+          # Separator (102)
+          { type = "org.kde.plasma.marginsseparator"; }
+
+          # System Tray (103)
+          { type = "org.kde.plasma.systemtray"; }
+
+          # Digital Clock (116)
+          {
+            type = "org.kde.plasma.digitalclock";
+            config = {
+              popupHeight = 400;
+              popupWidth  = 560;
+              Appearance.fontWeight = 400;
+            };
+          }
+
+          # Show Desktop (117)
+          { type = "org.kde.plasma.showdesktop"; }
         ];
       }
     ];
-  };  
-  # Override Kickoff’s icon at the KConfig level
-  # 1 ▸ the launcher itself
+  };
+
+  # VSCodium desktop entry override
   xdg.desktopEntries.vscodium = {
     name        = "VSCodium";
     genericName = "Source-code Editor";
@@ -76,14 +193,10 @@ in {
     terminal    = false;
   };
 
-  # 2 ▸ MIME associations (***note the path***)
+  # MIME associations
   xdg.mimeApps = {
     enable = true;
-
-    associations.added."inode/directory"   = [ "vscodium.desktop" ];
-    defaultApplications."inode/directory"  = [ "org.kde.dolphin.desktop" ];
+    associations.added."inode/directory"  = [ "vscodium.desktop" ];
+    defaultApplications."inode/directory" = [ "org.kde.dolphin.desktop" ];
   };
-
 }
-
-
