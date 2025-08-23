@@ -137,33 +137,6 @@ in {
             };
           }
 
-          # System Monitor: GPU “cores”
-          {
-            name = "org.kde.plasma.systemmonitor.cpucore";
-            config = {
-              CurrentPreset = "org.kde.plasma.systemmonitor";
-              PreloadWeight = 100;
-              popupHeight   = 306;
-              popupWidth    = 271;
-
-              "Appearance/chartFace" = "org.kde.ksysguard.piechart";
-              "Appearance/title"     = "Individual GPU Core Usage";
-
-              "FaceGrid/Appearance/chartFace"           = "org.kde.ksysguard.linechart";
-              "FaceGrid/Appearance/showTitle"           = false;
-              "FaceGrid/Sensors/highPrioritySensorIds"  = [ "gpu/gpu1/usage" ];
-
-              "Sensors/highPrioritySensorIds" = [
-                "gpu/gpu1/usedVram"
-                "gpu/gpu1/usage"
-                "gpu/gpu1/coreFrequency"
-                "gpu/gpu1/fan1"
-                "gpu/gpu1/temperature"
-              ];
-              "Sensors/totalSensors" = [ "cpu/all/usage" ];
-            };
-          }
-
           # System Monitor: Memory
           {
             name = "org.kde.plasma.systemmonitor.memory";
