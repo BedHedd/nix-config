@@ -83,14 +83,24 @@ in {
         "Individual Core Usage";
 
       # System Monitor: GPU “cores”
-      "Containments][98][Applets][124][Configuration][Appearance".chartFace =
-        "org.kde.ksysguard.piechart";
-      "Containments][98][Applets][124][Configuration][Appearance".title =
-        "Individual GPU Core Usage";
-      "Containments][98][Applets][124][Configuration][FaceGrid][Appearance".chartFace =
-        "org.kde.ksysguard.linechart";
-      "Containments][98][Applets][124][Configuration][FaceGrid][Appearance".showTitle =
-        "false";
+      "Containments][98][Applets][124][Configuration][Appearance".chartFace = "org.kde.ksysguard.piechart";
+      "Containments][98][Applets][124][Configuration][Appearance".title     = "Individual GPU Core Usage";
+
+      # Use a generic GPU regex so it works whether your card shows as gpu0 or gpu1
+      "Containments][98][Applets][124][Configuration][Sensors".highPrioritySensorIds =
+        ''["gpu/gpu.*/usage","gpu/gpu.*/temperature"]'';
+      "Containments][98][Applets][124][Configuration][Sensors".totalSensors =
+        ''["gpu/gpu.*/usage"]'';
+
+      # FaceGrid block (the applet is using a FaceGrid internally; make it GPU too)
+      "Containments][98][Applets][124][Configuration][FaceGrid][Appearance".chartFace = "org.kde.ksysguard.linechart";
+      "Containments][98][Applets][124][Configuration][FaceGrid][Appearance".showTitle = "false";
+      "Containments][98][Applets][124][Configuration][FaceGrid][Sensors".highPrioritySensorIds =
+        ''["gpu/gpu.*/usage"]'';
+
+      # (Optional) Colors for common GPU signals — safe to keep or remove
+      "Containments][98][Applets][124][Configuration][SensorColors"."gpu/gpu.*/usage"        = "62,49,149";
+      "Containments][98][Applets][124][Configuration][SensorColors"."gpu/gpu.*/temperature"  = "93,149,49";
 
       # Memory applet
       "Containments][98][Applets][125][Configuration][Appearance".chartFace =
