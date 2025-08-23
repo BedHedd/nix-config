@@ -74,7 +74,7 @@ in {
       "[Containments][292]".activityId   = "";
       "[Containments][292]".formfactor   = 2;
       "[Containments][292]".immutability = 1;
-      "[Containments][292]".lastScreen[$i] = 0;
+      "[Containments][292]".lastScreen = 0;
       "[Containments][292]".location     = 4;
       "[Containments][292]".plugin       = "org.kde.panel";
       "[Containments][292]".wallpaperplugin = "org.kde.image";
