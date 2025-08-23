@@ -33,7 +33,7 @@ in {
     # Panel cloned from your appletsrc (Containment 98)
     panels = lib.mkForce [
       {
-        screen   = 0;             # use 0 for widest compatibility (instead of "all")
+        screen   = "all";
         location = "bottom";
         height   = 64;
         floating = false;
@@ -74,14 +74,20 @@ in {
               PreloadWeight = 90;
               popupHeight   = 200;
               popupWidth    = 210;
-              Appearance = {
-                chartFace = "org.kde.ksysguard.linechart";
+
+              # Face + title
+              "org.kde.ksysguard.linechart/General" = {
                 title     = "Network Speed";
+                chartFace = "org.kde.ksysguard.linechart";
               };
+
+              # Sensors
               Sensors.highPrioritySensorIds = [
                 "network/all/download"
                 "network/all/upload"
               ];
+
+              # Per-sensor colors
               SensorColors."network/all/download" = "0,255,255";
               SensorColors."network/all/upload"   = "170,0,255";
             };
@@ -95,10 +101,12 @@ in {
               PreloadWeight = 65;
               popupHeight   = 386;
               popupWidth    = 306;
-              Appearance = {
-                chartFace = "org.kde.ksysguard.barchart";
+
+              "org.kde.ksysguard.barchart/General" = {
                 title     = "Individual Core Usage";
+                chartFace = "org.kde.ksysguard.barchart";
               };
+
               Sensors = {
                 highPrioritySensorIds = [ "cpu/cpu.*/usage" ];
                 totalSensors          = [ "cpu/all/usage" ];
@@ -114,17 +122,21 @@ in {
               PreloadWeight = 100;
               popupHeight   = 306;
               popupWidth    = 271;
-              Appearance = {
-                chartFace = "org.kde.ksysguard.piechart";
+
+              "org.kde.ksysguard.piechart/General" = {
                 title     = "Individual GPU Core Usage";
+                chartFace = "org.kde.ksysguard.piechart";
               };
+
+              # Grid face inside popup
               FaceGrid = {
-                Appearance = {
+                "org.kde.ksysguard.linechart/General" = {
                   chartFace = "org.kde.ksysguard.linechart";
                   showTitle = false;
                 };
                 Sensors.highPrioritySensorIds = [ "gpu/gpu1/usage" ];
               };
+
               Sensors = {
                 highPrioritySensorIds = [
                   "gpu/gpu1/usedVram"
@@ -146,15 +158,18 @@ in {
               PreloadWeight = 95;
               popupHeight   = 240;
               popupWidth    = 244;
-              Appearance = {
-                chartFace = "org.kde.ksysguard.piechart";
+
+              "org.kde.ksysguard.piechart/General" = {
                 title     = "Memory Usage";
+                chartFace = "org.kde.ksysguard.piechart";
               };
+
               Sensors = {
                 highPrioritySensorIds = [ "memory/physical/used" ];
                 lowPrioritySensorIds  = [ "memory/physical/total" ];
                 totalSensors          = [ "memory/physical/usedPercent" ];
               };
+
               SensorColors."memory/physical/used" = "0,0,255";
             };
           }
