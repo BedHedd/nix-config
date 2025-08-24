@@ -21,6 +21,7 @@
     "org/guake/style/background" = {
       transparency = 79;
     };
+    
     "org/guake/keybindings/global" = {
       show-hide = "<Super>grave";
     };
