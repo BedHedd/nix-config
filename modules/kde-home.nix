@@ -57,6 +57,19 @@ in {
       interval = intervalS;
     };
 
+    shortcuts = {
+      kwin = {
+        # Keep only Alt+` and drop Meta+`
+        "Walk Through Windows of Current Application" = [ "Alt+`" ];
+        "Walk Through Windows of Current Application (Reverse)" = [ "Alt+~" ];
+
+        # If these “Alternative” bindings exist on your system,
+        # clearing them ensures Super/Meta isn't grabbed anywhere:
+        "Walk Through Windows Alternative" = [ ];
+        "Walk Through Windows Alternative (Reverse)" = [ ];
+        };
+    };
+
     # Night Light
     kwin.nightLight = {
       enable = true;
