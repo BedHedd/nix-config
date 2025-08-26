@@ -31,6 +31,7 @@ let
         }'
     ${pkgs.qt6.qttools}/bin/qdbus org.kde.plasmashell /PlasmaShell org.kde.PlasmaShell.evaluateScript "$js"
   '';
+  kzLayouts = builtins.readFile ../dotfiles/xiphergrid2_kzones.json;
 in {
   programs.plasma = {
     enable = true;
@@ -67,7 +68,20 @@ in {
         # clearing them ensures Super/Meta isn't grabbed anywhere:
         "Walk Through Windows Alternative" = [ ];
         "Walk Through Windows Alternative (Reverse)" = [ ];
+        
+        extraConfig = {
+          # 1) enable the KWin script
+          "Plugins" = {
+            # If your script ID is "kzones" (it is for upstream), this is the switch:
+            kzonesEnabled = true;
+          };
+          # 2) provide the layouts JSON (the script reads its settings from kwinrc)
+          "Script-kzones" = {
+            # KZones reads the “layouts” key as JSON
+            layouts = kzLayouts;
+          };
         };
+      };
     };
 
     # Night Light

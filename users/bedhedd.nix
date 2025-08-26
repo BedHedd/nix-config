@@ -20,6 +20,7 @@ let
     vlc # media playback
     strawberry
     kdePackages.kdenlive # video editing
+    kdePackages.kzones
     krita # image manipulation
     guake
 
