@@ -31,7 +31,7 @@ let
         }'
     ${pkgs.qt6.qttools}/bin/qdbus org.kde.plasmashell /PlasmaShell org.kde.PlasmaShell.evaluateScript "$js"
   '';
-  kzLayouts = builtins.readFile ../dotfiles/xiphergrid2_kzones.json;
+  kzLayouts = builtins.toJSON (builtins.fromJSON (builtins.readFile ../dotfiles/xiphergrid2_kzones.json));
 in {
   programs.plasma = {
     enable = true;
@@ -57,6 +57,25 @@ in {
       path     = wpDir;
       interval = intervalS;
     };
+    
+    configFile = {
+      # Toggle your KWin script in [Plugins]
+      "kwinrc"."Plugins"."kzonesEnabled".value = true;
+      # Put your layouts JSON under [Script-kzones]
+      "kwinrc"."Script-kzones"."layouts".value = kzLayouts;
+    };
+
+    kwin = {
+      nightLight = {
+        enable = true;
+        mode = "location";
+        location.latitude  = "41.8781";
+        location.longitude = "-87.6298";
+        temperature.day   = 6500;
+        temperature.night = 1800;
+        transitionTime    = 30;
+      };
+    };
 
     shortcuts = {
       kwin = {
@@ -69,30 +88,7 @@ in {
         "Walk Through Windows Alternative" = [ ];
         "Walk Through Windows Alternative (Reverse)" = [ ];
         
-        extraConfig = {
-          # 1) enable the KWin script
-          "Plugins" = {
-            # If your script ID is "kzones" (it is for upstream), this is the switch:
-            kzonesEnabled = true;
-          };
-          # 2) provide the layouts JSON (the script reads its settings from kwinrc)
-          "Script-kzones" = {
-            # KZones reads the “layouts” key as JSON
-            layouts = kzLayouts;
-          };
-        };
       };
-    };
-
-    # Night Light
-    kwin.nightLight = {
-      enable = true;
-      mode = "location";
-      location.latitude  = "41.8781";
-      location.longitude = "-87.6298";
-      temperature.day   = 6500;
-      temperature.night = 1800;
-      transitionTime    = 30;
     };
 
     # Panel layout (unchanged)
