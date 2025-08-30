@@ -65,5 +65,8 @@
     };
 
     services.power-profiles-daemon.enable = !config.my.isLaptop;
+
+    services.clamav.daemon.enable = true;
+    services.clamav.updater.enable = true;
   };
 }

@@ -30,6 +30,7 @@
       tree
       fastfetch
       tealdeer
+      clamav
 
       rustdesk
 
