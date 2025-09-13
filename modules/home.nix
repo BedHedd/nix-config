@@ -43,6 +43,7 @@
       wget
       wl-clipboard
       xclip
+      usbutils
       kdePackages.kdeconnect-kde
       kdePackages.kcalc
     ];
