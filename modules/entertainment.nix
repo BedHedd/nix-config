@@ -6,5 +6,6 @@
     steam-run
     #lutris
     vlc
+    whipper
   ];
 }
