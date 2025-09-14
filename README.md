@@ -221,7 +221,7 @@ The last thing to add is home manager and plasma manager, copy and paste the fol
   home-manager.useUserPackages = true;
 
   home-manager.sharedModules = [
-    plasma-manager.homeManagerModules."plasma-manager"
+    plasma-manager.homeModules."plasma-manager"
   ];
 ```  
 #### adding a user to the machine

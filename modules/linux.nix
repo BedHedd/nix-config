@@ -26,7 +26,7 @@
 
     ####################   Home-Manager glue   ####################
     home-manager.sharedModules = [
-      plasma-manager.homeManagerModules."plasma-manager"  # provides `programs.plasma`
+      plasma-manager.homeModules."plasma-manager"  # provides `programs.plasma`
       ../modules/kde-home.nix                             # your own Plasma tweaks
     ];
 
