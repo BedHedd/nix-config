@@ -7,6 +7,5 @@
     #lutris
     vlc
     whipper
-    cyanrip
   ];
 }
