@@ -31,6 +31,9 @@ let
         }'
     ${pkgs.qt6.qttools}/bin/qdbus org.kde.plasmashell /PlasmaShell org.kde.PlasmaShell.evaluateScript "$js"
   '';
+
+  # Read your repo JSON, normalize to a single-line JSON string
+  kzLayouts = builtins.toJSON (builtins.fromJSON (builtins.readFile ../dotfiles/xiphergrid2_kzones.json));
 in {
   programs.plasma = {
     enable = true;
@@ -39,17 +42,8 @@ in {
     workspace.lookAndFeel = "com.valve.vgui.desktop";
 
     # IMPORTANT: Do NOT use Plasma's slideshow for the desktop; our timer drives it.
-    # Provide any static fallback image; the timer will immediately override it at login.
     workspace.wallpaper =
       "${pkgs.kdePackages.plasma-workspace-wallpapers}/share/wallpapers/Patak/contents/images/1920x1080.jpg";
-    
-    # Desktop & lock screen slideshows — 15 minutes
-    # workspace.wallpaperSlideShow = { # uncomment this block if you want to use the native slideshow, but wallpapers won't be synced
-    #   path     = wpDir;
-    #   interval = 900;
-    #   randomize = true;
-    #   fillMode  = "zoom";     
-    # };
 
     # Lock screen can keep using slideshow (independent of desktop sync)
     kscreenlocker.appearance.wallpaperSlideShow = {
@@ -57,28 +51,66 @@ in {
       interval = intervalS;
     };
 
+    # -------------------------
+    # KWin + KZones configuration
+    # -------------------------
+    configFile = {
+      # Enable the KZones plugin ONCE (avoid duplicates elsewhere)
+      "kwinrc"."Plugins"."kzonesEnabled".value = true;
+
+      # KZones script settings
+      "kwinrc"."Script-kzones" = {
+        # Supply your layout JSON to both keys seen in your config
+        "layouts".value     = kzLayouts;
+        "layoutsJson".value = kzLayouts;
+
+        # Match your UI settings / dump
+        # 1 == "Only target zone"
+        "zoneOverlayIndicatorDisplay".value = 1;
+
+        # Toggles reflected from your screenshot
+        "enableZoneSelector".value           = false;
+        "selectorTriggerDistance".value      = "Medium";
+
+        "enableZoneOverlay".value            = true;
+        "overlayShowWhen".value              = "startMove";       # "I start moving a window"
+        "overlayHighlightWhen".value         = "cursorOverInd";   # "My cursor is above the zone indicator"
+
+        "enableEdgeSnapping".value           = false;
+        "edgeSnapTriggerDistance".value      = "Medium";
+
+        "rememberWindowGeometries".value     = true;
+        "trackActiveLayoutPerScreen".value   = false;
+        "autoSnapNewWindows".value           = false;
+        "displayOsdMessages".value           = true;
+      };
+
+      # Optional: pin built-in KWin tiling padding from your dump
+      "kwinrc"."Tiling"."padding".value = 4;
+
+      # (Optional) If you want Xwayland scale pinned
+      # "kwinrc"."Xwayland"."Scale".value = 1;
+    };
+
+    kwin = {
+      nightLight = {
+        enable = true;
+        mode = "location";
+        location.latitude  = "41.8781";
+        location.longitude = "-87.6298";
+        temperature.day   = 6500;
+        temperature.night = 1800;
+        transitionTime    = 30;
+      };
+    };
+
     shortcuts = {
       kwin = {
-        # Keep only Alt+` and drop Meta+`
         "Walk Through Windows of Current Application" = [ "Alt+`" ];
         "Walk Through Windows of Current Application (Reverse)" = [ "Alt+~" ];
-
-        # If these “Alternative” bindings exist on your system,
-        # clearing them ensures Super/Meta isn't grabbed anywhere:
         "Walk Through Windows Alternative" = [ ];
         "Walk Through Windows Alternative (Reverse)" = [ ];
-        };
-    };    
-
-    # Night Light
-    kwin.nightLight = {
-      enable = true;
-      mode = "location";
-      location.latitude  = "41.8781";
-      location.longitude = "-87.6298";
-      temperature.day   = 6500;
-      temperature.night = 1800;
-      transitionTime    = 30;
+      };
     };
 
     # Panel layout (unchanged)
@@ -91,7 +123,6 @@ in {
         hiding   = "dodgewindows";
 
         widgets = [
-          # Kickoff
           {
             name = "org.kde.plasma.kickoff";
             config = {
@@ -101,11 +132,7 @@ in {
               "General/icon"  = "distributor-logo-steamdeck";
             };
           }
-
-          # Pager
           "org.kde.plasma.pager"
-
-          # Icon Tasks
           {
             name = "org.kde.plasma.icontasks";
             config = {
@@ -115,13 +142,10 @@ in {
                 "applications:org.strawberrymusicplayer.strawberry.desktop"
                 "applications:steam.desktop"
               ];
-
               "General/sortingStrategy"   = 0;
               "General/separateLaunchers" = true;
             };
           }
-
-          # System Monitor: Network
           {
             name = "org.kde.plasma.systemmonitor.net";
             config = {
@@ -129,21 +153,16 @@ in {
               PreloadWeight = 90;
               popupHeight   = 200;
               popupWidth    = 210;
-
               "Appearance/chartFace" = "org.kde.ksysguard.linechart";
               "Appearance/title"     = "Network Speed";
-
               "Sensors/highPrioritySensorIds" = [
                 "network/all/download"
                 "network/all/upload"
               ];
-
               "SensorColors/network/all/download" = "0,255,255";
               "SensorColors/network/all/upload"   = "170,0,255";
             };
           }
-
-          # System Monitor: CPU cores
           {
             name = "org.kde.plasma.systemmonitor.cpucore";
             config = {
@@ -151,16 +170,12 @@ in {
               PreloadWeight = 65;
               popupHeight   = 386;
               popupWidth    = 306;
-
               "Appearance/chartFace" = "org.kde.ksysguard.barchart";
               "Appearance/title"     = "Individual Core Usage";
-
               "Sensors/highPrioritySensorIds" = [ "cpu/cpu.*/usage" ];
               "Sensors/totalSensors"          = [ "cpu/all/usage" ];
             };
           }
-
-          # System Monitor: Memory
           {
             name = "org.kde.plasma.systemmonitor.memory";
             config = {
@@ -168,21 +183,16 @@ in {
               PreloadWeight = 95;
               popupHeight   = 240;
               popupWidth    = 244;
-
               "Appearance/chartFace" = "org.kde.ksysguard.piechart";
               "Appearance/title"     = "Memory Usage";
-
               "Sensors/highPrioritySensorIds" = [ "memory/physical/used" ];
               "Sensors/lowPrioritySensorIds"  = [ "memory/physical/total" ];
               "Sensors/totalSensors"          = [ "memory/physical/usedPercent" ];
-
               "SensorColors/memory/physical/used" = "0,0,255";
             };
           }
-
           "org.kde.plasma.marginsseparator"
           "org.kde.plasma.systemtray"
-
           {
             name = "org.kde.plasma.digitalclock";
             config = {
@@ -191,7 +201,6 @@ in {
               "Appearance/fontWeight" = 400;
             };
           }
-
           "org.kde.plasma.showdesktop"
         ];
       }
@@ -203,6 +212,11 @@ in {
       priority = 3; # after other Plasma startup scripts
     };
   };
+
+  # Reconfigure KWin so changes take effect without logout
+  home.activation.reconfigureKWin = lib.mkAfter ''
+    ${pkgs.qt6.qttools}/bin/qdbus org.kde.KWin /KWin reconfigure || true
+  '';
 
   # Timer/service to update every intervalS seconds (keeps all monitors in lockstep)
   systemd.user.services.sync-wallpapers = {

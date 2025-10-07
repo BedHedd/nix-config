@@ -13,33 +13,26 @@ in
   # ──────────────────────────────────────────────────────────────────────────
   programs.ssh = {
     enable = true;
+    addKeysToAgent = "yes"; 
 
     matchBlocks = {
-      # If you want it on for *all* hosts, add this catch-all first:
-      "*" = {
-        addKeysToAgent = "yes";   # valid values: "yes" | "no" | "confirm" | "ask"
-      };
-
       "github.com-primary" = {
         hostname       = "github.com";
         user           = "git";
         identityFile   = "~/.ssh/${primaryKeyFile}";
-        identitiesOnly = true;
-        # addKeysToAgent inherited from "*" above; you can override per-host if needed
+        identitiesOnly = true;       # force this key only
       };
-
       "github.com-secondary" = {
         hostname       = "github.com";
         user           = "git";
         identityFile   = "~/.ssh/${secondaryKeyFile}";
         identitiesOnly = true;
-        # addKeysToAgent inherited from "*" above
       };
     };
 
-    # Optional: keep your pinentry TTY refresh; this is verbatim ssh_config text
+    # optional: fix pinentry TTY when using gpg-agent
     extraConfig = ''
-      Match exec "gpg-connect-agent UPDATESTARTUPTTY /bye"
+      Match host * exec "gpg-connect-agent UPDATESTARTUPTTY /bye"
     '';
   };
 

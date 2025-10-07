@@ -157,7 +157,7 @@
   home-manager.useUserPackages = true;
 
   home-manager.sharedModules = [
-    plasma-manager.homeManagerModules."plasma-manager"
+    plasma-manager.homeModules."plasma-manager"
   ];
 
   # Open ports in the firewall.

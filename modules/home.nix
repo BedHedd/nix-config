@@ -30,6 +30,7 @@
       tree
       fastfetch
       tealdeer
+      clamav
 
       rustdesk
 
@@ -42,7 +43,9 @@
       wget
       wl-clipboard
       xclip
+      usbutils
       kdePackages.kdeconnect-kde
+      kdePackages.kcalc
     ];
     stateVersion = "25.05";
   };
