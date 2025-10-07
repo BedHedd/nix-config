@@ -1,1 +1,2 @@
-dotfiles/fish-config.nix merge=ours
+dotfiles/fish-config.nix        merge=ours
+dotfiles/multiple-ssh.nix       merge=ours
