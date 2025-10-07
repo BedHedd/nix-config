@@ -201,7 +201,14 @@ in {
               "Appearance/fontWeight" = 400;
             };
           }
-          "org.kde.plasma.showdesktop"
+          # "org.kde.plasma.showdesktop"
+          {
+            name = "org.kde.plasma.minimizeall";
+            config = {
+              immutability = 1;
+            };
+          }
+
         ];
       }
     ];
