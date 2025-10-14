@@ -125,7 +125,11 @@
           ms-toolsai.jupyter
           jnoortheen.nix-ide
         ];
-    };
+      };
+      userSettings = {
+        # disable smooth scrolling
+        "editor.smoothScrolling" = false;
+      };
     };
     firefox = {
       enable = true;
