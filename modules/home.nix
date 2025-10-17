@@ -129,6 +129,7 @@
         userSettings = {
           # disable smooth scrolling
           "editor.smoothScrolling" = false;
+          "notebook.lineNumbers"= "on";          
         };
       };
     };
