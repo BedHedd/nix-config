@@ -32,7 +32,7 @@
       tealdeer
       clamav
 
-      rustdesk
+      # rustdesk
 
       # dictionaries
       # aspell
@@ -125,10 +125,11 @@
           ms-toolsai.jupyter
           jnoortheen.nix-ide
         ];
-      };
-      userSettings = {
-        # disable smooth scrolling
-        "editor.smoothScrolling" = false;
+      
+        userSettings = {
+          # disable smooth scrolling
+          "editor.smoothScrolling" = false;
+        };
       };
     };
     firefox = {
