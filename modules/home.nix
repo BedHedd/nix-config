@@ -20,6 +20,15 @@
     };
   };
 
+  nix = {
+    settings.auto-optimise-store = true;
+
+    gc = {
+      automatic = true;
+      options = "--delete-older-than 30d";
+    };
+  };
+
   home = { 
     packages = with pkgs; [ 
       # handy cli packages
