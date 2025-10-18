@@ -30,45 +30,96 @@ let
          builtins.head xs;
 
   mkPngSet = name: hex:
-    pkgs.runCommand "icons-${name}" {
-      buildInputs = [ pkgs.imagemagick pkgs.librsvg pkgs.coreutils ];
-    } ''
+    pkgs.runCommand "icons-${name}" { buildInputs = [ pkgs.imagemagick pkgs.coreutils ]; } ''
       set -eu
       outdir="$out/share/icons/hicolor"
       mkdir -p "$outdir"
 
-      HEX=${lib.escapeShellArg hex}
+      IM=${pkgs.imagemagick}/bin/magick
+      ID=${pkgs.imagemagick}/bin/identify
+      CP=${pkgs.coreutils}/bin/cp
+      MKDIR=${pkgs.coreutils}/bin/mkdir
+      MKTEMP=${pkgs.coreutils}/bin/mktemp
 
-      # 1) Make a large master (do this once)
-      master="$(mktemp --suffix=.png)"
-      if ${lib.boolToString (builtins.pathExists svgPath)}; then
-        ${pkgs.librsvg}/bin/rsvg-convert -w 1024 -h 1024 ${lib.escapeShellArg svgPath} -o "$master"
-      else
-        ${pkgs.imagemagick}/bin/convert ${basePng} -resize 1024x1024 "$master"
-      fi
+      workdir="$($MKTEMP -d)"
+      master="$workdir/master.png"
+      ringMask="$workdir/ringMask.png"
+      wolfMask="$workdir/wolfMask.png"
+      tmp="$workdir/tmp.png"
 
-      # 2) Recolor ONCE at full res: broader fuzz to catch halo pixels; RGB only to preserve alpha
-      work="$(mktemp --suffix=.png)"
-      cp "$master" "$work"
+      # 0) Source image (do NOT resize yet)
+      $CP ${basePng} "$master"
+      WH="$($ID -format '%wx%h' "$master")"
+
+      # ------------------------------------------------
+      # 1) Build ring mask (union of candidate cyans)
+      # ------------------------------------------------
+      # Start with a black canvas at the same size
+      $IM -size "$WH" xc:black "$ringMask"
+
       for BLUE in ${lib.concatStringsSep " " (map (b: "'${b}'") candidateBlues)}; do
-        ${pkgs.imagemagick}/bin/convert "$work" \
-          -alpha on -channel RGB -fuzz 40% -fill "$HEX" -opaque "$BLUE" +channel \
-          "$work"
+        # White where pixels match BLUE (with fuzz), then extract alpha-ish edge and threshold
+        $IM "$master" \
+          -colorspace sRGB -fuzz 22% -fill white -opaque "$BLUE" \
+          -alpha extract -threshold 50% "$tmp"
+        # Lighten-composite into ringMask to OR the selections
+        $IM "$ringMask" "$tmp" -compose Lighten -composite "$ringMask"
       done
+      # Feather edges for smoother anti-aliasing
+      $IM "$ringMask" -morphology close disk:1 -blur 0x0.6 "$ringMask"
 
-      # Optional: clamp tiny remaining cyan halos by desaturating very-blue remnants a touch
-      ${pkgs.imagemagick}/bin/convert "$work" \
-        -alpha on -modulate 100,98,100 +alpha "$work"
+      # ----------------------------------------------------
+      # 2) Build wolf mask (near-white, low-sat & bright),
+      #    then subtract ring so we don't touch the stroke
+      # ----------------------------------------------------
+      sat="$workdir/sat.png"
+      lig="$workdir/lig.png"
+      nearWhite="$workdir/nearwhite.png"
 
-      # 3) Downscale the recolored master to all sizes (no new blue is introduced)
+      $IM "$master" -colorspace HSL -channel saturation -separate +channel "$sat"
+      $IM "$master" -colorspace HSL -channel lightness  -separate +channel "$lig"
+
+      # Low saturation (<= ~12%) AND high lightness (>= ~70%)
+      $IM "$sat" -threshold 12% -negate "$sat"
+      $IM "$lig" -threshold 70% "$lig"
+      $IM "$sat" "$lig" -compose Multiply -composite "$nearWhite"
+
+      # Subtract ring area so we don’t paint the stroke white
+      # Use MinusSrc for IM7
+      $IM "$nearWhite" "$ringMask" -compose MinusSrc -composite "$wolfMask"
+      $IM "$wolfMask" -morphology open disk:1 "$wolfMask"
+
+      # ------------------------------
+      # 3) Recolor ONLY the ring
+      # ------------------------------
+      colorLayer="$workdir/color.png"
+      $IM "$master" -fill '${hex}' -colorize 100 "$colorLayer"
+      $IM "$colorLayer" "$ringMask" -compose CopyAlpha -composite "$colorLayer"
+      recolored="$workdir/recolored.png"
+      $IM "$master" "$colorLayer" -compose Over -composite "$recolored"
+
+      # -------------------------------------
+      # 4) Force the wolf back to pure white
+      # -------------------------------------
+      whiteLayer="$workdir/white.png"
+      final="$workdir/final.png"
+      $IM "$recolored" -fill white -colorize 100 "$whiteLayer"
+      $IM "$whiteLayer" "$wolfMask" -compose CopyAlpha -composite "$whiteLayer"
+      $IM "$recolored" "$whiteLayer" -compose Over -composite "$final"
+
+      # -------------------------
+      # 5) Downscale to all sizes
+      # -------------------------
       for sz in ${lib.concatStringsSep " " (map toString sizes)}; do
         dir="$outdir/''${sz}x''${sz}/apps"
-        mkdir -p "$dir"
-        ${pkgs.imagemagick}/bin/convert "$work" \
-          -filter Lanczos -define filter:lobes=3 -resize ''${sz}x''${sz} \
+        $MKDIR -p "$dir"
+        $IM "$final" -filter Lanczos -define filter:lobes=3 \
+          -resize ''${sz}x''${sz} -unsharp 0x0.75+0.75+0.02 \
           "$dir/librewolf-${name}.png"
       done
     '';
+
+
 
   pngPersonal     = mkPngSet "personal"     colorPersonal;
   pngProfessional = mkPngSet "professional" colorProfessional;
