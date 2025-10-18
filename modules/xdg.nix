@@ -46,10 +46,6 @@
         StartupWMClass = "LibreWolf-personal";
       };
     };
-  };
-
-    
-
 
     # Example override you already had
     vscodium = {
