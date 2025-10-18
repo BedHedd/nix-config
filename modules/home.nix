@@ -2,7 +2,8 @@
 
 {
   imports = [ 
-    ./entertainment.nix 
+    ./entertainment.nix
+    ./xdg.nix 
     # ./research.nix 
     # ./work.nix 
   ];
