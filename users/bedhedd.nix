@@ -50,6 +50,8 @@ in
         ../modules/development.nix
         ../modules/guake.nix
         ../dotfiles/multiple-ssh.nix
+        ../modules/xdg-librewolf-icons.nix
+        ../modules/xdg.nix
       ];
 
       programs.fish.enable = true;

@@ -18,8 +18,6 @@
     ../modules/kde.nix
     ../modules/steamdeck-plasma-system.nix
     ../modules/entertainment.nix
-    ../modules/xdg-librewolf-icons.nix
-    ../modules/xdg.nix
   ];
 
   #######################################################################
