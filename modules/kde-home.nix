@@ -137,6 +137,8 @@ in {
             name = "org.kde.plasma.icontasks";
             config = {
               "launchers" = [
+                "applications:librewolf-master.desktop"
+                "applications:librewolf-professional.desktop"
                 "preferred://browser"
                 "preferred://filemanager"
                 "applications:org.strawberrymusicplayer.strawberry.desktop"
@@ -201,7 +203,14 @@ in {
               "Appearance/fontWeight" = 400;
             };
           }
-          "org.kde.plasma.showdesktop"
+          # "org.kde.plasma.showdesktop"
+          {
+            name = "org.kde.plasma.minimizeall";
+            config = {
+              immutability = 1;
+            };
+          }
+
         ];
       }
     ];
@@ -236,23 +245,5 @@ in {
       AccuracySec = "1s";
     };
     Install.WantedBy = [ "timers.target" ];
-  };
-
-  # VSCodium desktop entry override
-  xdg.desktopEntries.vscodium = {
-    name        = "VSCodium";
-    genericName = "Source-code Editor";
-    exec        = "codium %F";
-    icon        = "vscodium";
-    mimeType    = [ "inode/directory" ];
-    categories  = [ "Utility" "Development" "TextEditor" "IDE" ];
-    terminal    = false;
-  };
-
-  # MIME associations
-  xdg.mimeApps = {
-    enable = true;
-    associations.added."inode/directory"  = [ "vscodium.desktop" ];
-    defaultApplications."inode/directory" = [ "org.kde.dolphin.desktop" ];
   };
 }

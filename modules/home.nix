@@ -2,7 +2,7 @@
 
 {
   imports = [ 
-    ./entertainment.nix 
+    # ./entertainment.nix
     # ./research.nix 
     # ./work.nix 
   ];
@@ -20,6 +20,15 @@
     };
   };
 
+  nix = {
+    settings.auto-optimise-store = true;
+
+    gc = {
+      automatic = true;
+      options = "--delete-older-than 30d";
+    };
+  };
+
   home = { 
     packages = with pkgs; [ 
       # handy cli packages
@@ -32,7 +41,7 @@
       tealdeer
       clamav
 
-      rustdesk
+      # rustdesk
 
       # dictionaries
       # aspell
@@ -125,7 +134,13 @@
           ms-toolsai.jupyter
           jnoortheen.nix-ide
         ];
-    };
+      
+        userSettings = {
+          # disable smooth scrolling
+          "editor.smoothScrolling" = false;
+          "notebook.lineNumbers"= "on";          
+        };
+      };
     };
     firefox = {
       enable = true;
