@@ -19,26 +19,32 @@
 
   # Separate launchers (menu items you can pin to the panel)
   xdg.desktopEntries = {
-    librewolf-work = {
-      name = "LibreWolf (Professional)";
-      exec = ''env MOZ_ENABLE_WAYLAND=0 librewolf --class LibreWolf-Professional -P Work -no-remote --new-instance %u'';
-      icon = "librewolf";
-      terminal = false;
-      type = "Application";
-      categories = [ "Network" "WebBrowser" ];
-      mimeType = [ "text/html" "x-scheme-handler/http" "x-scheme-handler/https" ];
-      settings = { StartupWMClass = "LibreWolf-Work"; };
-    };
-
     librewolf-personal = {
       name = "LibreWolf (Personal)";
-      exec = ''env MOZ_ENABLE_WAYLAND=0 librewolf --class LibreWolf-Personal -P Personal -no-remote --new-instance %u'';
+      comment = "LibreWolf with the Personal profile";
+      exec = ''librewolf --name librewolf-personal -P personal --no-remote --new-instance %u'';
       icon = "librewolf";
       terminal = false;
       type = "Application";
       categories = [ "Network" "WebBrowser" ];
       mimeType = [ "text/html" "x-scheme-handler/http" "x-scheme-handler/https" ];
-      settings = { StartupWMClass = "LibreWolf-Personal"; };
+      settings = {
+        X-KDE-WaylandAppId = "librewolf-personal";
+      };
+    };
+
+    librewolf-professional = {
+      name = "LibreWolf (Professional)";
+      comment = "LibreWolf with the Professional profile";
+      exec = ''librewolf --name librewolf-professional -P professional --no-remote --new-instance %u'';
+      icon = "librewolf";
+      terminal = false;
+      type = "Application";
+      categories = [ "Network" "WebBrowser" ];
+      mimeType = [ "text/html" "x-scheme-handler/http" "x-scheme-handler/https" ];
+      settings = {
+        X-KDE-WaylandAppId = "librewolf-professional";
+      };
     };
 
     # Example override you already had
