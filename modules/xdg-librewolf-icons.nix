@@ -7,7 +7,13 @@ let
   colorMaster       = "#0e0e0e";
 
   sizes = [ 16 32 48 64 128 256 512 ];
-  candidateBlues = [ "#00acff" "#00a9e0" "#23a3dc" "#1ea0db" ];
+  candidateBlues = [
+    # originals
+    "#00acff" "#00a9e0" "#23a3dc" "#1ea0db"
+    # common ring/halo variants (lighter/darker cyans)
+    "#00b4ff" "#00bfff" "#00c0ff" "#00ccff" "#00d4ff" "#00e5ff" "#18ffff"
+    "#26c6da" "#29b6f6" "#33b5e5" "#40c4ff" "#4dd0e1" "#80deea"
+  ];
 
   # Prefer SVG if present (sharper at big sizes); else choose the largest PNG available.
   svgPath = "${pkgs.librewolf}/share/icons/hicolor/scalable/apps/librewolf.svg";
@@ -31,43 +37,36 @@ let
       outdir="$out/share/icons/hicolor"
       mkdir -p "$outdir"
 
-      # Nix-escaped values
       HEX=${lib.escapeShellArg hex}
 
-      render_base () {
-        # $1 = target size (e.g. 128)
-        # print path to a temp PNG at that size
-        sz="$1"
-        tmp="$(mktemp --suffix=.png)"
-        if ${lib.boolToString baseIsSvg}; then
-          ${pkgs.librsvg}/bin/rsvg-convert -w "$sz" -h "$sz" ${lib.escapeShellArg svgPath} -o "$tmp"
-        else
-          ${pkgs.imagemagick}/bin/convert ${basePng} -resize ''${sz}x''${sz} "$tmp"
-        fi
-        printf "%s\n" "$tmp"
-      }
+      # 1) Make a large master (do this once)
+      master="$(mktemp --suffix=.png)"
+      if ${lib.boolToString (builtins.pathExists svgPath)}; then
+        ${pkgs.librsvg}/bin/rsvg-convert -w 1024 -h 1024 ${lib.escapeShellArg svgPath} -o "$master"
+      else
+        ${pkgs.imagemagick}/bin/convert ${basePng} -resize 1024x1024 "$master"
+      fi
 
-      recolor_into () {
-        # $1 = inpng, $2 = outpng
-        inpng="$1"; outpng="$2"
-        # Work on RGB only; keep alpha untouched to avoid halos
-        work="$(mktemp --suffix=.png)"
-        cp "$inpng" "$work"
+      # 2) Recolor ONCE at full res: broader fuzz to catch halo pixels; RGB only to preserve alpha
+      work="$(mktemp --suffix=.png)"
+      cp "$master" "$work"
+      for BLUE in ${lib.concatStringsSep " " (map (b: "'${b}'") candidateBlues)}; do
+        ${pkgs.imagemagick}/bin/convert "$work" \
+          -alpha on -channel RGB -fuzz 40% -fill "$HEX" -opaque "$BLUE" +channel \
+          "$work"
+      done
 
-        # Slightly stricter fuzz to avoid re-coloring greys/whites unintentionally
-        for BLUE in ${lib.concatStringsSep " " (map (b: "'${b}'") candidateBlues)}; do
-          ${pkgs.imagemagick}/bin/convert "$work" \
-            -alpha on -channel RGB -fuzz 20% -fill "$HEX" -opaque "$BLUE" +channel \
-            "$work"
-        done
-        mv "$work" "$outpng"
-      }
+      # Optional: clamp tiny remaining cyan halos by desaturating very-blue remnants a touch
+      ${pkgs.imagemagick}/bin/convert "$work" \
+        -alpha on -modulate 100,98,100 +alpha "$work"
 
+      # 3) Downscale the recolored master to all sizes (no new blue is introduced)
       for sz in ${lib.concatStringsSep " " (map toString sizes)}; do
         dir="$outdir/''${sz}x''${sz}/apps"
         mkdir -p "$dir"
-        base_png="$(render_base "$sz")"
-        recolor_into "$base_png" "$dir/librewolf-${name}.png"
+        ${pkgs.imagemagick}/bin/convert "$work" \
+          -filter Lanczos -define filter:lobes=3 -resize ''${sz}x''${sz} \
+          "$dir/librewolf-${name}.png"
       done
     '';
 
