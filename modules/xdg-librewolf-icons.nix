@@ -1,80 +1,99 @@
 { config, lib, pkgs, ... }:
 
 let
-  # ---- helpers --------------------------------------------------------------
-  svgPath = "${pkgs.librewolf}/share/icons/hicolor/scalable/apps/librewolf.svg";
-  hasSvg  = builtins.pathExists svgPath;
-
-  # Common PNG locations shipped by many Firefox/LibreWolf builds
-  pngCandidates = map (sz: "${pkgs.librewolf}/share/icons/hicolor/${sz}/apps/librewolf.png")
-    [ "32x32" "48x48" "64x64" "128x128" "256x256" ];
-  basePng = lib.findFirst builtins.pathExists (throw "LibreWolf icon not found in ${pkgs.librewolf}") pngCandidates;
-
-  # Your colors
+  # --- Profile colors (your choices) -----------------------------------------
   colorPersonal     = "#8d4953";
   colorProfessional = "#5b7b65";
   colorMaster       = "#0e0e0e";
 
-  # Known LibreWolf blues we swap in SVGs
-  sourceBlues = [
-    "#00ACFF" "#00acff"  # your noted default
-    "#00A9E0" "#00a9e0"
-    "#23A3DC" "#23a3dc"
-    "#1EA0DB" "#1ea0db"
-  ];
+  # Sizes we’ll generate for PNG
+  sizes = [ 16 32 48 64 128 256 512 ];
 
-  # ---- SVG recolor path (preferred if present) ------------------------------
-  svgPersonal = pkgs.runCommand "librewolf-personal.svg" {}
-    ''
-      cp ${svgPath} $out
-      ${pkgs.gnused}/bin/sed -i 's/${lib.concatStringsSep "\\|" sourceBlues}/${colorPersonal}/gI' $out
-    '';
-  svgProfessional = pkgs.runCommand "librewolf-professional.svg" {}
-    ''
-      cp ${svgPath} $out
-      ${pkgs.gnused}/bin/sed -i 's/${lib.concatStringsSep "\\|" sourceBlues}/${colorProfessional}/gI' $out
-    '';
-  svgMaster = pkgs.runCommand "librewolf-master.svg" {}
-    ''
-      cp ${svgPath} $out
-      ${pkgs.gnused}/bin/sed -i 's/${lib.concatStringsSep "\\|" sourceBlues}/${colorMaster}/gI' $out
-    '';
+  # Candidate "LibreWolf blue" shades we’ll replace (case-insensitive-ish).
+  # We’ll run -opaque for each with a fuzz so slight variations are caught.
+  candidateBlues = [ "#00acff" "#00a9e0" "#23a3dc" "#1ea0db" ];
 
-  # ---- PNG recolor path (fallback) ------------------------------------------
-  # Generates a small set of sizes in hicolor; recolors the “default blue” to your color.
-  mkPngSet = name: hex: pkgs.runCommand "icons-${name}" { buildInputs = [ pkgs.imagemagick ]; }
-    ''
+  # Try stock SVG first (some builds ship it), otherwise we fall back to PNGs.
+  svgPath = "${pkgs.librewolf}/share/icons/hicolor/scalable/apps/librewolf.svg";
+  hasSvg  = builtins.pathExists svgPath;
+
+  # Find a base PNG from the hicolor tree in the package.
+  pngCandidates =
+    map (sz: "${pkgs.librewolf}/share/icons/hicolor/${sz}/apps/librewolf.png")
+      [ "256x256" "128x128" "64x64" "48x48" "32x32" ];
+  basePng =
+    let xs = builtins.filter (p: builtins.pathExists p) pngCandidates;
+    in if xs == [] then
+         throw "LibreWolf icon PNG not found under ${pkgs.librewolf}"
+       else
+         builtins.head xs;
+
+  # ===== SVG recolor (if present) ============================================
+  mkSvg = name: hex:
+    pkgs.runCommand "librewolf-${name}.svg" { } ''
       set -eu
-      outdir=$out/share/icons/hicolor
-      for sz in 32 48 64 128 256; do
-        mkdir -p "$outdir/${sz}x${sz}/apps"
-        ${pkgs.imagemagick}/bin/convert ${basePng} -resize ${"$"}{sz}x${"$"}{sz} \
-          -fuzz 20% -fill '${hex}' -opaque '#00acff' \
-          "$outdir/${sz}x${sz}/apps/librewolf-${name}.png"
-      done
-      # Also drop a 512 if you like:
-      mkdir -p "$outdir/512x512/apps"
-      ${pkgs.imagemagick}/bin/convert ${basePng} -resize 512x512 \
-        -fuzz 20% -fill '${hex}' -opaque '#00acff' \
-        "$outdir/512x512/apps/librewolf-${name}.png"
+      cp ${svgPath} "$out"
+      # Replace several likely blues with your target (case-insensitive).
+      ${pkgs.gnused}/bin/sed -E -i 's/#(00ACFF|00A9E0|23A3DC|1EA0DB)/${hex}/gI' "$out"
     '';
+
+  svgPersonal     = mkSvg "personal"     colorPersonal;
+  svgProfessional = mkSvg "professional" colorProfessional;
+  svgMaster       = mkSvg "master"       colorMaster;
+
+  # ===== PNG recolor (fallback / your current case) ==========================
+  mkPngSet = name: hex:
+    pkgs.runCommand "icons-${name}" { buildInputs = [ pkgs.imagemagick ]; } ''
+      set -eu
+      outdir="$out/share/icons/hicolor"
+
+      # Recolor helper: run -opaque for each candidate blue with fuzz.
+      recolor_png () {
+        inpng="$1"; outpng="$2"
+        tmp="$(${pkgs.coreutils}/bin/mktemp)"
+        ${pkgs.coreutils}/bin/cp "$inpng" "$tmp"
+        # Try several likely blues; 35% fuzz gives breathing room across sizes.
+        for BLUE in ${lib.concatStringsSep " " (map (b: "'${b}'") candidateBlues)}; do
+          ${pkgs.imagemagick}/bin/convert "$tmp" -fuzz 35% -fill '${hex}' -opaque "$BLUE" "$tmp"
+        done
+        ${pkgs.coreutils}/bin/mv "$tmp" "$outpng"
+      }
+
+      # Generate all sizes
+      for sz in ${lib.concatStringsSep " " (map toString sizes)}; do
+        dir="$outdir/''${sz}x''${sz}/apps"
+        ${pkgs.coreutils}/bin/mkdir -p "$dir"
+        # Resize a fresh copy, then recolor in place
+        tmpResized="$(${pkgs.coreutils}/bin/mktemp)"
+        ${pkgs.imagemagick}/bin/convert ${basePng} -resize ''${sz}x''${sz} "$tmpResized"
+        recolor_png "$tmpResized" "$dir/librewolf-${name}.png"
+      done
+    '';
+
+  pngPersonal     = mkPngSet "personal"     colorPersonal;
+  pngProfessional = mkPngSet "professional" colorProfessional;
+  pngMaster       = mkPngSet "master"       colorMaster;
+
+  # Helper: build xdg.dataFile entries for each size pointing at a derivation output
+  mkXdgPngFiles = name: drv:
+    lib.listToAttrs (map (sz: {
+      name  = "icons/hicolor/${toString sz}x${toString sz}/apps/librewolf-${name}.png";
+      value = { source = "${drv}/share/icons/hicolor/${toString sz}x${toString sz}/apps/librewolf-${name}.png"; };
+    }) sizes);
+
 in
-# ---- Expose files into your XDG icon search path ----------------------------
+# ===== Install into ~/.local/share/icons/hicolor/... =========================
 if hasSvg then
 {
+  # SVG present: install recolored SVGs
   xdg.dataFile."icons/hicolor/scalable/apps/librewolf-personal.svg".source     = svgPersonal;
   xdg.dataFile."icons/hicolor/scalable/apps/librewolf-professional.svg".source = svgProfessional;
   xdg.dataFile."icons/hicolor/scalable/apps/librewolf-master.svg".source       = svgMaster;
 }
 else
-let
-  pngPersonal     = mkPngSet "personal"     colorPersonal;
-  pngProfessional = mkPngSet "professional" colorProfessional;
-  pngMaster       = mkPngSet "master"       colorMaster;
-in
-{
-  # copy the whole generated hicolor trees
-  xdg.dataFile."icons".source = pngPersonal + "/share/icons";
-  xdg.dataFile."icons-2".source = pngProfessional + "/share/icons";
-  xdg.dataFile."icons-3".source = pngMaster + "/share/icons";
-}
+(
+  # PNG-only: install generated PNG trees (all sizes) for each profile
+  mkXdgPngFiles "personal"     pngPersonal
+  // mkXdgPngFiles "professional" pngProfessional
+  // mkXdgPngFiles "master"       pngMaster
+)
