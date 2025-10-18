@@ -30,7 +30,7 @@
       mimeType = [ "text/html" "x-scheme-handler/http" "x-scheme-handler/https" ];
       settings = {
         StartupWMClass = "LibreWolf-professional";
-      };      
+      };
     };
 
     librewolf-personal = {
@@ -42,11 +42,12 @@
       type = "Application";
       categories = [ "Network" "WebBrowser" ];
       mimeType = [ "text/html" "x-scheme-handler/http" "x-scheme-handler/https" ];
-      startupWMClass = "LibreWolf-personal";
       settings = {
         StartupWMClass = "LibreWolf-personal";
       };
     };
+  };
+
     
 
 
