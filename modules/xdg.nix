@@ -23,7 +23,7 @@
       name = "LibreWolf (Master)";
       comment = "LibreWolf with the Master profile";
       exec = ''librewolf --name librewolf-master -P master --no-remote --new-instance %u'';
-      icon = "librewolf";
+      icon = "librewolf-master";
       terminal = false;
       type = "Application";
       categories = [ "Network" "WebBrowser" ];
@@ -37,7 +37,7 @@
       name = "LibreWolf (Professional)";
       comment = "LibreWolf with the Professional profile";
       exec = ''librewolf --name librewolf-professional -P professional --no-remote --new-instance %u'';
-      icon = "librewolf";
+      icon = "librewolf-professional";
       terminal = false;
       type = "Application";
       categories = [ "Network" "WebBrowser" ];
@@ -51,7 +51,7 @@
       name = "LibreWolf (Personal)";
       comment = "LibreWolf with the Personal profile";
       exec = ''librewolf --name librewolf-personal -P personal --no-remote --new-instance %u'';
-      icon = "librewolf";
+      icon = "librewolf-personal";
       terminal = false;
       type = "Application";
       categories = [ "Network" "WebBrowser" ];
