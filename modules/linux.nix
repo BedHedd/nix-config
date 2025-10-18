@@ -17,7 +17,6 @@
   imports = [
     ../modules/kde.nix
     ../modules/steamdeck-plasma-system.nix
-    ../modules/entertainment.nix
   ];
 
   #######################################################################
@@ -29,6 +28,7 @@
     home-manager.sharedModules = [
       plasma-manager.homeModules."plasma-manager"  # provides `programs.plasma`
       ../modules/kde-home.nix                             # your own Plasma tweaks
+      ../modules/entertainment.nix
     ];
 
     ####################   Boot & kernel   ####################
