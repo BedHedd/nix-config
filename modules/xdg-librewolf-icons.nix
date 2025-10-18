@@ -19,62 +19,73 @@ let
        else
          builtins.head xs;
 
-      mkPngSet = name: hex:
-      pkgs.runCommand "icons-${name}" { buildInputs = [ pkgs.imagemagick pkgs.coreutils ]; } ''
-        set -eu
-        outdir="$out/share/icons/hicolor"
-        mkdir -p "$outdir"
+        mkPngSet = name: hex:
+        pkgs.runCommand "icons-${name}" { buildInputs = [ pkgs.imagemagick pkgs.coreutils ]; } ''
+          set -eu
+          outdir="$out/share/icons/hicolor"
+          mkdir -p "$outdir"
 
-        workdir="$(${pkgs.coreutils}/bin/mktemp -d)"
-        master="$workdir/master.png"
-        ring_mask="$workdir/ring_mask.png"
-        white_mask="$workdir/white_mask.png"
-        ring_only="$workdir/ring_only.png"
-        colored="$workdir/colored.png"
-        recolored="$workdir/recolored.png"
+          workdir="$(${pkgs.coreutils}/bin/mktemp -d)"
+          master="$workdir/master.png"
+          ring_mask="$workdir/ring_mask.png"
+          white_mask="$workdir/white_mask.png"
+          ring_only="$workdir/ring_only.png"
+          colored="$workdir/colored.png"
+          colored_rgba="$workdir/colored_rgba.png"
+          recolored="$workdir/recolored.png"
 
-        ${pkgs.coreutils}/bin/cp ${basePng} "$master"
+          ${pkgs.coreutils}/bin/cp ${basePng} "$master"
 
-        # --- Build ring mask (cyan-ish stroke only) ----------------------------
-        # Start with union of all cyan candidates, then soften/close edges.
-        ${pkgs.imagemagick}/bin/convert -size "$(${pkgs.imagemagick}/bin/identify -format '%wx%h' "$master")" xc:black "$ring_mask"
-        for BLUE in ${lib.concatStringsSep " " (map (b: "'${b}'") candidateBlues)}; do
-          ${pkgs.imagemagick}/bin/convert "$master" \
-            -colorspace sRGB -fuzz 15% -fill white -opaque "$BLUE" \
-            -alpha extract -threshold 45% mpr:one
-          ${pkgs.imagemagick}/bin/convert "$ring_mask" mpr:one -compose Lighten -composite "$ring_mask"
-        done
-        ${pkgs.imagemagick}/bin/convert "$ring_mask" -morphology close disk:1 -blur 0x0.6 "$ring_mask"
+          # --- Build ring mask by OR'ing (Lighten) all cyan candidates -----------
+          first=1
+          for BLUE in ${lib.concatStringsSep " " (map (b: "'${b}'") candidateBlues)}; do
+            tmp="$workdir/m_$(${pkgs.coreutils}/bin/mktemp -u XXXXX).png"
+            # select BLUE-ish pixels → alpha matte → binarize
+            ${pkgs.imagemagick}/bin/magick "$master" \
+              -colorspace sRGB -fuzz 15% -fill white -opaque "$BLUE" \
+              -alpha extract -threshold 45% "$tmp"
 
-        # --- Build protection mask for the wolf (white/neutral & bright) -------
-        # Low saturation AND high lightness ≈ white silhouette; clean it up a bit.
-        ${pkgs.imagemagick}/bin/convert "$master" -colorspace HSL \
-          -channel G -separate -threshold 12% mpr:sat_low       \  # low S
-          -channel B -separate -threshold 70% mpr:light_high    # high L
-        ${pkgs.imagemagick}/bin/convert mpr:sat_low mpr:light_high -compose Multiply -composite \
-          -morphology open disk:1 -blur 0x0.6 "$white_mask"
+            if [ "$first" -eq 1 ]; then
+              ${pkgs.coreutils}/bin/cp "$tmp" "$ring_mask"
+              first=0
+            else
+              ${pkgs.imagemagick}/bin/magick "$ring_mask" "$tmp" -compose Lighten -composite "$ring_mask"
+            fi
+          done
+          # soften/close edges a touch
+          ${pkgs.imagemagick}/bin/magick "$ring_mask" -morphology close disk:1 -blur 0x0.6 "$ring_mask"
 
-        # --- Keep only the ring: ring_mask minus white_mask --------------------
-        # ring_only = ring_mask AND (NOT white_mask)
-        ${pkgs.imagemagick}/bin/convert "$white_mask" -negate mpr:white_inv
-        ${pkgs.imagemagick}/bin/convert "$ring_mask" mpr:white_inv -compose Multiply -composite "$ring_only"
+          # --- Build white-protection mask (low saturation & high lightness) -----
+          # sat_low = (HSL channel G) < ~12%, light_high = (HSL channel B) > ~70%
+          sat="$workdir/sat.png"
+          light="$workdir/light.png"
+          ${pkgs.imagemagick}/bin/magick "$master" -colorspace HSL -channel G -separate +channel "$sat"
+          ${pkgs.imagemagick}/bin/magick "$master" -colorspace HSL -channel B -separate +channel "$light"
+          ${pkgs.imagemagick}/bin/magick "$sat" -threshold 12% "$sat"
+          ${pkgs.imagemagick}/bin/magick "$light" -threshold 70% "$light"
+          ${pkgs.imagemagick}/bin/magick "$sat" "$light" -compose Multiply -composite \
+            -morphology open disk:1 -blur 0x0.6 "$white_mask"
 
-        # --- Color layer with ring_only as alpha, composite over original ------
-        ${pkgs.imagemagick}/bin/convert "$master" -fill '${hex}' -colorize 100 "$colored"
-        ${pkgs.imagemagick}/bin/convert "$colored" "$ring_only" -compose CopyOpacity -composite "$colored"
-        ${pkgs.imagemagick}/bin/convert "$master" "$colored" -compose Over -composite "$recolored"
+          # ring_only = ring_mask AND (NOT white_mask)
+          ${pkgs.imagemagick}/bin/magick "$white_mask" -negate "$workdir/white_inv.png"
+          ${pkgs.imagemagick}/bin/magick "$ring_mask" "$workdir/white_inv.png" -compose Multiply -composite "$ring_only"
 
-        # --- Downscale cleanly to all sizes ------------------------------------
-        for sz in ${lib.concatStringsSep " " (map toString sizes)}; do
-          dir="$outdir/''${sz}x''${sz}/apps"
-          ${pkgs.coreutils}/bin/mkdir -p "$dir"
-          ${pkgs.imagemagick}/bin/convert "$recolored" \
-            -filter Lanczos -define filter:lobes=3 \
-            -resize ''${sz}x''${sz} \
-            -unsharp 0x0.75+0.75+0.02 \
-            "$dir/librewolf-${name}.png"
-        done
-      '';
+          # --- Make solid color layer, copy ring alpha, composite over original ---
+          ${pkgs.imagemagick}/bin/magick "$master" -fill '${hex}' -colorize 100 "$colored"
+          ${pkgs.imagemagick}/bin/magick "$colored" "$ring_only" -compose CopyOpacity -composite "$colored_rgba"
+          ${pkgs.imagemagick}/bin/magick "$master" "$colored_rgba" -compose Over -composite "$recolored"
+
+          # --- Generate all sizes from the single high-res recolor ----------------
+          for sz in ${lib.concatStringsSep " " (map toString sizes)}; do
+            dir="$outdir/''${sz}x''${sz}/apps"
+            ${pkgs.coreutils}/bin/mkdir -p "$dir"
+            ${pkgs.imagemagick}/bin/magick "$recolored" \
+              -filter Lanczos -define filter:lobes=3 \
+              -resize ''${sz}x''${sz} \
+              -unsharp 0x0.75+0.75+0.02 \
+              "$dir/librewolf-${name}.png"
+          done
+        '';
 
   pngPersonal     = mkPngSet "personal"     colorPersonal;
   pngProfessional = mkPngSet "professional" colorProfessional;
