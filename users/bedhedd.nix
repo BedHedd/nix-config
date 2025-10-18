@@ -52,6 +52,7 @@ in
         ../dotfiles/multiple-ssh.nix
         ../modules/xdg-librewolf-icons.nix
         ../modules/xdg.nix
+        ../modules/entertainment.nix
       ];
 
       programs.fish.enable = true;
