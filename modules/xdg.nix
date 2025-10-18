@@ -28,7 +28,6 @@
       type = "Application";
       categories = [ "Network" "WebBrowser" ];
       mimeType = [ "text/html" "x-scheme-handler/http" "x-scheme-handler/https" ];
-      startupWMClass = "LibreWolf-professional";
     };
 
     librewolf-personal = {
@@ -40,8 +39,12 @@
       type = "Application";
       categories = [ "Network" "WebBrowser" ];
       mimeType = [ "text/html" "x-scheme-handler/http" "x-scheme-handler/https" ];
-      startupWMClass = "LibreWolf-personal";
     };
+    
+    settings = {
+      startupWMClass = "LibreWolf-professional";
+      StartupWMClass = "LibreWolf-personal";
+      };
 
     # Example override you already had
     vscodium = {
