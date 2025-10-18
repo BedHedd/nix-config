@@ -139,6 +139,7 @@ in {
               "launchers" = [
                 "applications:librewolf-master.desktop"
                 "applications:librewolf-professional.desktop"
+                "preferred://browser"
                 "preferred://filemanager"
                 "applications:org.strawberrymusicplayer.strawberry.desktop"
                 "applications:steam.desktop"
