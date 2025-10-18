@@ -2,9 +2,7 @@
 
 {
   imports = [ 
-    ./entertainment.nix
-    ./xdg.nix
-    ./xdg-librewolf-icons.nix
+    # ./entertainment.nix
     # ./research.nix 
     # ./work.nix 
   ];
