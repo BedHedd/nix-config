@@ -137,7 +137,8 @@ in {
             name = "org.kde.plasma.icontasks";
             config = {
               "launchers" = [
-                "preferred://browser"
+                "applications:librewolf-master.desktop"
+                "applications:librewolf-professional.desktop"
                 "preferred://filemanager"
                 "applications:org.strawberrymusicplayer.strawberry.desktop"
                 "applications:steam.desktop"
