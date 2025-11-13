@@ -41,6 +41,22 @@
   fileSystems."/mnt/sda1" = {
     device  = "/dev/disk/by-uuid/027f2550-4813-20d9-ac54-fc87dc4612eb";
     fsType  = "btrfs";
+    
+
+    # Fine-tune options to taste.  Good defaults for a personal btrfs data disk:
+    options = [
+      "compress=zstd"    # transparent compression
+      "noatime"          # don’t update atime on every read
+      "ssd"              # if the drive is actually an SSD
+      # For a plug-in USB disk add:
+      # "noauto" "x-systemd.automount"
+    ];
+  };
+
+  fileSystems."/mnt/sda2" = {
+    device  = "/dev/disk/by-uuid/54547ccd-fc55-1218-ae52-f57777ecbf20";
+    fsType  = "btrfs";
+    
 
     # Fine-tune options to taste.  Good defaults for a personal btrfs data disk:
     options = [
