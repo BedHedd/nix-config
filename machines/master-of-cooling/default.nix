@@ -53,7 +53,7 @@
     ];
   };
 
-  fileSystems."/mnt/sda2" = {
+  fileSystems."/mnt/sdg1" = {
     device  = "/dev/disk/by-uuid/54547ccd-fc55-1218-ae52-f57777ecbf20";
     fsType  = "btrfs";
     
@@ -67,6 +67,16 @@
       # "noauto" "x-systemd.automount"
     ];
   };
+  
+  fileSystems."/home/bedhedd/GamezDrive" = {
+    device  = "/mnt/sdg1";
+    options = [ "bind" ];
+    depends = [ "/mnt/sdg1" ];
+  };
+  systemd.tmpfiles.rules = [
+    "z /mnt/sdg1 0755 bedhedd users -"
+  ];
+
 
   fileSystems."/home/bedhedd/Documents" = {
     device  = "/mnt/sda1/Documents";
