@@ -15,7 +15,7 @@ let
     nativeBuildInputs = [ pkgs.cmake ];
     buildInputs = [
       pkgs.obs-studio
-      pkgs.qt6.qtbase   # <- changed from pkgs.qtbase
+      pkgs.qt6.qtbase  # or pkgs.qt5.qtbase on your channel
     ];
 
     cmakeFlags = [
@@ -26,14 +26,22 @@ let
 
     dontWrapQtApps = true;
 
-    postInstall = ''
-      mkdir -p $out/{lib,share/obs/obs-plugins/}
-      mv $out/dist/obs-multi-rtmp/data $out/share/obs/obs-plugins/obs-multi-rtmp
-      mv $out/dist/obs-multi-rtmp/bin/64bit $out/lib/obs-plugins
-      rm -rf $out/dist
-    '';
+    # IMPORTANT: remove the old postInstall that moves from $out/dist
+    # CMake's default install already puts:
+    #   lib/obs-plugins/obs-multi-rtmp.so
+    #   share/obs/obs-plugins/obs-multi-rtmp/...
+    # so no extra moves needed.
+
+    meta = {
+      homepage   = "https://github.com/sorayuki/obs-multi-rtmp/";
+      changelog  = "https://github.com/sorayuki/obs-multi-rtmp/releases/tag/${version}";
+      description = "Multi-site simultaneous broadcast plugin for OBS Studio";
+      license    = lib.licenses.gpl2Only;
+      inherit (pkgs.obs-studio.meta) platforms;
+    };
   };
-in {
+in
+{
   programs.obs-studio = {
     enable = true;
     plugins = [ obsMultiRtmp ];
