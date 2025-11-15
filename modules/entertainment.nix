@@ -5,6 +5,7 @@
     steam
     steam-run
     #lutris
+    ludusavi
     vlc
     whipper
     cyanrip
