@@ -54,7 +54,7 @@
   };
 
  fileSystems."/mnt/GamezDrive" = {
-   device  = "/dev/disk/by-uuid/54547ccd-fc55-1218-ae52-f57777ecbf20";
+   device  = "/dev/disk/by-uuid/e8aff502-720e-4f90-9f4b-a6ab13bfd9a3";
    fsType  = "btrfs";
    
    # Fine-tune options to taste.  Good defaults for a personal btrfs data disk:
