@@ -67,14 +67,14 @@
    ];
  };
   
-#  fileSystems."/home/bedhedd/GamezDrive" = {
-#    device  = "/mnt/GamezDrive";
-#    options = [ "bind" ];
-#    depends = [ "/mnt/GamezDrive" ];
-#  };
-#  systemd.tmpfiles.rules = [
-#    "z /mnt/GamezDrive 0755 bedhedd users -"
-#  ];
+ fileSystems."/home/bedhedd/GamezDrive" = {
+   device  = "/mnt/GamezDrive";
+   options = [ "bind" ];
+   depends = [ "/mnt/GamezDrive" ];
+ };
+ systemd.tmpfiles.rules = [
+   "z /mnt/GamezDrive 0755 bedhedd users -"
+ ];
 
 
   fileSystems."/home/bedhedd/Documents" = {
