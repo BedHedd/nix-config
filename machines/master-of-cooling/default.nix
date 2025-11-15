@@ -72,10 +72,6 @@
    options = [ "bind" ];
    depends = [ "/mnt/GamezDrive" ];
  };
-#  systemd.tmpfiles.rules = [
-#    "z /mnt/GamezDrive 0755 bedhedd users -"
-#  ];
-
 
   fileSystems."/home/bedhedd/Documents" = {
     device  = "/mnt/sda1/Documents";
