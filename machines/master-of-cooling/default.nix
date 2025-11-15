@@ -53,25 +53,25 @@
     ];
   };
 
-#  fileSystems."/mnt/GamezDrive" = {
-#    device  = "/dev/disk/by-uuid/54547ccd-fc55-1218-ae52-f57777ecbf20";
-#    fsType  = "btrfs";
+ fileSystems."/mnt/GamezDrive" = {
+   device  = "/dev/disk/by-uuid/54547ccd-fc55-1218-ae52-f57777ecbf20";
+   fsType  = "btrfs";
    
-#    # Fine-tune options to taste.  Good defaults for a personal btrfs data disk:
-#    options = [
-#      "compress=zstd"    # transparent compression
-#      "noatime"          # don’t update atime on every read
-#      "ssd"              # if the drive is actually an SSD
-#      # For a plug-in USB disk add:
-#       "noauto" "x-systemd.automount"
-#    ];
-#  };
+   # Fine-tune options to taste.  Good defaults for a personal btrfs data disk:
+   options = [
+     "compress=zstd"    # transparent compression
+     "noatime"          # don’t update atime on every read
+     "ssd"              # if the drive is actually an SSD
+     # For a plug-in USB disk add:
+     # "noauto" "x-systemd.automount"
+   ];
+ };
   
-#  fileSystems."/home/bedhedd/GamezDrive" = {
-#    device  = "/mnt/GamezDrive";
-#    options = [ "bind" ];
-#    depends = [ "/mnt/GamezDrive" ];
-#  };
+ fileSystems."/home/bedhedd/GamezDrive" = {
+   device  = "/mnt/GamezDrive";
+   options = [ "bind" ];
+   depends = [ "/mnt/GamezDrive" ];
+ };
 #  systemd.tmpfiles.rules = [
 #    "z /mnt/GamezDrive 0755 bedhedd users -"
 #  ];
