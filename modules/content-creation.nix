@@ -4,6 +4,7 @@
   home.packages = with pkgs; [
     obs-studio # screen recording
     obs-studio-plugins.advanced-scene-switcher
+    obs-studio-plugins.obs-multi-rtmp
     ffmpeg # video encoding
     vlc # media playback
     kdePackages.kdenlive # video editing
