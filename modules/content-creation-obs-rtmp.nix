@@ -44,6 +44,8 @@ in
 {
   programs.obs-studio = {
     enable = true;
-    plugins = [ obsMultiRtmp ];
+    plugins = [ 
+      obsMultiRtmp
+      ];
   };
 }
