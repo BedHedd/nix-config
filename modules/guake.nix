@@ -9,7 +9,7 @@
     # geometry & font toggle
     "org/guake/general" = {
       window-width                   = 100;
-      window-height                  = 36;
+      window-height                  = 33;
       window-halignment              = 0;     # 0=Left,1=Center,2=Right
       window-valignment              = 1;     # 0=Top,1=Bottom
       window-horizontal-displacement = 0;
@@ -20,6 +20,10 @@
     # transparency
     "org/guake/style/background" = {
       transparency = 79;
+    };
+    
+    "org/guake/keybindings/global" = {
+      show-hide = "<Super>grave";
     };
   };
 }

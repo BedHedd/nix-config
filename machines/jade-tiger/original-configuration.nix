@@ -9,20 +9,58 @@
     [
       ../../modules/kde.nix
       ../../modules/steamdeck-plasma-system.nix
-      nixos-hardware.nixosModules.common-gpu-amd # replace this with your desired graphics driver
+      nixos-hardware.nixosModules.common-gpu-amd
+      nixos-hardware.nixosModules.gigabyte-b550
       ./hardware-configuration.nix
       home-manager.nixosModules.home-manager
       ./users.nix
     ];
 
   # Bootloader.
-  boot.loader.systemd-boot.enable = true;
-  boot.loader.efi.canTouchEfiVariables = true;
+  boot.loader.grub.enable = true;
+  boot.loader.grub.device = "/dev/nvme0n1";
+  boot.loader.grub.useOSProber = true;
+  boot.kernelParams = [ 
+    # "video=DP-1:3840x2160@60"
+    "video=DP-2:3840x2160@60"
+    #"video=DP-3:3840x2160@60"
+    #"video=HDMI-A-1:2560x1440@59.95"
+  ];
 
-  # Use latest kernel.
-  boot.kernelPackages = pkgs.linuxPackages_latest;
+  services.udev.extraRules = ''
+  # Disable wake for every AMD PCIe bridge
+  ACTION=="add", SUBSYSTEM=="pci", ATTR{vendor}=="0x1022", ATTR{class}=="0x0604*", \
+    ATTR{power/wakeup}="disabled"
 
-  networking.hostName = "generic-machine"; # Define your hostname.
+  # Disable wake for AMD xHCI controllers
+  ACTION=="add", SUBSYSTEM=="pci", ATTR{vendor}=="0x1022", ATTR{class}=="0x0c0330", \
+    ATTR{power/wakeup}="disabled"
+
+  # Disable wake for Realtek LAN on Gigabyte boards
+  ACTION=="add", SUBSYSTEM=="pci", ATTR{vendor}=="0x10ec", ATTR{device}=="0x8168", \
+    ATTR{power/wakeup}="disabled"
+'';
+
+# # ── Disable every *enabled* ACPI wake device right after boot ────────────────
+# systemd.services.disable-acpi-wakeups = {
+#   description = "Turn off all ACPI devices that are wake-capable by default";
+#   wantedBy    = [ "multi-user.target" ];
+#   after       = [ "local-fs.target" ];
+#
+#   serviceConfig = {
+#     Type = "oneshot";
+#     ExecStart = pkgs.writeShellScript "disable-acpi-wakeups" ''
+#       #!${pkgs.bash}/bin/bash
+#       for dev in $("${pkgs.gawk}/bin/awk" '/\*enabled/ {print $1}' /proc/acpi/wakeup); do
+#         echo "disabling $dev"
+#         echo "$dev" > /proc/acpi/wakeup
+#       done
+#     '';
+#     StandardOutput = "journal";
+#   };
+# };
+#
+  networking.hostName = "jade-tiger"; # Define your hostname.
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
 
   # Configure network proxy if necessary
@@ -62,14 +100,18 @@
   services.desktopManager.plasma6.enable = true;
 
   # Configure keymap in X11
-#   services.xserver.xkb = {
-#     layout = "us";
-#     variant = "";
-#   };
+  #services.xserver.xkb = {
+  #  layout = "us";
+  #  variant = "";
+  #};
 
   # Enable CUPS to print documents.
   services.printing.enable = true;
 
+  hardware.graphics = {
+    enable = true;
+    enable32Bit = true;
+  };
   # Enable sound with pipewire.
   services.pulseaudio.enable = false;
   security.rtkit.enable = true;
@@ -89,28 +131,13 @@
   # Enable touchpad support (enabled default in most desktopManager).
   # services.xserver.libinput.enable = true;
 
-  # Define a user account. Don't forget to set a password with ‘passwd’.
-  users.users.generic-user = {
-    isNormalUser = true;
-    description = "generic-user";
-    extraGroups = [ "networkmanager" "wheel" ];
-    packages = with pkgs; [
-      kdePackages.kate
-    #  thunderbird
-    ];
-  };
-
   # Allow unfree packages
   nixpkgs.config.allowUnfree = true;
 
   # List packages installed in system profile. To search, run:
   # $ nix search wget
-  environment.systemPackages = with pkgs; [
-  #  vim # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
-  #  wget
-  ];
 
-  # Some programs need SUID wrappers, can be configured further or are
+  # Some programs need SUID wrappers, can be configured further or are:
   # started in user sessions.
   # programs.mtr.enable = true;
   # programs.gnupg.agent = {
@@ -123,13 +150,14 @@
   # Enable the OpenSSH daemon.
   # services.openssh.enable = true;
 
+
   # Home‑Manager setup for plasma‑manager
 
   home-manager.useGlobalPkgs   = true;
   home-manager.useUserPackages = true;
 
   home-manager.sharedModules = [
-    plasma-manager.homeManagerModules."plasma-manager"
+    plasma-manager.homeModules."plasma-manager"
   ];
 
   # Open ports in the firewall.
@@ -144,6 +172,7 @@
   # this value at the release version of the first install of this system.
   # Before changing this value read the documentation for this option
   # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
-  system.stateVersion = "25.05"; # Did you read the comment?
+  system.stateVersion = "24.11"; # Did you read the comment?
+
 
 }

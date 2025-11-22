@@ -1,91 +1,53 @@
 {
   inputs = {
-    nixpkgs  = {
-      url = "github:NixOS/nixpkgs/nixos-unstable";
-    };
-
-    home-manager = {
-      url = "github:nix-community/home-manager";
-      # make sure it uses the same nixpkgs:
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
-    plasma-manager = {
-      url = "github:nix-community/plasma-manager";
-      # point it at the same nixpkgs and home‑manager:
-      inputs.nixpkgs.follows     = "nixpkgs";
-      inputs.home-manager.follows = "home-manager";
-    };
-
-    nixos-hardware = {
-      url = "github:NixOS/nixos-hardware";
-    };
+    nixpkgs.url        = "github:NixOS/nixpkgs/nixos-unstable";
+    home-manager.url   = "github:nix-community/home-manager";
+    home-manager.inputs.nixpkgs.follows = "nixpkgs";
+    plasma-manager.url = "github:nix-community/plasma-manager";
+    plasma-manager.inputs.nixpkgs.follows     = "nixpkgs";
+    plasma-manager.inputs.home-manager.follows = "home-manager";
+    nixos-hardware.url = "github:NixOS/nixos-hardware";
   };
 
-  outputs = inputs@{ self, nixpkgs, nixos-hardware, home-manager, plasma-manager, ... }:
-  let
-    nixLdModule = { pkgs, ... }: { programs.nix-ld.enable = true; };
-    revModule = {
-      system.configurationRevision = nixpkgs.lib.mkIf (self ? rev) self.rev;
-    };
+  outputs = { self, nixpkgs, home-manager, plasma-manager, nixos-hardware, ... }:
 
-    localNixpkgsModule = {
-      environment.etc.nixpkgs.source = nixpkgs;
-      nix.nixPath                = [ "nixpkgs=/etc/nixpkgs" ];
-    };
+  let
+    # your machines:
+    hostNames     = builtins.filter
+                      (n: builtins.pathExists ./machines/${n}/default.nix)
+                      (builtins.attrNames (builtins.readDir ./machines));
+
+    defaultSystem = "x86_64-linux";
+
+    modules       = import ./modules;
+    mkSpecialArgs = { inherit modules home-manager plasma-manager nixos-hardware; };
+
+    # ← move it here
+    systems       = [ "x86_64-linux" "aarch64-linux" "x86_64-darwin" "aarch64-darwin" ];
   in
   {
-    nixosConfigurations.generic-machine = nixpkgs.lib.nixosSystem {
-      system = "x86_64-linux";
+    nixosConfigurations = nixpkgs.lib.genAttrs hostNames (host:
+      nixpkgs.lib.nixosSystem {
+        system     = defaultSystem;
+        modules    = [ ./machines/${host}/default.nix ]
+                     ++ nixpkgs.lib.optionals (defaultSystem == "x86_64-linux") [ modules.kde ];
+        specialArgs = mkSpecialArgs // { inherit host; };
+      });
 
-      modules = [
-        (import ./machines/generic-machine/configuration.nix)
-        revModule
-        localNixpkgsModule
-        nixLdModule
-
-        # ← pull in Home‑Manager as a NixOS module:
-        home-manager.nixosModules.home-manager
-      ];
-
-      # expose both home-manager and plasma-manager into your
-      # machine’s specialArgs so that configuration.nix can see them:
-      specialArgs = { inherit nixos-hardware home-manager plasma-manager; };
-    };
-    nixosConfigurations.jade-tiger = nixpkgs.lib.nixosSystem {
-      system = "x86_64-linux";
-
-      modules = [
-        (import ./machines/jade-tiger/configuration.nix)
-        revModule
-        localNixpkgsModule
-        nixLdModule
-
-        # ← pull in Home‑Manager as a NixOS module:
-        home-manager.nixosModules.home-manager
-      ];
-
-      # expose both home-manager and plasma-manager into your
-      # machine’s specialArgs so that configuration.nix can see them:
-      specialArgs = { inherit nixos-hardware home-manager plasma-manager; };
-    };
-    nixosConfigurations.master-of-cooling = nixpkgs.lib.nixosSystem {
-      system = "x86_64-linux";
-
-      modules = [
-        (import ./machines/master-of-cooling/configuration.nix)
-        revModule
-        localNixpkgsModule
-        nixLdModule
-
-        # ← pull in Home‑Manager as a NixOS module:
-        home-manager.nixosModules.home-manager
-      ];
-
-      # expose both home-manager and plasma-manager into your
-      # machine’s specialArgs so that configuration.nix can see them:
-      specialArgs = { inherit nixos-hardware home-manager plasma-manager; };
-    };
+    apps = nixpkgs.lib.genAttrs systems (system:
+      let
+        pkgs      = import nixpkgs { inherit system; };
+        scriptDrv = pkgs.writeShellScriptBin "setup-wizard" ''
+          #!${pkgs.runtimeShell}
+          export PATH=${pkgs.pciutils}/bin:$PATH
+          export REPO_ROOT="$PWD"
+          exec ${pkgs.python3}/bin/python ${./scripts/setup-wizard.py} "$@"
+        '';
+      in {
+        setup-wizard = {
+          type    = "app";
+          program = "${scriptDrv}/bin/setup-wizard";
+        };
+      });
   };
 }
-

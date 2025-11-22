@@ -20,6 +20,7 @@ let
     vlc # media playback
     strawberry
     kdePackages.kdenlive # video editing
+    kdePackages.kzones
     krita # image manipulation
     guake
 
@@ -45,11 +46,13 @@ in
       home.homeDirectory = "/home/${username}";
 
       imports = [
-        ../modules/home.nix
         ../modules/kde-home.nix
         ../modules/development.nix
         ../modules/guake.nix
         ../dotfiles/multiple-ssh.nix
+        ../modules/xdg-librewolf-icons.nix
+        ../modules/xdg.nix
+        ../modules/entertainment.nix
       ];
 
       programs.fish.enable = true;

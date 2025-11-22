@@ -2,7 +2,7 @@
 
 {
   imports = [ 
-    ./entertainment.nix 
+    # ./entertainment.nix
     # ./research.nix 
     # ./work.nix 
   ];
@@ -20,6 +20,15 @@
     };
   };
 
+  nix = {
+    settings.auto-optimise-store = true;
+
+    gc = {
+      automatic = true;
+      options = "--delete-older-than 30d";
+    };
+  };
+
   home = { 
     packages = with pkgs; [ 
       # handy cli packages
@@ -30,6 +39,9 @@
       tree
       fastfetch
       tealdeer
+      clamav
+
+      # rustdesk
 
       # dictionaries
       # aspell
@@ -40,15 +52,13 @@
       wget
       wl-clipboard
       xclip
+      usbutils
+      kdePackages.kdeconnect-kde
+      kdePackages.kcalc
     ];
     stateVersion = "25.05";
   };
 
-  home.sessionVariables = {          # <── needs the `home.` prefix
-    LD_LIBRARY_PATH =
-      "${pkgs.lib.makeLibraryPath [ pkgs.stdenv.cc.cc.lib ]}:$LD_LIBRARY_PATH";
-  };
-  
   #nix = {
     #package = pkgs.nixUnstable;
     #settings = {
@@ -56,6 +66,7 @@
       #allow-import-from-derivation = true;
     #};
   #};
+  home.shell.enableFishIntegration = true;
 
   programs = {
     home-manager.enable = true;
@@ -117,10 +128,19 @@
       enable  = true;                       # create the wrapper script and dirs
       package = pkgs.vscodium;              # use VSCodium instead of Microsoft VS Code
       
-      extensions = with pkgs.vscode-extensions; [
-        ms-python.python
-        ms-toolsai.jupyter
+      profiles.default = {
+        extensions = with pkgs.vscode-extensions; [
+          ms-python.python
+          ms-toolsai.jupyter
+          jnoortheen.nix-ide
         ];
+      
+        userSettings = {
+          # disable smooth scrolling
+          "editor.smoothScrolling" = false;
+          "notebook.lineNumbers"= "on";          
+        };
+      };
     };
     firefox = {
       enable = true;

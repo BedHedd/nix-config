@@ -1,6 +1,0 @@
-{ ... }: {
-  imports = [
-    ../../users/bedhedd.nix
-  ];
-}
-

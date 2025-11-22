@@ -6,5 +6,7 @@
     steam-run
     #lutris
     vlc
+    whipper
+    cyanrip
   ];
 }
