@@ -96,6 +96,7 @@
       };
     };
   };
-
+  
+  boot.extraModprobeConfig = '' options bluetooth disable_ertm=1 '';
   system.stateVersion = "25.05";
 }
