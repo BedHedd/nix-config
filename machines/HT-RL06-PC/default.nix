@@ -8,6 +8,7 @@
     home-manager.nixosModules.home-manager
     ./hardware-configuration.nix
     ../../users/bedhedd.nix
+    nixos-hardware.nixosModules.common-gpu-nvidia
     ];
 
   networking.hostName  = host;
@@ -39,7 +40,46 @@
       # "noauto" "x-systemd.automount"
     ];    
   };
+  
+  boot = {
+  initrd.kernelModules = [ "nvidia" "i915" "nvidia_modeset" "nvidia_uvm" "nvidia_drm" ];
+  kernelParams = [ "nvidia-drm.fbdev=1" ];
+  };
 
+  hardware = {
+    graphics = {
+      enable = true;
+      enable32Bit = true;
+      # optional but nice to have:
+      # extraPackages = with pkgs; [ vaapiVdpau libvdpau-va-gl intel-media-driver nvidia-vaapi-driver ];
+    };
+    
+    xpadneo = {
+      enable = true;
+    };
+
+    nvidia = {
+      modesetting.enable = true;
+      powerManagement.enable = true;
+      powerManagement.finegrained = false;
+      open = false;
+      forceFullCompositionPipeline = true;
+
+      prime = {
+        intelBusId = "PCI:0:2:0";
+        nvidiaBusId = "PCI:1:0:0";
+        offload = {
+          enable = true;
+          enableOffloadCmd = true;
+        };
+      };
+
+      nvidiaSettings = true;
+      package = config.boot.kernelPackages.nvidiaPackages.beta;
+    };
+  };
+
+  services.xserver.videoDrivers = [ "nvidia" ];
 
   system.stateVersion = "25.05";
 }
