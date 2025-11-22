@@ -53,7 +53,7 @@
       # optional but nice to have:
       # extraPackages = with pkgs; [ vaapiVdpau libvdpau-va-gl intel-media-driver nvidia-vaapi-driver ];
     };
-    
+
     xpadneo = {
       enable = true;
     };
