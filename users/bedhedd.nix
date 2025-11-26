@@ -15,13 +15,8 @@ let
     colima # docker containers
 
     # graphics and video
-    obs-studio # screen recording
-    ffmpeg # video encoding
-    vlc # media playback
     strawberry
-    kdePackages.kdenlive # video editing
     kdePackages.kzones
-    krita # image manipulation
     guake
 
     # social apps
@@ -53,6 +48,9 @@ in
         ../modules/xdg-librewolf-icons.nix
         ../modules/xdg.nix
         ../modules/entertainment.nix
+        ../modules/living-room.nix
+        ../modules/content-creation-obs-rtmp.nix
+        ../modules/content-creation.nix
       ];
 
       programs.fish.enable = true;
