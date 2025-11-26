@@ -48,6 +48,7 @@ in
         ../modules/xdg-librewolf-icons.nix
         ../modules/xdg.nix
         ../modules/entertainment.nix
+        ../modules/living-room.nix
         ../modules/content-creation-obs-rtmp.nix
         ../modules/content-creation.nix
       ];
