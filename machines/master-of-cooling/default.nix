@@ -41,6 +41,7 @@
   fileSystems."/mnt/sda1" = {
     device  = "/dev/disk/by-uuid/027f2550-4813-20d9-ac54-fc87dc4612eb";
     fsType  = "btrfs";
+    
 
     # Fine-tune options to taste.  Good defaults for a personal btrfs data disk:
     options = [
@@ -51,6 +52,26 @@
       # "noauto" "x-systemd.automount"
     ];
   };
+
+ fileSystems."/mnt/GamezDrive" = {
+   device  = "/dev/disk/by-uuid/e8aff502-720e-4f90-9f4b-a6ab13bfd9a3";
+   fsType  = "btrfs";
+   
+   # Fine-tune options to taste.  Good defaults for a personal btrfs data disk:
+   options = [
+     "compress=zstd"    # transparent compression
+     "noatime"          # don’t update atime on every read
+     "ssd"              # if the drive is actually an SSD
+     # For a plug-in USB disk add:
+     # "noauto" "x-systemd.automount"
+   ];
+ };
+  
+ fileSystems."/home/bedhedd/GamezDrive" = {
+   device  = "/mnt/GamezDrive";
+   options = [ "bind" ];
+   depends = [ "/mnt/GamezDrive" ];
+ };
 
   fileSystems."/home/bedhedd/Documents" = {
     device  = "/mnt/sda1/Documents";

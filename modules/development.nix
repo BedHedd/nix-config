@@ -19,6 +19,7 @@ in
     nodejs_20
     playwright-driver.browsers
     gcc
+    zig
     fastfetch
     chromium
     chromedriver

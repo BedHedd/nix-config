@@ -205,16 +205,17 @@
     };    
     git = {
       enable = true;
-      package = pkgs.gitAndTools.gitFull;
+      # was: pkgs.gitAndTools.gitFull
+      package = pkgs.gitFull;     # or pkgs.git if you don't need the extras
       includes = [
-        # { path = ../dotfiles/gitconfig; } # git account config for paths
-        # { condition = "gitdir:iohk/"; path = ../dotfiles/gitconfig-iohk; } 
-        # { condition = "gitdir:input-output-hk/"; path = ../dotfiles/gitconfig-iohk; }
-        # { condition = "gitdir:IntersectMBO/"; path = ../dotfiles/gitconfig-iohk; }
-        # { condition = "gitdir:cardano-foundation/"; path = ../dotfiles/gitconfig-iohk; }
-        # { condition = "gitdir:circuithub/"; path = ../dotfiles/gitconfig-circuithub; }
+        # { path = ../dotfiles/gitconfig; }
+        # { condition = "gitdir:iohk/"; path = ../dotfiles/gitconfig-iohk; }
+        # ...
       ];
-    };
+      # optional niceties:
+      # lfs.enable = true;          # replaces separate git-lfs install
+      # delta.enable = true;        # nicer diffs
+  };
     gh = {
       enable = true;
       settings = {
