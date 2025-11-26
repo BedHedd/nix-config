@@ -4,8 +4,8 @@
   imports = [
     modules.universal
     modules.linux
+    modules.rocksmith
     nixos-hardware.nixosModules.common-gpu-amd
-
     home-manager.nixosModules.home-manager
     ./hardware-configuration.nix
     ../../users/bedhedd.nix
