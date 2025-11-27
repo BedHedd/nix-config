@@ -1,37 +1,61 @@
-{ config, lib, pkgs, username, ... }:
+{ lib, config, pkgs, ... }:
 
 let
-  # Pull nixos-rocksmith via default.nix (no flake input needed)
-  nixos-rocksmith =
-    import (builtins.fetchTarball
-      "https://github.com/re1n0/nixos-rocksmith/archive/master.tar.gz") {};
+  cfg = config.programs.rocksmith;
 
-  cfg = config.profiles.rocksmith;
+  # 1. Fetch a pinned tarball of the nixos-rocksmith repo
+  rocksmithSrc = builtins.fetchTarball {
+    url = "https://github.com/re1n0/nixos-rocksmith/archive/master.tar.gz";
+    # This is the hash Nix printed:
+    sha256 = "0fkbjxxvp2amcgm6zm2vnygx4avzc1sarashkyksb07pbxcmbhfw";
+  };
+
+  # 2. Bring in flake-compat (pinned, with its sha256)
+  flakeCompatSrc = builtins.fetchTarball {
+    url = "https://github.com/edolstra/flake-compat/archive/99f1c2157fba4bfe6211a321fd0ee43199025dbf.tar.gz";
+    sha256 = "0x2jn3vrawwv9xp15674wjz9pixwjyj3j771izayl962zziivbx2";
+  };
+
+  # 3. Use flake-compat to evaluate nixos-rocksmith's flake outputs
+  #    This is equivalent to what their own default.nix does.
+  flakeCompat = import flakeCompatSrc { src = rocksmithSrc; };
+
+  # 4. Upstream NixOS module from the flake outputs
+  rocksmithUpstreamModule = flakeCompat.defaultNix.nixosModules.default;
 in
 {
-  # Load upstream module so programs.steam.rocksmithPatch exists
+  #### Options ###############################################################
+
+  options.programs.rocksmith = {
+    enable = lib.mkEnableOption "Rocksmith 2014 setup via nixos-rocksmith";
+
+    username = lib.mkOption {
+      type = lib.types.nullOr lib.types.str;
+      default = null;
+      description = ''
+        User account that will play Rocksmith.
+        If set, this user is added to the "audio" and "rtkit" groups.
+      '';
+    };
+  };
+
+  #### Imports ###############################################################
+
   imports = [
-    nixos-rocksmith.nixosModules.default
+    rocksmithUpstreamModule
   ];
 
-  options.profiles.rocksmith.enable =
-    lib.mkEnableOption "Enable Rocksmith patch, Steam, and audio wiring";
+  #### Config ################################################################
 
   config = lib.mkIf cfg.enable {
-    ### Steam + Rocksmith
+    # Enable Steam Rocksmith patch when our toggle is on
     programs.steam = {
-      enable = lib.mkDefault true;
       rocksmithPatch.enable = true;
     };
 
-    ### Audio
-    services.pipewire.enable = lib.mkDefault true;
-
-    users.users.${username}.extraGroups =
-      lib.mkAfter [ "audio" "rtkit" ];
-
-    environment.systemPackages =
-      (config.environment.systemPackages or []) ++
-      (with pkgs; [ helvum rtaudio ]);
+    # Optional: add the Rocksmith user to audio/rtkit
+    users.users = lib.mkIf (cfg.username != null) {
+      "${cfg.username}".extraGroups = [ "audio" "rtkit" ];
+    };
   };
 }

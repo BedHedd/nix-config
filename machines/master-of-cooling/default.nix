@@ -113,4 +113,9 @@
       };
     models  = "/mnt/sda1/Documents/ollama-models";  # <-- custom model dir
   };
+
+  programs.rocksmith = {
+    enable = true;
+    username = "bedhedd";  # or whatever your login is
+  };
 }
