@@ -1,30 +1,37 @@
-# modules/rocksmith.nix
-{ config, pkgs, lib, username, ... }:
+{ config, lib, pkgs, username, ... }:
 
 let
-  # Import nixos-rocksmith via default.nix, no flake input needed
+  # Pull nixos-rocksmith via default.nix (no flake input needed)
   nixos-rocksmith =
-    import (builtins.fetchTarball "https://github.com/re1n0/nixos-rocksmith/archive/master.tar.gz") {};
+    import (builtins.fetchTarball
+      "https://github.com/re1n0/nixos-rocksmith/archive/master.tar.gz") {};
+
+  cfg = config.profiles.rocksmith;
 in
 {
-  # Pull in the upstream module so the option exists
+  # Load upstream module so programs.steam.rocksmithPatch exists
   imports = [
     nixos-rocksmith.nixosModules.default
   ];
 
-  ### Audio
-  services.pipewire.enable = lib.mkDefault true;
+  options.profiles.rocksmith.enable =
+    lib.mkEnableOption "Enable Rocksmith patch, Steam, and audio wiring";
 
-  # Add user to audio/rtkit
-  users.users.${username}.extraGroups =
-    lib.mkAfter [ "audio" "rtkit" ];
+  config = lib.mkIf cfg.enable {
+    ### Steam + Rocksmith
+    programs.steam = {
+      enable = lib.mkDefault true;
+      rocksmithPatch.enable = true;
+    };
 
-  environment.systemPackages =
-    (config.environment.systemPackages or []) ++
-    (with pkgs; [ helvum rtaudio ]);
+    ### Audio
+    services.pipewire.enable = lib.mkDefault true;
 
-  ### Steam + Rocksmith
-  programs.steam = {
-    rocksmithPatch.enable = true;
+    users.users.${username}.extraGroups =
+      lib.mkAfter [ "audio" "rtkit" ];
+
+    environment.systemPackages =
+      (config.environment.systemPackages or []) ++
+      (with pkgs; [ helvum rtaudio ]);
   };
 }
