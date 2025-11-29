@@ -136,7 +136,12 @@
     models  = "/mnt/sda1/Documents/ollama-models";  # <-- custom model dir
   };
 
-  virtualisation.virtualbox.host.enable = true;
+   virtualisation.virtualbox.host = {
+    enable = true;
+
+    # Optional but usually needed for USB support etc.
+    enableExtensionPack = true;
+  };
   virtualisation.virtualbox.guest.enable = true;
   virtualisation.virtualbox.guest.dragAndDrop = true;
   users.extraGroups.vboxusers.members = [ "bedhedd" ];
