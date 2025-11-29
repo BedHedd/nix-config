@@ -1,5 +1,23 @@
 {
   "nodes": {
+    "flake-parts": {
+      "inputs": {
+        "nixpkgs-lib": "nixpkgs-lib"
+      },
+      "locked": {
+        "lastModified": 1763759067,
+        "narHash": "sha256-LlLt2Jo/gMNYAwOgdRQBrsRoOz7BPRkzvNaI/fzXi2Q=",
+        "owner": "hercules-ci",
+        "repo": "flake-parts",
+        "rev": "2cccadc7357c0ba201788ae99c4dfa90728ef5e0",
+        "type": "github"
+      },
+      "original": {
+        "owner": "hercules-ci",
+        "repo": "flake-parts",
+        "type": "github"
+      }
+    },
     "home-manager": {
       "inputs": {
         "nixpkgs": [
@@ -20,6 +38,47 @@
         "type": "github"
       }
     },
+    "linux-rocksmith": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1764062645,
+        "narHash": "sha256-U0H6Nh4rkDwnApu4xXVu9bCtDUB2D9eCQ6hXhN8BwlE=",
+        "owner": "theNizo",
+        "repo": "linux_rocksmith",
+        "rev": "8a057e2aa70c19f3826c6365eb11ab78f1427fac",
+        "type": "github"
+      },
+      "original": {
+        "owner": "theNizo",
+        "repo": "linux_rocksmith",
+        "type": "github"
+      }
+    },
+    "nix-gaming": {
+      "inputs": {
+        "flake-parts": [
+          "nixos-rocksmith",
+          "flake-parts"
+        ],
+        "nixpkgs": [
+          "nixos-rocksmith",
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1764035827,
+        "narHash": "sha256-hDpF3nvtGXrUpLdLiac2t+DVq2jbIVwspXSZ+wBju0Y=",
+        "owner": "fufexan",
+        "repo": "nix-gaming",
+        "rev": "c3bf5ffdbdcc3612379e380b72fd36834c6284e0",
+        "type": "github"
+      },
+      "original": {
+        "owner": "fufexan",
+        "repo": "nix-gaming",
+        "type": "github"
+      }
+    },
     "nixos-hardware": {
       "locked": {
         "lastModified": 1759582739,
@@ -32,6 +91,30 @@
       "original": {
         "owner": "NixOS",
         "repo": "nixos-hardware",
+        "type": "github"
+      }
+    },
+    "nixos-rocksmith": {
+      "inputs": {
+        "flake-parts": "flake-parts",
+        "linux-rocksmith": "linux-rocksmith",
+        "nix-gaming": "nix-gaming",
+        "nixpkgs": [
+          "nixpkgs"
+        ],
+        "rs-linux-autoconnect": "rs-linux-autoconnect"
+      },
+      "locked": {
+        "lastModified": 1764066344,
+        "narHash": "sha256-3MFVWV/3gKWnn1CrrHRgfyvSn7db1G/qY1WJu3uXazo=",
+        "owner": "re1n0",
+        "repo": "nixos-rocksmith",
+        "rev": "d1e1340df93cd9d1abba9d0fceac32db79d08388",
+        "type": "github"
+      },
+      "original": {
+        "owner": "re1n0",
+        "repo": "nixos-rocksmith",
         "type": "github"
       }
     },
@@ -48,6 +131,21 @@
         "owner": "NixOS",
         "ref": "nixos-unstable",
         "repo": "nixpkgs",
+        "type": "github"
+      }
+    },
+    "nixpkgs-lib": {
+      "locked": {
+        "lastModified": 1761765539,
+        "narHash": "sha256-b0yj6kfvO8ApcSE+QmA6mUfu8IYG6/uU28OFn4PaC8M=",
+        "owner": "nix-community",
+        "repo": "nixpkgs.lib",
+        "rev": "719359f4562934ae99f5443f20aa06c2ffff91fc",
+        "type": "github"
+      },
+      "original": {
+        "owner": "nix-community",
+        "repo": "nixpkgs.lib",
         "type": "github"
       }
     },
@@ -78,8 +176,25 @@
       "inputs": {
         "home-manager": "home-manager",
         "nixos-hardware": "nixos-hardware",
+        "nixos-rocksmith": "nixos-rocksmith",
         "nixpkgs": "nixpkgs",
         "plasma-manager": "plasma-manager"
+      }
+    },
+    "rs-linux-autoconnect": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1753454170,
+        "narHash": "sha256-Uk4J2ZGHZFI6RX7pmGbdgxUWWdOegsNtJLc/aeBnj54=",
+        "owner": "KczBen",
+        "repo": "rs-linux-autoconnect",
+        "rev": "09a3f0fd0492573dd48468ab413626edd0cba757",
+        "type": "github"
+      },
+      "original": {
+        "owner": "KczBen",
+        "repo": "rs-linux-autoconnect",
+        "type": "github"
       }
     }
   },
