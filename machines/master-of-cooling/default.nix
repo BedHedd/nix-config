@@ -72,6 +72,28 @@
    options = [ "bind" ];
    depends = [ "/mnt/GamezDrive" ];
  };
+ 
+ systemd.tmpfiles.rules = [
+    # Steam data on GamezDrive
+    "d /home/bedhedd/GamezDrive 0755 bedhedd users -"
+    "d /home/bedhedd/GamezDrive/steam-linux 0755 bedhedd users -"
+    "d /home/bedhedd/GamezDrive/steam-linux/steamapps 0755 bedhedd users -"
+
+    # Steam folder in $HOME
+    "d /home/bedhedd/.steam 0755 bedhedd users -"
+    "d /home/bedhedd/.steam/steam 0755 bedhedd users -"
+  ];
+  
+  fileSystems."/home/bedhedd/.steam/steam/steamapps" = {
+    device  = "/home/bedhedd/GamezDrive/steam-linux/steamapps";
+    options = [
+      "bind"
+      "nofail"              # don’t fail the boot if this mount fails
+    ];
+    # Ensure the GamezDrive mount is set up first
+    depends = [ "/home/bedhedd/GamezDrive" ];
+  };
+
 
   fileSystems."/home/bedhedd/Documents" = {
     device  = "/mnt/sda1/Documents";
@@ -114,8 +136,4 @@
     models  = "/mnt/sda1/Documents/ollama-models";  # <-- custom model dir
   };
 
-  # programs.rocksmith = {
-  #   enable = true;
-  #   username = "bedhedd";  # or whatever your login is
-  # };
 }
