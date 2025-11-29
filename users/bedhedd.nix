@@ -13,6 +13,7 @@ let
     lmstudio # local llms
     docker # containers
     colima # docker containers
+    qemu # virtualization
 
     # graphics and video
     strawberry
