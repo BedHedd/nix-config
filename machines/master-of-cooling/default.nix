@@ -136,4 +136,6 @@
     models  = "/mnt/sda1/Documents/ollama-models";  # <-- custom model dir
   };
 
+  virtualisation.virtualbox.host.enable = true;
+
 }
