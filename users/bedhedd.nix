@@ -14,6 +14,7 @@ let
     docker # containers
     colima # docker containers
     qemu # virtualization
+    virtualbox
 
     # graphics and video
     strawberry
