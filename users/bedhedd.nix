@@ -13,6 +13,9 @@ let
     lmstudio # local llms
     docker # containers
     colima # docker containers
+    quickemu
+    p7zip
+    cdrtools
     # qemu # virtualization
     # virtualbox
 

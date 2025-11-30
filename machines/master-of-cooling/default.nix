@@ -146,5 +146,6 @@
   virtualisation.virtualbox.guest.dragAndDrop = true;
   users.extraGroups.vboxusers.members = [ "bedhedd" ];
   virtualisation.virtualbox.host.enableHardening = false;
+  virtualisation.spiceUSBRedirection.enable = true;
 
 }
