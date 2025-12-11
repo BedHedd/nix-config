@@ -135,6 +135,11 @@
     models  = "/mnt/sda1/Documents/ollama-models";  # <-- custom model dir
   };
 
+  services.llama-cpp = {
+      # enable = true;
+      model  = "/mnt/sda1/Documents/ollama-models/llama-cpp-models";  # <-- custom model dir
+  };
+
    virtualisation.virtualbox.host = {
     enable = true;
 

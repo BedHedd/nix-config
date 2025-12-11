@@ -10,6 +10,7 @@ let
     uv # python
     vscodium # vscode
     ollama-rocm # ollama local llm
+    llama-cpp-rocm
     lmstudio # local llms
     docker # containers
     colima # docker containers
