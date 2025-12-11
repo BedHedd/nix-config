@@ -129,9 +129,8 @@
 
   services.ollama = {
       enable = true;
-      acceleration = "rocm";
+      package = pkgs.ollama-rocm;
       environmentVariables = {
-        HSA_OVERRIDE_GFX_VERSION = "11.0.2";
       };
     models  = "/mnt/sda1/Documents/ollama-models";  # <-- custom model dir
   };
