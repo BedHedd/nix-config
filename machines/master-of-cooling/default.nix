@@ -126,6 +126,7 @@
   };
 
   system.stateVersion  = "25.05";
+  
   users.users.ollama = {
     isSystemUser = true;
     group = "ollama";
