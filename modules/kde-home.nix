@@ -35,10 +35,18 @@ let
   # Read your repo JSON, normalize to a single-line JSON string
   kzLayouts = builtins.toJSON (builtins.fromJSON (builtins.readFile ../dotfiles/xiphergrid2_kzones.json));
 in {
+  home.file.".local/share/icons/breeze-teal".source =
+    ../dotfiles/breeze-teal;
+  
   programs.plasma = {
     enable = true;
     overrideConfig = true;
 
+    workspace.cursor = {
+    theme = "breeze-teal";  # must match the theme directory name KDE sees
+    size = 24;
+    };
+    
     workspace.lookAndFeel = "com.valve.vgui.desktop";
 
     # IMPORTANT: Do NOT use Plasma's slideshow for the desktop; our timer drives it.
