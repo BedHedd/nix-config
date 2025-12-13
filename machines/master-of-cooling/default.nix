@@ -126,11 +126,17 @@
   };
 
   system.stateVersion  = "25.05";
-
+  users.users.ollama = {
+    isSystemUser = true;
+    group = "ollama";
+  };
+  users.groups.ollama = {};
+  
   services.ollama = {
       enable = true;
       package = pkgs.ollama-rocm;
       environmentVariables = {
+        OLLAMA_MODELS = "/mnt/sda1/Documents/ollama-models";  # <-- custom model dir
       };
     models  = "/mnt/sda1/Documents/ollama-models";  # <-- custom model dir
   };
