@@ -4,8 +4,8 @@
   imports = [
     modules.universal
     modules.linux
+    # modules.rocksmith
     nixos-hardware.nixosModules.common-gpu-amd
-
     home-manager.nixosModules.home-manager
     ./hardware-configuration.nix
     ../../users/bedhedd.nix
@@ -72,6 +72,28 @@
    options = [ "bind" ];
    depends = [ "/mnt/GamezDrive" ];
  };
+ 
+ systemd.tmpfiles.rules = [
+    # Steam data on GamezDrive
+    "d /home/bedhedd/GamezDrive 0755 bedhedd users -"
+    "d /home/bedhedd/GamezDrive/steam-linux 0755 bedhedd users -"
+    "d /home/bedhedd/GamezDrive/steam-linux/steamapps 0755 bedhedd users -"
+
+    # Steam folder in $HOME
+    "d /home/bedhedd/.steam 0755 bedhedd users -"
+    "d /home/bedhedd/.steam/steam 0755 bedhedd users -"
+  ];
+  
+  fileSystems."/home/bedhedd/.steam/steam/steamapps" = {
+    device  = "/home/bedhedd/GamezDrive/steam-linux/steamapps";
+    options = [
+      "bind"
+      "nofail"              # don’t fail the boot if this mount fails
+    ];
+    # Ensure the GamezDrive mount is set up first
+    depends = [ "/home/bedhedd/GamezDrive" ];
+  };
+
 
   fileSystems."/home/bedhedd/Documents" = {
     device  = "/mnt/sda1/Documents";
@@ -104,13 +126,37 @@
   };
 
   system.stateVersion  = "25.05";
-
+  
+  users.users.ollama = {
+    isSystemUser = true;
+    group = "ollama";
+  };
+  users.groups.ollama = {};
+  
   services.ollama = {
       enable = true;
-      acceleration = "rocm";
+      package = pkgs.ollama-rocm;
       environmentVariables = {
-        HSA_OVERRIDE_GFX_VERSION = "11.0.2";
+        OLLAMA_MODELS = "/mnt/sda1/Documents/ollama-models";  # <-- custom model dir
       };
     models  = "/mnt/sda1/Documents/ollama-models";  # <-- custom model dir
   };
+
+  services.llama-cpp = {
+      # enable = true;
+      model  = "/mnt/sda1/Documents/ollama-models/llama-cpp-models";  # <-- custom model dir
+  };
+
+   virtualisation.virtualbox.host = {
+    enable = true;
+
+    # Optional but usually needed for USB support etc.
+    enableExtensionPack = true;
+  };
+  virtualisation.virtualbox.guest.enable = true;
+  virtualisation.virtualbox.guest.dragAndDrop = true;
+  users.extraGroups.vboxusers.members = [ "bedhedd" ];
+  virtualisation.virtualbox.host.enableHardening = false;
+  virtualisation.spiceUSBRedirection.enable = true;
+
 }

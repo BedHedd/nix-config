@@ -133,6 +133,7 @@
           ms-python.python
           ms-toolsai.jupyter
           jnoortheen.nix-ide
+          asvetliakov.vscode-neovim
         ];
       
         userSettings = {
