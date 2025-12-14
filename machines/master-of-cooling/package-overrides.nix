@@ -78,10 +78,7 @@
       '';
     };
   };
-  services.llama-cpp = {
-      # enable = true;
-      model  = "/mnt/sda1/Documents/ollama-models/llama-cpp-models";  # <-- custom model dir
-  };
+  environment.variables.LLAMA_CACHE = "/mnt/sda1/Documents/ollama-models/llama-cpp-cache";
   users.users.ollama = {
     isSystemUser = true;
     group = "ollama";
