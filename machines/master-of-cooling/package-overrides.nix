@@ -82,8 +82,29 @@
   users.users.ollama = {
     isSystemUser = true;
     group = "ollama";
+    extraGroups = [ "llm" ];
   };
   users.groups.ollama = {};
+
+  users.users.llama-cpp = {
+    isSystemUser = true;
+    group = "llama-cpp";
+    extraGroups = [ "llm" ];
+  };
+  users.groups.llama-cpp = {};
+
+  users.groups.llm = {};
+  users.users.bedhedd.extraGroups = [ "llm" ]; 
+
+  systemd.tmpfiles.rules = [
+    # shared base dir (setgid so new files inherit group)
+    "d /mnt/sda1/Documents/ollama-models 2775 ollama llm -"
+    # cache dir
+    "d /mnt/sda1/Documents/ollama-models/llama-cpp-cache 2775 llama-cpp llm -"
+  ];
+
+  systemd.services.llama-cpp.environment.LLAMA_CACHE =
+    "/mnt/sda1/Documents/ollama-models/llama-cpp-cache";
 
   services.ollama = {
     enable = true;
