@@ -5,7 +5,7 @@
 {
   nixpkgs.config = {
     # cudaSupport = true;
-    rocmSupport = true;
+    # rocmSupport = true;
     packageOverrides = pkgs: {
       ollama = pkgs.ollama.overrideAttrs (oldAttrs: rec {
         version = "0.12.11";
