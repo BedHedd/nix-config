@@ -138,6 +138,7 @@
       package = pkgs.ollama-rocm;
       environmentVariables = {
         OLLAMA_MODELS = "/mnt/sda1/Documents/ollama-models";  # <-- custom model dir
+        HSA_OVERRIDE_GFX_VERSION = "11.0.2";
       };
     models  = "/mnt/sda1/Documents/ollama-models";  # <-- custom model dir
   };
