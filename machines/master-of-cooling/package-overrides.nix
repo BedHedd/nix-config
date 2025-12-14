@@ -41,7 +41,7 @@
               owner = "ggml-org";
               repo = "llama.cpp";
               tag = "b${version}";
-              hash = "sha256-zByAX9zfMkSa/7zyaHGWLA8kqS3i71xtjyVLoRnJf2w=";
+              hash = "sha256-s6C2wrzxNolVGwDQ2KBBR/+MfBJPf7mT1UgmS8m8KD8=";
               leaveDotGit = true;
               postFetch = ''
                 git -C "$out" rev-parse --short HEAD > $out/COMMIT
