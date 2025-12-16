@@ -15,6 +15,11 @@
       url = "github:re1n0/nixos-rocksmith";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    ollama-src.url = "github:ollama/ollama";
+    ollama-src.flake = false;
+
+    llamacpp-src.url = "github:ggml-org/llama.cpp";
+    llamacpp-src.flake = false;
   };
 
   outputs =

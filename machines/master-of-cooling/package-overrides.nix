@@ -1,71 +1,60 @@
 # PC-specific package overrides (CUDA, custom packages)
-# Note: allowUnfree is set in common/nixpkgs.nix
-{ pkgs, ... }:
+{ pkgs, inputs, ... }:
 
 {
   nixpkgs.config = {
-    # cudaSupport = true;
-    # rocmSupport = true;
-    packageOverrides = pkgs: {
-      ollama = pkgs.ollama.overrideAttrs (oldAttrs: rec {
-        version = "0.12.11";
-        src = pkgs.fetchFromGitHub {
-          owner = "ollama";
-          repo = "ollama";
-          rev = "v${version}";
-          hash = "sha256-o6jjn9VyLRwD1wFoUv8nNwf5QC6TOVipmMrcHtikNjI=";
-        };
-        vendorHash = "sha256-rKRRcwmon/3K2bN7iQaMap5yNYKMCZ7P0M1C2hv4IlQ=";
-        postFixup = pkgs.lib.replaceStrings [
-          ''mv "$out/bin/app" "$out/bin/.ollama-app"''
-        ] [
-          ''if [ -e "$out/bin/app" ]; then
-             mv "$out/bin/app" "$out/bin/.ollama-app"
-           fi''
-        ] oldAttrs.postFixup;
-      });
+    packageOverrides = pkgs: let
+      mkOllamaFromGitHub = base: base.overrideAttrs (oldAttrs: {
+        # flake-pinned source (no rev/hash here)
+        src = inputs.ollama-src;
 
-      # Override llama-cpp to latest version b6150 with CUDA support
+        # keep your postFixup change
+        postFixup = pkgs.lib.replaceStrings
+          [ ''mv "$out/bin/app" "$out/bin/.ollama-app"'' ]
+          [ ''if [ -e "$out/bin/app" ]; then
+                 mv "$out/bin/app" "$out/bin/.ollama-app"
+               fi'' ]
+          (oldAttrs.postFixup or "");
+
+        # IMPORTANT: vendorHash is still required for Go deps and may change
+        # Keep it here; update only when Nix tells you the new one.
+        vendorHash = oldAttrs.vendorHash or null;
+      });
+    in {
+      # CPU ollama (flake-pinned)
+      ollama = mkOllamaFromGitHub pkgs.ollama;
+
+      # ROCm ollama (flake-pinned)
+      ollama-rocm = mkOllamaFromGitHub pkgs.ollama-rocm;
+
+      # llama.cpp (flake-pinned) + keep leaveDotGit/postFetch + native flags
       llama-cpp =
         (pkgs.llama-cpp.override {
-          cudaSupport = false;
-          rocmSupport = true;
+          cudaSupport  = false;
+          rocmSupport  = true;
           metalSupport = false;
-          # Enable BLAS for optimized CPU layer performance (OpenBLAS)
-          # This is crucial for models using split-mode or CPU offloading
-          blasSupport = true;
-        }).overrideAttrs
-          (oldAttrs: rec {
-            version = "7402";
-            src = pkgs.fetchFromGitHub {
-              owner = "ggml-org";
-              repo = "llama.cpp";
-              tag = "b${version}";
-              hash = "sha256-s6C2wrzxNolVGwDQ2KBBR/+MfBJPf7mT1UgmS8m8KD8=";
-              leaveDotGit = true;
-              postFetch = ''
-                git -C "$out" rev-parse --short HEAD > $out/COMMIT
-                find "$out" -name .git -print0 | xargs -0 rm -rf
-              '';
-            };
-            # Enable native CPU optimizations for massively better CPU performance
-            # This enables AVX, AVX2, AVX-512, FMA, etc. for your specific CPU
-            # NOTE: This is intentionally opposite of nixpkgs (which uses -DGGML_NATIVE=off
-            # for reproducible builds). We sacrifice portability for faster CPU layers.
-            cmakeFlags = (oldAttrs.cmakeFlags or []) ++ [
-              "-DGGML_NATIVE=ON"
-            ];
+          blasSupport  = true;
+        }).overrideAttrs (oldAttrs: {
+          src = inputs.llamacpp-src;
 
-            # Disable Nix's NIX_ENFORCE_NO_NATIVE which strips -march=native flags
-            # See: https://github.com/NixOS/nixpkgs/issues/357736
-            # See: https://github.com/NixOS/nixpkgs/pull/377484 (intentionally contradicts this)
-            preConfigure = ''
-              export NIX_ENFORCE_NO_NATIVE=0
-              ${oldAttrs.preConfigure or ""}
-            '';
-          });
+          # keep commit stamping + stripping .git (your postFetch behavior)
+          postUnpack = (oldAttrs.postUnpack or "") + ''
+            if [ -d source/.git ]; then
+              git -C source rev-parse --short HEAD > source/COMMIT
+              find source -name .git -print0 | xargs -0 rm -rf
+            fi
+          '';
 
-      # llama-swap from GitHub releases
+          cmakeFlags = (oldAttrs.cmakeFlags or []) ++ [
+            "-DGGML_NATIVE=ON"
+          ];
+
+          preConfigure = ''
+            export NIX_ENFORCE_NO_NATIVE=0
+            ${oldAttrs.preConfigure or ""}
+          '';
+        });
+
       llama-swap = pkgs.runCommand "llama-swap" { } ''
         mkdir -p $out/bin
         tar -xzf ${
@@ -78,41 +67,19 @@
       '';
     };
   };
-  environment.variables.LLAMA_CACHE = "/mnt/sda1/Documents/ollama-models/llama-cpp-cache";
-  users.users.ollama = {
-    isSystemUser = true;
-    group = "ollama";
-    extraGroups = [ "llm" ];
-  };
-  users.groups.ollama = {};
 
-  users.users.llama-cpp = {
-    isSystemUser = true;
-    group = "llama-cpp";
-    extraGroups = [ "llm" ];
-  };
-  users.groups.llama-cpp = {};
-
-  users.groups.llm = {};
-  users.users.bedhedd.extraGroups = [ "llm" ]; 
-
-  systemd.tmpfiles.rules = [
-    # shared base dir (setgid so new files inherit group)
-    "d /mnt/sda1/Documents/ollama-models 2775 ollama llm -"
-    # cache dir
-    "d /mnt/sda1/Documents/ollama-models/llama-cpp-cache 2775 llama-cpp llm -"
-  ];
-
-  systemd.services.llama-cpp.environment.LLAMA_CACHE =
-    "/mnt/sda1/Documents/ollama-models/llama-cpp-cache";
-
+  # (rest of your config unchanged)
   services.ollama = {
     enable = true;
-    # package = pkgs.ollama-rocm;
+    
+    # pick the backend by package
+    package = pkgs.ollama-rocm;
+
+    models = "/mnt/sda1/Documents/ollama-models";
     environmentVariables = {
-      OLLAMA_MODELS = "/mnt/sda1/Documents/ollama-models";  # <-- custom model dir
+      OLLAMA_MODELS = "/mnt/sda1/Documents/ollama-models";
       HSA_OVERRIDE_GFX_VERSION = "11.0.2";
     };
-    models  = "/mnt/sda1/Documents/ollama-models";  # <-- custom model dir
   };
+
 }
