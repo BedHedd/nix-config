@@ -50,15 +50,31 @@
     graphics = {
       enable = true;
       enable32Bit = true;
-      # optional but nice to have:
-      # extraPackages = with pkgs; [ vaapiVdpau libvdpau-va-gl intel-media-driver nvidia-vaapi-driver ];
     };
 
-    xpadneo = {
+    xpadneo.enable = true;
+    xone.enable = true;
+
+    firmware = [
+      pkgs.xow_dongle-firmware
+      (pkgs.runCommand "xone-dongle-firmware-alias" {} ''
+        mkdir -p $out/lib/firmware
+        cp -f ${pkgs.xow_dongle-firmware}/lib/firmware/xow_dongle.bin \
+              $out/lib/firmware/xone_dongle_02e6.bin
+      '')
+    ];
+
+    bluetooth = {
       enable = true;
-    };
-    xone = {
-      enable = true;
+      powerOnBoot = true;
+      settings = {
+        General = {
+          Privacy = "device";
+          JustWorksRepairing = "always";
+          Class = "0x000100";
+          FastConnectable = "true";
+        };
+      };
     };
 
     nvidia = {
@@ -82,20 +98,8 @@
     };
   };
 
+  boot.extraModprobeConfig = "options bluetooth disable_ertm=1";
   services.xserver.videoDrivers = [ "nvidia" ];
-  hardware.bluetooth = {
-    enable = true; # enables support for Bluetooth
-    powerOnBoot = true; # powers up the default Bluetooth controller on boot
-    settings = {
-      General = {
-        Privacy = "device";
-        JustWorksRepairing = "always";
-        Class = "0x000100";
-        FastConnectable = "true";
-      };
-    };
-  };
-  
-  boot.extraModprobeConfig = '' options bluetooth disable_ertm=1 '';
+
   system.stateVersion = "25.05";
 }
