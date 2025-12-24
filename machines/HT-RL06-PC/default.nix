@@ -41,6 +41,38 @@
     ];    
   };
   
+   fileSystems."/home/bedhedd/Documents" = {
+    device  = "/mnt/games/Documents";
+    options = [ "bind" ];
+    depends = [ "/mnt/games" ];   # be sure the disk is mounted first
+  };
+
+  fileSystems."/home/bedhedd/Downloads" = {
+    device  = "/mnt/games/Downloads";
+    options = [ "bind" ];
+    depends = [ "/mnt/games" ];
+  };
+
+  fileSystems."/home/bedhedd/Music" = {
+    device  = "/mnt/games/Music";
+    options = [ "bind" ];
+    depends = [ "/mnt/games" ];
+  };
+  
+  fileSystems."/home/bedhedd/Pictures" = {
+    device  = "/mnt/games/Pictures";
+    options = [ "bind" ];
+    depends = [ "/mnt/games" ];
+  };
+
+  fileSystems."/home/bedhedd/Videos" = {
+    device  = "/mnt/games/Videos";
+    options = [ "bind" ];
+    depends = [ "/mnt/games" ];
+  };
+
+  
+  
   boot = {
   initrd.kernelModules = [ "nvidia" "i915" "nvidia_modeset" "nvidia_uvm" "nvidia_drm" ];
   kernelParams = [ "nvidia-drm.fbdev=1" ];
@@ -96,6 +128,11 @@
       nvidiaSettings = true;
       package = config.boot.kernelPackages.nvidiaPackages.beta;
     };
+  };
+
+  virtualisation.waydroid = {
+    enable = true;
+    package = pkgs.waydroid-nftables;
   };
 
   boot.extraModprobeConfig = "options bluetooth disable_ertm=1";
