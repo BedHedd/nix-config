@@ -8,14 +8,14 @@
     # rocmSupport = true;
     packageOverrides = pkgs: {
       ollama = pkgs.ollama.overrideAttrs (oldAttrs: rec {
-        version = "0.13.3";
+        version = "0.13.5";
         src = pkgs.fetchFromGitHub {
           owner = "ollama";
           repo = "ollama";
           rev = "v${version}";
-          hash = "sha256-DsAgosnvkyGFPKSjjnE9dZ37CfqAIlvodpVjHLihX2A=";
+          hash = "sha256-4K1+GE96Uu5w1otSiP69vNDJ03tFvr78VluIEHMzFGQ=";
         };
-        vendorHash = "sha256-rKRRcwmon/3K2bN7iQaMap5yNYKMCZ7P0M1C2hv4IlQ=";
+        vendorHash = "sha256-NM0vtue0MFrAJCjmpYJ/rPEDWBxWCzBrWDb0MVOhY+Q=";
         postFixup = pkgs.lib.replaceStrings [
           ''mv "$out/bin/app" "$out/bin/.ollama-app"''
         ] [
@@ -26,14 +26,14 @@
       });
 
       ollama-rocm = pkgs.ollama-rocm.overrideAttrs (oldAttrs: rec {
-        version = "0.13.3";
+        version = "0.13.5";
         src = pkgs.fetchFromGitHub {
           owner = "ollama";
           repo = "ollama";
           rev = "v${version}";
-          hash = "sha256-DsAgosnvkyGFPKSjjnE9dZ37CfqAIlvodpVjHLihX2A=";
+          hash = "sha256-4K1+GE96Uu5w1otSiP69vNDJ03tFvr78VluIEHMzFGQ=";
         };
-        vendorHash = "sha256-rKRRcwmon/3K2bN7iQaMap5yNYKMCZ7P0M1C2hv4IlQ=";
+        vendorHash = "sha256-NM0vtue0MFrAJCjmpYJ/rPEDWBxWCzBrWDb0MVOhY+Q=";
         postFixup = pkgs.lib.replaceStrings [
           ''mv "$out/bin/app" "$out/bin/.ollama-app"''
         ] [
@@ -54,12 +54,12 @@
           blasSupport = true;
         }).overrideAttrs
           (oldAttrs: rec {
-            version = "7415";
+            version = "7531";
             src = pkgs.fetchFromGitHub {
               owner = "ggml-org";
               repo = "llama.cpp";
               tag = "b${version}";
-              hash = "sha256-Kd21cwA319z2rmlqQy5SnAZTc6bsuLkB+4sCTpSnYIM=";
+              hash = "sha256-91zqS5yUN89wVOVxv9W56bR4Bqoul9YmCl89ArNli+Y=";
               leaveDotGit = true;
               postFetch = ''
                 git -C "$out" rev-parse --short HEAD > $out/COMMIT
@@ -88,8 +88,8 @@
         mkdir -p $out/bin
         tar -xzf ${
           pkgs.fetchurl {
-            url = "https://github.com/mostlygeek/llama-swap/releases/download/v175/llama-swap_175_linux_amd64.tar.gz";
-            hash = "sha256-zeyVz0ldMxV4HKK+u5TtAozfRI6IJmeBo92IJTgkGrQ=";
+            url = "https://github.com/mostlygeek/llama-swap/releases/download/v178/llama-swap_178_linux_amd64.tar.gz";
+            hash = "sha256-WhoGaS+m+2Ne+7U5JVvj1Fr5n3xB3ccsTe93slSAhFw=";
           }
         } -C $out/bin
         chmod +x $out/bin/llama-swap
