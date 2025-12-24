@@ -41,11 +41,11 @@
     "linux-rocksmith": {
       "flake": false,
       "locked": {
-        "lastModified": 1765549758,
-        "narHash": "sha256-51a2/Br+opaXD/FkFty36RwGr9YdMcN54rGKMCW0HAk=",
+        "lastModified": 1766501068,
+        "narHash": "sha256-B3Iq+fYI2VYB82PfEOKIcBnEfGmQ832CQm200qP/LAQ=",
         "owner": "theNizo",
         "repo": "linux_rocksmith",
-        "rev": "f019ebee03182a14440a8a4cac7e2b49a6482eb5",
+        "rev": "551a120c3075eb33e9791f0a0172a781ae355c31",
         "type": "github"
       },
       "original": {
@@ -81,11 +81,11 @@
     },
     "nixos-hardware": {
       "locked": {
-        "lastModified": 1764440730,
-        "narHash": "sha256-ZlJTNLUKQRANlLDomuRWLBCH5792x+6XUJ4YdFRjtO4=",
+        "lastModified": 1766568855,
+        "narHash": "sha256-UXVtN77D7pzKmzOotFTStgZBqpOcf8cO95FcupWp4Zo=",
         "owner": "NixOS",
         "repo": "nixos-hardware",
-        "rev": "9154f4569b6cdfd3c595851a6ba51bfaa472d9f3",
+        "rev": "c5db9569ac9cc70929c268ac461f4003e3e5ca80",
         "type": "github"
       },
       "original": {
@@ -120,11 +120,11 @@
     },
     "nixpkgs": {
       "locked": {
-        "lastModified": 1765779637,
-        "narHash": "sha256-KJ2wa/BLSrTqDjbfyNx70ov/HdgNBCBBSQP3BIzKnv4=",
+        "lastModified": 1766309749,
+        "narHash": "sha256-3xY8CZ4rSnQ0NqGhMKAy5vgC+2IVK0NoVEzDoOh4DA4=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "1306659b587dc277866c7b69eb97e5f07864d8c4",
+        "rev": "a6531044f6d0bef691ea18d4d4ce44d0daa6e816",
         "type": "github"
       },
       "original": {
