@@ -41,6 +41,38 @@
     ];    
   };
   
+   fileSystems."/home/bedhedd/Documents" = {
+    device  = "/mnt/games/Documents";
+    options = [ "bind" ];
+    depends = [ "/mnt/games" ];   # be sure the disk is mounted first
+  };
+
+  fileSystems."/home/bedhedd/Downloads" = {
+    device  = "/mnt/games/Downloads";
+    options = [ "bind" ];
+    depends = [ "/mnt/games" ];
+  };
+
+  fileSystems."/home/bedhedd/Music" = {
+    device  = "/mnt/games/Music";
+    options = [ "bind" ];
+    depends = [ "/mnt/games" ];
+  };
+  
+  fileSystems."/home/bedhedd/Pictures" = {
+    device  = "/mnt/games/Pictures";
+    options = [ "bind" ];
+    depends = [ "/mnt/games" ];
+  };
+
+  fileSystems."/home/bedhedd/Videos" = {
+    device  = "/mnt/games/Videos";
+    options = [ "bind" ];
+    depends = [ "/mnt/games" ];
+  };
+
+  
+  
   boot = {
   initrd.kernelModules = [ "nvidia" "i915" "nvidia_modeset" "nvidia_uvm" "nvidia_drm" ];
   kernelParams = [ "nvidia-drm.fbdev=1" ];
@@ -50,15 +82,31 @@
     graphics = {
       enable = true;
       enable32Bit = true;
-      # optional but nice to have:
-      # extraPackages = with pkgs; [ vaapiVdpau libvdpau-va-gl intel-media-driver nvidia-vaapi-driver ];
     };
 
-    xpadneo = {
+    xpadneo.enable = true;
+    xone.enable = true;
+
+    firmware = [
+      pkgs.xow_dongle-firmware
+      (pkgs.runCommand "xone-dongle-firmware-alias" {} ''
+        mkdir -p $out/lib/firmware
+        cp -f ${pkgs.xow_dongle-firmware}/lib/firmware/xow_dongle.bin \
+              $out/lib/firmware/xone_dongle_02e6.bin
+      '')
+    ];
+
+    bluetooth = {
       enable = true;
-    };
-    xone = {
-      enable = true;
+      powerOnBoot = true;
+      settings = {
+        General = {
+          Privacy = "device";
+          JustWorksRepairing = "always";
+          Class = "0x000100";
+          FastConnectable = "true";
+        };
+      };
     };
 
     nvidia = {
@@ -82,20 +130,13 @@
     };
   };
 
-  services.xserver.videoDrivers = [ "nvidia" ];
-  hardware.bluetooth = {
-    enable = true; # enables support for Bluetooth
-    powerOnBoot = true; # powers up the default Bluetooth controller on boot
-    settings = {
-      General = {
-        Privacy = "device";
-        JustWorksRepairing = "always";
-        Class = "0x000100";
-        FastConnectable = "true";
-      };
-    };
+  virtualisation.waydroid = {
+    enable = true;
+    package = pkgs.waydroid-nftables;
   };
-  
-  boot.extraModprobeConfig = '' options bluetooth disable_ertm=1 '';
+
+  boot.extraModprobeConfig = "options bluetooth disable_ertm=1";
+  services.xserver.videoDrivers = [ "nvidia" ];
+
   system.stateVersion = "25.05";
 }
